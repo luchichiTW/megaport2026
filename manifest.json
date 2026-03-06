@@ -1,0 +1,27 @@
+{
+  "name": "大港開唱 2026",
+  "short_name": "大港開唱",
+  "description": "Megaport Festival 2026 Schedule Planner",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0B0B0D",
+  "theme_color": "#E63946",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

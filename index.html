@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>大港開唱 2026</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="大港開唱">
+  <link rel="apple-touch-icon" href="./icon-180.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap">
+
+  <style>
+
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --spring: cubic-bezier(.175,.885,.32,1.275);
+      --ease-out: cubic-bezier(.16,1,.3,1);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    html { background:#000; }
+
+    body {
+      font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Noto Sans TC', system-ui, sans-serif;
+      color: rgba(255,255,255,.92);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+    }
+
+    /* ═══ Ambient light canvas ═══ */
+    .ambient-wrap {
+      position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
+      background: #050508;
+    }
+    .orb {
+      position:absolute; border-radius:50%; filter:blur(80px);
+      mix-blend-mode:screen; will-change:transform;
+    }
+    .orb-1 {
+      width:420px; height:420px; top:-120px; left:-60px;
+      background:radial-gradient(circle, rgba(230,57,70,.35), transparent 70%);
+      animation: float1 16s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width:350px; height:350px; bottom:-80px; right:-40px;
+      background:radial-gradient(circle, rgba(244,162,97,.28), transparent 70%);
+      animation: float2 20s ease-in-out infinite alternate;
+    }
+    .orb-3 {
+      width:300px; height:300px; top:40%; left:50%;
+      background:radial-gradient(circle, rgba(108,123,216,.2), transparent 70%);
+      animation: float3 18s ease-in-out infinite alternate;
+    }
+    @keyframes float1 { to { transform:translate(100px,80px) scale(1.15); } }
+    @keyframes float2 { to { transform:translate(-80px,-100px) scale(1.2); } }
+    @keyframes float3 { to { transform:translate(-60px,50px) scale(1.1); } }
+
+    /* ═══ Liquid Glass material ═══ */
+    .liquid-glass {
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.10) 0%,
+        rgba(255,255,255,.05) 50%,
+        rgba(255,255,255,.08) 100%
+      );
+      backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      box-shadow:
+        0 8px 32px rgba(0,0,0,.25),
+        inset 0 .5px 0 rgba(255,255,255,.25),
+        inset 0 -1px 0 rgba(255,255,255,.03);
+      border: .5px solid rgba(255,255,255,.15);
+    }
+
+    /* ═══ Scrollbar hide ═══ */
+    .no-scrollbar { scrollbar-width:none; -ms-overflow-style:none; }
+    .no-scrollbar::-webkit-scrollbar { display:none; }
+
+    /* ═══ iOS install banner ═══ */
+    .ios-banner {
+      position:fixed; z-index:999;
+      bottom: calc(90px + var(--safe-bottom));
+      left:16px; right:16px;
+      border-radius:20px; padding:18px 20px;
+      display:flex; align-items:center; gap:14px;
+      animation: bannerIn .5s var(--ease-out);
+    }
+    .ios-banner .x {
+      position:absolute; top:10px; right:14px;
+      background:none; border:none;
+      color:rgba(255,255,255,.3); font-size:22px;
+      cursor:pointer; padding:4px; line-height:1;
+    }
+    @keyframes bannerIn {
+      from { transform:translateY(140px) scale(.95); opacity:0; }
+      to   { transform:translateY(0) scale(1); opacity:1; }
+    }
+
+    /* ═══ Press feedback ═══ */
+    .press { transition: transform .15s var(--ease-out), opacity .15s; }
+    .press:active { transform: scale(.97); opacity:.85; }
+  </style>
+
+  <script crossorigin="anonymous" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin="anonymous" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin="anonymous" src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+
+  <!-- Ambient light -->
+  <div class="ambient-wrap">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div id="root"></div>
+
+  <!-- iOS install prompt -->
+  <script>
+    (function(){
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+      const isStandalone = navigator.standalone === true ||
+        matchMedia('(display-mode:standalone)').matches;
+
+      if(isIOS && !isStandalone && !sessionStorage.getItem('pwa-x')){
+        const banner = document.createElement('div');
+        banner.className = 'ios-banner liquid-glass';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'x';
+        closeBtn.textContent = '\u00d7';
+        closeBtn.addEventListener('click', function() {
+          banner.remove();
+          sessionStorage.setItem('pwa-x', '1');
+        });
+
+        const icon = document.createElement('div');
+        icon.style.fontSize = '38px';
+        icon.textContent = '\u2B06\uFE0F';
+
+        const textWrap = document.createElement('div');
+        const title = document.createElement('div');
+        title.style.cssText = 'font-size:15px;font-weight:700';
+        title.textContent = '加入主畫面';
+
+        const desc = document.createElement('div');
+        desc.style.cssText = 'font-size:12px;color:rgba(255,255,255,.45);margin-top:3px;line-height:1.5';
+        desc.textContent = '點擊 分享 → 加入主畫面';
+
+        textWrap.appendChild(title);
+        textWrap.appendChild(desc);
+        banner.appendChild(closeBtn);
+        banner.appendChild(icon);
+        banner.appendChild(textWrap);
+        document.body.appendChild(banner);
+      }
+    })();
+  </script>
+
+  <script>
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(function(err) {
+        console.warn('SW registration failed:', err);
+      });
+    }
+  </script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useMemo } = React;
+
+    const STAGES = {
+      SO:{name:"南霸天",bg:"#E63946"},DK:{name:"海龍王",bg:"#3A86C4"},
+      DG:{name:"女神龍",bg:"#E76F51"},HB:{name:"海波浪",bg:"#9B6DD7"},
+      KM:{name:"卡魔麥",bg:"#2EAA8A"},CT:{name:"出頭天",bg:"#EF6C00"},
+      DX:{name:"大雄丸",bg:"#D4A017"},BS:{name:"藍寶石",bg:"#6C7BD8"},
+      QC:{name:"青春夢",bg:"#E8578A"},XG:{name:"小港祭",bg:"#36B5A0"},
+    };
+
+    const T=[
+      {id:"1-SO-1",day:1,stage:"SO",artist:"椅子樂團",start:"12:40",end:"13:00"},
+      {id:"1-SO-2",day:1,stage:"SO",artist:"The Birthday [JP]",start:"14:20",end:"14:50"},
+      {id:"1-SO-3",day:1,stage:"SO",artist:"joOji [JP]",start:"14:50",end:"15:10"},
+      {id:"1-SO-4",day:1,stage:"SO",artist:"Aooo [JP]",start:"16:00",end:"16:20"},
+      {id:"1-SO-5",day:1,stage:"SO",artist:"滅火器",start:"17:40",end:"18:00"},
+      {id:"1-SO-6",day:1,stage:"SO",artist:"milet [JP]",start:"19:20",end:"19:50"},
+      {id:"1-SO-7",day:1,stage:"SO",artist:"血肉果汁機 ft. 陳亞蘭",start:"21:10",end:"21:50"},
+      {id:"1-DK-1",day:1,stage:"DK",artist:"海豚刑警",start:"12:40",end:"13:00"},
+      {id:"1-DK-2",day:1,stage:"DK",artist:"NEE [JP]",start:"13:20",end:"13:50"},
+      {id:"1-DK-3",day:1,stage:"DK",artist:"漂流出口",start:"14:00",end:"14:20"},
+      {id:"1-DK-4",day:1,stage:"DK",artist:"南瓜妮歌迷俱樂部",start:"15:10",end:"15:40"},
+      {id:"1-DK-5",day:1,stage:"DK",artist:"黑狼人肉戰車那卡西",start:"16:00",end:"16:40"},
+      {id:"1-DK-6",day:1,stage:"DK",artist:"the band apart [JP]",start:"16:40",end:"17:10"},
+      {id:"1-DK-7",day:1,stage:"DK",artist:"AVRALIZE [DE]",start:"17:20",end:"17:50"},
+      {id:"1-DK-8",day:1,stage:"DK",artist:"same Sam but different.",start:"18:00",end:"18:40"},
+      {id:"1-DK-9",day:1,stage:"DK",artist:"無妄合作社",start:"18:50",end:"19:10"},
+      {id:"1-DK-10",day:1,stage:"DK",artist:"李竺芯 ft. 妮妃雅·瘋",start:"19:40",end:"20:00"},
+      {id:"1-DK-11",day:1,stage:"DK",artist:"Käärijä [FI]",start:"20:10",end:"20:50"},
+      {id:"1-DK-12",day:1,stage:"DK",artist:"謝金燕",start:"21:10",end:"21:40"},
+      {id:"1-DG-1",day:1,stage:"DG",artist:"倒車入庫",start:"13:20",end:"13:50"},
+      {id:"1-DG-2",day:1,stage:"DG",artist:"DSPS",start:"14:40",end:"15:10"},
+      {id:"1-DG-3",day:1,stage:"DG",artist:"Yokkorio",start:"16:00",end:"16:30"},
+      {id:"1-DG-4",day:1,stage:"DG",artist:"馬克",start:"16:40",end:"17:00"},
+      {id:"1-DG-5",day:1,stage:"DG",artist:"Mong Tong × XTRUX",start:"17:10",end:"17:40"},
+      {id:"1-DG-6",day:1,stage:"DG",artist:"P!SCO",start:"18:20",end:"18:50"},
+      {id:"1-DG-7",day:1,stage:"DG",artist:"體熊專科 Major in Body Bear",start:"18:50",end:"19:10"},
+      {id:"1-DG-8",day:1,stage:"DG",artist:"Manic Sheep",start:"20:00",end:"20:20"},
+      {id:"1-DG-9",day:1,stage:"DG",artist:"宅邦戰隊 OTAKUNI 學園祭",start:"20:40",end:"21:10"},
+      {id:"1-HB-1",day:1,stage:"HB",artist:"COLD DEW",start:"13:20",end:"13:50"},
+      {id:"1-HB-2",day:1,stage:"HB",artist:"MoonD'shake",start:"13:50",end:"14:10"},
+      {id:"1-HB-3",day:1,stage:"HB",artist:"Yappy",start:"15:00",end:"15:20"},
+      {id:"1-CT-1",day:1,stage:"CT",artist:"LAWA ft. Angie安吉",start:"15:10",end:"15:40"},
+      {id:"1-CT-2",day:1,stage:"CT",artist:"憂憂 ft. 奕碩",start:"16:30",end:"16:50"},
+      {id:"1-CT-3",day:1,stage:"CT",artist:"陳以恆",start:"17:50",end:"18:10"},
+
+      {id:"1-DX-1",day:1,stage:"DX",artist:"寫下你對這場派對的心得",start:"13:10",end:"13:30"},
+      {id:"1-DX-2",day:1,stage:"DX",artist:"何勁旻 陳冠哼",start:"13:20",end:"13:50"},
+      {id:"1-DX-3",day:1,stage:"DX",artist:"光頭火鳥 光頭美麗 光頭珞亦",start:"15:10",end:"15:50"},
+      {id:"1-DX-4",day:1,stage:"DX",artist:"曾國宏 許正泰",start:"17:20",end:"17:50"},
+      {id:"1-DX-5",day:1,stage:"DX",artist:"美麗本人 ft. 異鄉人",start:"18:10",end:"18:50"},
+      {id:"1-DX-6",day:1,stage:"DX",artist:"大象體操 紀錄長片",start:"19:30",end:"20:00"},
+      {id:"1-BS-1",day:1,stage:"BS",artist:"黃雨晴",start:"14:10",end:"14:40"},
+      {id:"1-BS-2",day:1,stage:"BS",artist:"昭霖 & 甜吻吻",start:"15:20",end:"15:50"},
+      {id:"1-BS-3",day:1,stage:"BS",artist:"MOTIF HIVE",start:"16:20",end:"16:50"},
+      {id:"1-BS-4",day:1,stage:"BS",artist:"BBFFMF",start:"16:50",end:"17:20"},
+      {id:"1-BS-5",day:1,stage:"BS",artist:"震樂堂",start:"17:30",end:"17:50"},
+      {id:"1-BS-6",day:1,stage:"BS",artist:"庹心自在所",start:"18:50",end:"19:10"},
+      {id:"1-QC-1",day:1,stage:"QC",artist:"共振效應",start:"13:30",end:"13:50"},
+      {id:"1-QC-2",day:1,stage:"QC",artist:"帕崎拉",start:"14:50",end:"15:10"},
+      {id:"1-QC-3",day:1,stage:"QC",artist:"DJ N.OERS",start:"15:30",end:"15:50"},
+      {id:"1-QC-4",day:1,stage:"QC",artist:"DJ GAN3DA",start:"16:40",end:"17:00"},
+      {id:"1-QC-5",day:1,stage:"QC",artist:"DJ GTER",start:"17:50",end:"18:10"},
+      {id:"1-QC-6",day:1,stage:"QC",artist:"DJ YU",start:"19:10",end:"19:30"},
+      {id:"1-QC-7",day:1,stage:"QC",artist:"DJ DINDIN",start:"20:20",end:"20:50"},
+      {id:"2-SO-1",day:2,stage:"SO",artist:"結束バンド [JP]",start:"12:40",end:"13:00"},
+      {id:"2-SO-2",day:2,stage:"SO",artist:"EmptyORio",start:"13:20",end:"14:00"},
+      {id:"2-SO-3",day:2,stage:"SO",artist:"芒果醬",start:"14:20",end:"14:40"},
+      {id:"2-SO-4",day:2,stage:"SO",artist:"ゲシュタルト乙女 urban session ft. yurinasia",start:"14:40",end:"15:10"},
+      {id:"2-SO-5",day:2,stage:"SO",artist:"康士坦的變化球",start:"15:50",end:"16:20"},
+      {id:"2-SO-6",day:2,stage:"SO",artist:"怕胖團 ft. 陽帆",start:"17:30",end:"18:00"},
+      {id:"2-SO-7",day:2,stage:"SO",artist:"巨大的轟鳴",start:"18:50",end:"19:10"},
+      {id:"2-SO-8",day:2,stage:"SO",artist:"拍謝少年 ft. AYUNi D from PEDRO",start:"19:10",end:"19:50"},
+      {id:"2-SO-9",day:2,stage:"SO",artist:"落日飛車",start:"21:20",end:"21:50"},
+      {id:"2-DK-1",day:2,stage:"DK",artist:"HUSH",start:"12:50",end:"13:10"},
+      {id:"2-DK-2",day:2,stage:"DK",artist:"TOOBOE [JP]",start:"14:10",end:"14:40"},
+      {id:"2-DK-3",day:2,stage:"DK",artist:"Gummy B × 陳嫻靜",start:"15:30",end:"15:50"},
+      {id:"2-DK-4",day:2,stage:"DK",artist:"隨性 ft. 婷文",start:"16:00",end:"16:20"},
+      {id:"2-DK-5",day:2,stage:"DK",artist:"NOVELISTS [FR]",start:"17:30",end:"17:50"},
+      {id:"2-DK-6",day:2,stage:"DK",artist:"鄭宜農",start:"18:10",end:"18:30"},
+      {id:"2-DK-7",day:2,stage:"DK",artist:"BAND-MAID [JP]",start:"19:40",end:"20:00"},
+      {id:"2-DK-8",day:2,stage:"DK",artist:"Hiromi's Sonicwonder [JP·US·FR]",start:"20:20",end:"20:50"},
+      {id:"2-DK-9",day:2,stage:"DK",artist:"AiNA THE END [JP]",start:"21:00",end:"21:30"},
+      {id:"2-DG-1",day:2,stage:"DG",artist:"黃宇寒",start:"13:20",end:"13:40"},
+      {id:"2-DG-2",day:2,stage:"DG",artist:"KINAKO & 東京中央線",start:"14:40",end:"15:10"},
+      {id:"2-DG-3",day:2,stage:"DG",artist:"恆月三途",start:"15:10",end:"15:30"},
+      {id:"2-DG-4",day:2,stage:"DG",artist:"多米多羅 ft. 可凡",start:"16:00",end:"16:30"},
+      {id:"2-DG-5",day:2,stage:"DG",artist:"當代電影大師",start:"16:40",end:"17:10"},
+      {id:"2-DG-6",day:2,stage:"DG",artist:"FunkyMo ft. 小尾巴",start:"17:10",end:"17:50"},
+      {id:"2-DG-7",day:2,stage:"DG",artist:"Infernal Chaos",start:"18:20",end:"18:50"},
+      {id:"2-DG-8",day:2,stage:"DG",artist:"粉紅噪音",start:"18:40",end:"19:00"},
+      {id:"2-HB-1",day:2,stage:"HB",artist:"TSS [FR]",start:"13:10",end:"13:40"},
+      {id:"2-HB-2",day:2,stage:"HB",artist:"畫室",start:"13:50",end:"14:10"},
+      {id:"2-HB-3",day:2,stage:"HB",artist:"薄荷葉 ft. JB",start:"15:10",end:"15:40"},
+      {id:"2-HB-4",day:2,stage:"HB",artist:"五月五日 [KR]",start:"16:30",end:"17:00"},
+      {id:"2-KM-1",day:2,stage:"KM",artist:"派對超人 羅百吉 ft. 寶貝 謝明諒 C.Holly 潤少 LilHAO",start:"20:20",end:"21:10"},
+      {id:"2-CT-1",day:2,stage:"CT",artist:"馬尾 ft. 立長",start:"16:30",end:"16:50"},
+      {id:"2-CT-2",day:2,stage:"CT",artist:"喜劇開港 單口喜劇",start:"16:40",end:"17:10"},
+      {id:"2-CT-3",day:2,stage:"CT",artist:"還有夜間限定 小堯 阿賢",start:"17:20",end:"17:50"},
+      {id:"2-CT-4",day:2,stage:"CT",artist:"洪安妮",start:"17:50",end:"18:10"},
+      {id:"2-CT-5",day:2,stage:"CT",artist:"忘憂水",start:"20:00",end:"20:20"},
+      {id:"2-DX-1",day:2,stage:"DX",artist:"陪呱吉放歌 vol.1 呱吉 迪拉 李毅誠",start:"13:10",end:"13:50"},
+      {id:"2-DX-2",day:2,stage:"DX",artist:"丸長世代 柯家洋 阿舌 破地獄",start:"15:20",end:"15:50"},
+      {id:"2-BS-1",day:2,stage:"BS",artist:"壓滿俱樂部",start:"14:50",end:"15:10"},
+      {id:"2-BS-2",day:2,stage:"BS",artist:"沉默紳士",start:"16:10",end:"16:30"},
+      {id:"2-BS-3",day:2,stage:"BS",artist:"debloop",start:"17:30",end:"17:50"},
+      {id:"2-BS-4",day:2,stage:"BS",artist:"Plutato",start:"18:10",end:"18:40"},
+      {id:"2-BS-5",day:2,stage:"BS",artist:"貓膽汁",start:"18:50",end:"19:20"},
+      {id:"2-QC-1",day:2,stage:"QC",artist:"DJ QuestionMark 英語金曲復興運動",start:"15:20",end:"16:00"},
+      {id:"2-QC-2",day:2,stage:"QC",artist:"DCIV + Lazy Habits",start:"16:30",end:"17:10"},
+      {id:"2-QC-3",day:2,stage:"QC",artist:"Flowstrong + Dac",start:"17:10",end:"17:50"},
+      {id:"2-QC-4",day:2,stage:"QC",artist:"BRADD + 阿法",start:"17:40",end:"18:10"},
+      {id:"2-QC-5",day:2,stage:"QC",artist:"That's My Shhh",start:"18:50",end:"19:20"},
+      {id:"2-QC-6",day:2,stage:"QC",artist:"DJ 賴皮 MR.SKIN 國語作業簿",start:"20:10",end:"20:50"},
+      {id:"2-XG-1",day:2,stage:"XG",artist:"打倒三明治",start:"13:20",end:"13:50"},
+      {id:"2-XG-2",day:2,stage:"XG",artist:"LEIGHT NINE",start:"14:20",end:"14:50"},
+    ];
+
+    const t2m=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};
+    const clash=(a,b)=>a.day===b.day&&t2m(a.start)<t2m(b.end)&&t2m(b.start)<t2m(a.end);
+
+    const openDB = () => new Promise((resolve, reject) => {
+      const req = indexedDB.open("mp2026", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("s");
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+    const dbGet = async () => {
+      try {
+        const db = await openDB();
+        return new Promise((resolve) => {
+          const req = db.transaction("s", "readonly").objectStore("s").get("v");
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve([]);
+        });
+      } catch (err) {
+        console.warn("dbGet failed:", err);
+        return [];
+      }
+    };
+
+    const dbSet = async (value) => {
+      try {
+        const db = await openDB();
+        db.transaction("s", "readwrite").objectStore("s").put(value, "v");
+      } catch (err) {
+        console.warn("dbSet failed:", err);
+      }
+    };
+
+    /* ══════════════════════════════════════
+       Liquid Glass Design System
+       ══════════════════════════════════════ */
+
+    // Segmented Control — Apple-style with floating indicator
+    function Segment({items, value, onChange, size="md"}) {
+      const idx = items.findIndex(i=>i.value===value);
+      const count = items.length;
+      const pad = size==="sm" ? 2 : 3;
+      const py = size==="sm" ? "6px" : "9px";
+      const fs = size==="sm" ? 12 : 14;
+      return (
+        <div style={{
+          position:"relative", display:"flex", padding:pad,
+          borderRadius: size==="sm" ? 10 : 12,
+          background:"rgba(255,255,255,.06)",
+          border:".5px solid rgba(255,255,255,.08)",
+        }}>
+          {/* sliding indicator */}
+          <div style={{
+            position:"absolute",
+            top:pad, bottom:pad,
+            left: `calc(${pad}px + ${idx/count*100}%)`,
+            width:`calc(${100/count}% - ${pad}px)`,
+            borderRadius: size==="sm" ? 8 : 10,
+            background:"linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.10) 100%)",
+            boxShadow:"0 2px 8px rgba(0,0,0,.2), inset 0 .5px 0 rgba(255,255,255,.3)",
+            transition:"left .35s cubic-bezier(.16,1,.3,1)",
+          }}/>
+          {items.map(item=>(
+            <button key={item.value} onClick={()=>onChange(item.value)} style={{
+              flex:1, position:"relative", zIndex:1,
+              padding:`${py} 0`, border:"none", borderRadius:10,
+              background:"transparent", cursor:"pointer",
+              fontSize:fs, fontWeight:600, fontFamily:"inherit",
+              color: value===item.value ? "rgba(255,255,255,.95)" : "rgba(255,255,255,.35)",
+              transition:"color .25s",
+              letterSpacing: size==="sm" ? 0 : .2,
+            }}>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      );
+    }
+
+    // Pill filter chip
+    function Pill({label, active, color, onClick}) {
+      return (
+        <button className="press" onClick={onClick} style={{
+          padding:"7px 16px", borderRadius:100, border:"none",
+          fontSize:12, fontWeight:600, cursor:"pointer",
+          whiteSpace:"nowrap", flexShrink:0, fontFamily:"inherit",
+          background: active
+            ? `linear-gradient(135deg, ${color||"rgba(255,255,255,.2)"}30, ${color||"rgba(255,255,255,.15)"}18)`
+            : "rgba(255,255,255,.04)",
+          color: active ? (color||"#fff") : "rgba(255,255,255,.28)",
+          boxShadow: active
+            ? `0 0 0 .5px ${color||"rgba(255,255,255,.2)"}50, 0 2px 8px ${color||"rgba(0,0,0,.15)"}30, inset 0 .5px 0 rgba(255,255,255,.15)`
+            : "0 0 0 .5px rgba(255,255,255,.06)",
+          transition:"all .2s cubic-bezier(.16,1,.3,1)",
+        }}>
+          {label}
+        </button>
+      );
+    }
+
+    // Stage badge — frosted colored chip
+    function Badge({stage, large}) {
+      const s=STAGES[stage]; if(!s) return null;
+      return (
+        <span style={{
+          display:"inline-flex", alignItems:"center",
+          background:`linear-gradient(135deg, ${s.bg}DD, ${s.bg}99)`,
+          color:"#fff", padding:large?"3px 11px":"2px 8px",
+          borderRadius:large?8:6, fontSize:large?11:10,
+          fontWeight:700, letterSpacing:.4, whiteSpace:"nowrap",
+          flexShrink:0,
+          boxShadow:`0 1px 4px ${s.bg}50, inset 0 .5px 0 rgba(255,255,255,.25)`,
+        }}>
+          {s.name}
+        </span>
+      );
+    }
+
+    // Artist card — glass card with tinted selection
+    function Card({item, selected, dimmed, conflict, onToggle}) {
+      const c = STAGES[item.stage]?.bg||"#888";
+      return (
+        <button className="press" onClick={()=>onToggle(item.id)} style={{
+          display:"flex", alignItems:"center", gap:11,
+          width:"100%", padding:"15px 16px",
+          borderRadius:18, cursor:"pointer", textAlign:"left",
+          position:"relative", color:"inherit", fontFamily:"inherit",
+          background: selected
+            ? `linear-gradient(135deg, ${c}20, ${c}0A)`
+            : "rgba(255,255,255,.03)",
+          border: selected
+            ? `.5px solid ${c}50`
+            : ".5px solid rgba(255,255,255,.06)",
+          boxShadow: selected
+            ? `0 4px 24px ${c}18, inset 0 .5px 0 rgba(255,255,255,.12), inset 0 0 0 .5px ${c}20`
+            : "inset 0 .5px 0 rgba(255,255,255,.06)",
+          backdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
+          WebkitBackdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
+          opacity: dimmed&&!selected ? .35 : 1,
+          transition:"all .25s cubic-bezier(.16,1,.3,1)",
+        }}>
+          {/* check badge */}
+          {selected && (
+            <span style={{
+              position:"absolute", top:-7, right:-7,
+              width:24, height:24, borderRadius:"50%",
+              background:`linear-gradient(145deg, ${c}, ${c}BB)`,
+              display:"flex", alignItems:"center", justifyContent:"center",
+              fontSize:12, color:"#fff", fontWeight:700,
+              boxShadow:`0 3px 12px ${c}60, inset 0 1px 0 rgba(255,255,255,.3)`,
+              transition:"transform .3s cubic-bezier(.175,.885,.32,1.275)",
+            }}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+          )}
+
+          <span style={{
+            fontVariantNumeric:"tabular-nums", fontSize:13,
+            color:"rgba(255,255,255,.38)", minWidth:85, fontWeight:500,
+          }}>
+            {item.start}–{item.end}
+          </span>
+
+          <Badge stage={item.stage}/>
+
+          <span style={{
+            fontSize:15, fontWeight:600, flex:1,
+            overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
+            lineHeight:1.3,
+          }}>
+            {item.artist}
+          </span>
+
+          {conflict&&selected&&(
+            <span style={{
+              fontSize:10, fontWeight:700, flexShrink:0,
+              background:"rgba(255,80,80,.12)", color:"#FF6B6B",
+              padding:"3px 9px", borderRadius:8,
+              boxShadow:"inset 0 .5px 0 rgba(255,255,255,.08)",
+            }}>衝突</span>
+          )}
+        </button>
+      );
+    }
+
+    // Schedule timeline card
+    function TimelineCard({item, conflict, gap}) {
+      const c = STAGES[item.stage]?.bg||"#888";
+      const dur = t2m(item.end)-t2m(item.start);
+      return (
+        <>
+          {gap!==null&&gap>0&&(
+            <div style={{
+              display:"flex", alignItems:"center", gap:8,
+              padding:"8px 0", justifyContent:"center",
+            }}>
+              <div style={{flex:1, height:.5, background:"rgba(255,255,255,.06)"}}/>
+              <span style={{fontSize:11, color:"rgba(255,255,255,.2)", fontWeight:500}}>
+                {gap} 分鐘
+              </span>
+              <div style={{flex:1, height:.5, background:"rgba(255,255,255,.06)"}}/>
+            </div>
+          )}
+          {gap!==null&&gap<0&&(
+            <div style={{
+              textAlign:"center", padding:"8px 0",
+              fontSize:11, color:"#FF6B6B", fontWeight:600,
+            }}>
+              時間重疊
+            </div>
+          )}
+          <div style={{
+            position:"relative", marginBottom:8,
+            borderRadius:18, overflow:"hidden",
+            background:`linear-gradient(135deg, ${c}14, ${c}08)`,
+            border:`.5px solid ${c}25`,
+            boxShadow:`0 2px 16px ${c}10, inset 0 .5px 0 rgba(255,255,255,.1)`,
+          }}>
+            {/* Color accent bar */}
+            <div style={{
+              position:"absolute", left:0, top:0, bottom:0, width:3,
+              background:`linear-gradient(180deg, ${c}, ${c}88)`,
+              borderRadius:"3px 0 0 3px",
+            }}/>
+            <div style={{padding:"16px 18px 16px 20px"}}>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <span style={{
+                  fontVariantNumeric:"tabular-nums", fontSize:13,
+                  color:"rgba(255,255,255,.45)", fontWeight:600,
+                }}>
+                  {item.start} – {item.end}
+                </span>
+                <Badge stage={item.stage} large/>
+                {conflict&&(
+                  <span style={{
+                    fontSize:10, fontWeight:700,
+                    background:"rgba(255,80,80,.12)", color:"#FF6B6B",
+                    padding:"2px 8px", borderRadius:6,
+                  }}>衝突</span>
+                )}
+              </div>
+              <div style={{fontSize:17,fontWeight:700,marginTop:8,lineHeight:1.3}}>
+                {item.artist}
+              </div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,.25)",marginTop:4,fontWeight:500}}>
+                {dur} 分鐘
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    /* ══════════ App ══════════ */
+
+    function App() {
+      const [sel,setSel]=useState([]);
+      const [view,setView]=useState("pick");
+      const [day,setDay]=useState(1);
+      const [stg,setStg]=useState("ALL");
+      const [q,setQ]=useState("");
+      const [rdy,setRdy]=useState(false);
+
+      useEffect(()=>{dbGet().then(v=>{setSel(v);setRdy(true)})},[]);
+      useEffect(()=>{if(rdy)dbSet(sel)},[sel,rdy]);
+
+      const toggle=useCallback(id=>setSel(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]),[]);
+
+      const selItems=useMemo(()=>T.filter(t=>sel.includes(t.id)),[sel]);
+      const confIds=useMemo(()=>{const s=new Set();for(let i=0;i<selItems.length;i++)for(let j=i+1;j<selItems.length;j++)if(clash(selItems[i],selItems[j])){s.add(selItems[i].id);s.add(selItems[j].id)}return s},[selItems]);
+      const dimIds=useMemo(()=>{const s=new Set();T.forEach(t=>{if(sel.includes(t.id))return;for(const si of selItems)if(clash(t,si)){s.add(t.id);break}});return s},[sel,selItems]);
+
+      const list=useMemo(()=>T.filter(t=>{if(t.day!==day)return false;if(stg!=="ALL"&&t.stage!==stg)return false;if(q&&!t.artist.toLowerCase().includes(q.toLowerCase()))return false;return true}).sort((a,b)=>t2m(a.start)-t2m(b.start)),[day,stg,q]);
+
+      const sched=useMemo(()=>{const d={1:[],2:[]};selItems.forEach(i=>d[i.day]?.push(i));Object.values(d).forEach(a=>a.sort((x,y)=>t2m(x.start)-t2m(y.start)));return d},[selItems]);
+      const stgsDay=useMemo(()=>{const s=new Set();T.forEach(t=>{if(t.day===day)s.add(t.stage)});return["ALL",...Object.keys(STAGES).filter(k=>s.has(k))]},[day]);
+      const nC=Math.floor(confIds.size/2);
+
+      return (
+        <div style={{
+          position:"relative", zIndex:1,
+          minHeight:"100dvh", maxWidth:520, margin:"0 auto",
+          paddingBottom:`calc(90px + var(--safe-bottom))`,
+        }}>
+
+          {/* ══ Floating Header ══ */}
+          <div className="liquid-glass" style={{
+            position:"sticky", top:0, zIndex:100,
+            padding:`calc(14px + var(--safe-top)) 18px 14px`,
+            borderRadius:"0 0 24px 24px",
+            borderTop:"none",
+          }}>
+            {/* Title */}
+            <div style={{marginBottom:14}}>
+              <h1 style={{
+                fontSize:24, fontWeight:800, letterSpacing:-.5, lineHeight:1.2,
+              }}>
+                <span style={{
+                  background:"linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
+                  WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+                }}>大港開唱</span>
+                <span style={{color:"rgba(255,255,255,.25)", fontWeight:600, fontSize:20, marginLeft:6}}>2026</span>
+              </h1>
+              <p style={{fontSize:13, color:"rgba(255,255,255,.32)", marginTop:4, fontWeight:500}}>
+                3/21–22 高雄駁二
+                <span style={{margin:"0 6px", opacity:.3}}>·</span>
+                已選 {sel.length} 組
+                {nC>0&&(
+                  <span style={{
+                    marginLeft:8, display:"inline-block",
+                    background:"rgba(255,80,80,.15)", color:"#FF6B6B",
+                    fontSize:11, fontWeight:700, padding:"2px 9px", borderRadius:8,
+                  }}>{nC} 衝突</span>
+                )}
+              </p>
+            </div>
+
+            {/* Mode toggle */}
+            <Segment
+              items={[{value:"pick",label:"選團"},{value:"sched",label:"行程表"}]}
+              value={view} onChange={setView}
+            />
+
+            {view==="pick"&&(
+              <>
+                {/* Day toggle */}
+                <div style={{marginTop:10}}>
+                  <Segment
+                    items={[{value:1,label:"DAY 1 · 3/21 六"},{value:2,label:"DAY 2 · 3/22 日"}]}
+                    value={day} onChange={v=>{setDay(v);setStg("ALL")}} size="sm"
+                  />
+                </div>
+
+                {/* Search */}
+                <div style={{position:"relative",marginTop:10}}>
+                  <svg style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",opacity:.25}} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  <input
+                    value={q} onChange={e=>setQ(e.target.value)}
+                    placeholder="搜尋藝人..."
+                    style={{
+                      width:"100%", padding:"11px 14px 11px 36px",
+                      borderRadius:14, boxSizing:"border-box",
+                      border:".5px solid rgba(255,255,255,.08)",
+                      background:"rgba(255,255,255,.04)",
+                      color:"rgba(255,255,255,.9)", fontSize:15,
+                      outline:"none", fontFamily:"inherit",
+                      transition:"all .2s",
+                      boxShadow:"inset 0 .5px 0 rgba(255,255,255,.06)",
+                    }}
+                    onFocus={e=>{e.target.style.borderColor="rgba(255,255,255,.2)";e.target.style.background="rgba(255,255,255,.07)"}}
+                    onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,.08)";e.target.style.background="rgba(255,255,255,.04)"}}
+                  />
+                </div>
+
+                {/* Stage pills */}
+                <div className="no-scrollbar" style={{
+                  display:"flex", gap:7, overflowX:"auto",
+                  paddingTop:10, paddingBottom:2,
+                }}>
+                  {stgsDay.map(s=>(
+                    <Pill
+                      key={s}
+                      label={s==="ALL"?"全部":STAGES[s]?.name}
+                      active={stg===s}
+                      color={s==="ALL"?null:STAGES[s]?.bg}
+                      onClick={()=>setStg(s)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* ══ Content ══ */}
+          <div style={{padding:"12px 16px 0"}}>
+            {view==="pick" ? (
+              <div style={{display:"flex",flexDirection:"column",gap:7}}>
+                {list.length===0&&(
+                  <div style={{
+                    textAlign:"center", padding:"100px 20px",
+                    color:"rgba(255,255,255,.18)", fontSize:16, fontWeight:500,
+                  }}>
+                    {q?"找不到符合的藝人":"此舞台本日無演出"}
+                  </div>
+                )}
+                {list.map(item=>(
+                  <Card
+                    key={item.id} item={item}
+                    selected={sel.includes(item.id)}
+                    dimmed={dimIds.has(item.id)}
+                    conflict={confIds.has(item.id)}
+                    onToggle={toggle}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div>
+                {sel.length===0 ? (
+                  <div style={{
+                    textAlign:"center", padding:"100px 20px",
+                    color:"rgba(255,255,255,.18)", fontSize:16,
+                    fontWeight:500, lineHeight:2,
+                  }}>
+                    還沒選任何演出<br/>切換到「選團」開始挑選
+                  </div>
+                ) : (
+                  [1,2].map(d=>{
+                    const items=sched[d]; if(!items?.length)return null;
+                    return(
+                      <div key={d} style={{marginBottom:24}}>
+                        <div style={{
+                          display:"flex", alignItems:"baseline", gap:8,
+                          margin:"20px 0 14px",
+                        }}>
+                          <h3 style={{
+                            fontSize:18, fontWeight:800,
+                            background: d===1
+                              ? "linear-gradient(135deg,#FF6B6B,#E63946)"
+                              : "linear-gradient(135deg,#F4A261,#EF6C00)",
+                            WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+                          }}>
+                            {d===1?"DAY 1":"DAY 2"}
+                          </h3>
+                          <span style={{fontSize:13,color:"rgba(255,255,255,.22)",fontWeight:500}}>
+                            {d===1?"3/21 (六)":"3/22 (日)"}
+                          </span>
+                          <span style={{fontSize:12,color:"rgba(255,255,255,.15)",fontWeight:500}}>
+                            {items.length} 組
+                          </span>
+                        </div>
+                        {items.map((item,idx)=>{
+                          let gap=null;
+                          if(idx>0) gap=t2m(item.start)-t2m(items[idx-1].end);
+                          return <TimelineCard key={item.id} item={item} conflict={confIds.has(item.id)} gap={gap}/>;
+                        })}
+                      </div>
+                    );
+                  })
+                )}
+                {sel.length>0&&(
+                  <div style={{textAlign:"center",padding:"8px 0 20px"}}>
+                    <button className="press" onClick={()=>setSel([])} style={{
+                      padding:"13px 32px", borderRadius:100,
+                      border:".5px solid rgba(255,80,80,.2)",
+                      background:"rgba(255,80,80,.08)",
+                      color:"#FF6B6B", fontSize:15, fontWeight:600,
+                      cursor:"pointer", fontFamily:"inherit",
+                      boxShadow:"0 2px 12px rgba(255,80,80,.08), inset 0 .5px 0 rgba(255,255,255,.06)",
+                    }}>
+                      清除所有選取
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* ══ Floating Tab Bar ══ */}
+          <div className="liquid-glass" style={{
+            position:"fixed", bottom:0, left:0, right:0, zIndex:200,
+            borderRadius:"20px 20px 0 0",
+            borderBottom:"none",
+            padding:`14px 0 calc(14px + var(--safe-bottom))`,
+            display:"flex", justifyContent:"center", gap:20,
+            fontSize:13, fontWeight:500,
+            color:"rgba(255,255,255,.30)",
+          }}>
+            <span>DAY 1 <span style={{fontWeight:700,color:"rgba(255,255,255,.5)"}}>{sched[1]?.length||0}</span></span>
+            <span style={{color:"rgba(255,255,255,.08)"}}>|</span>
+            <span>DAY 2 <span style={{fontWeight:700,color:"rgba(255,255,255,.5)"}}>{sched[2]?.length||0}</span></span>
+            {nC>0&&(
+              <>
+                <span style={{color:"rgba(255,255,255,.08)"}}>|</span>
+                <span style={{color:"#FF6B6B",fontWeight:700}}>{nC} 衝突</span>
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
