@@ -109,6 +109,65 @@
     /* ═══ Press feedback ═══ */
     .press { transition: transform .15s var(--ease-out), opacity .15s; }
     .press:active { transform: scale(.97); opacity:.85; }
+
+    /* ═══ Confirm Dialog (liquid glass) ═══ */
+    .confirm-backdrop {
+      position:fixed; inset:0; z-index:9999;
+      background:rgba(0,0,0,.5);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      animation: fadeIn .2s ease-out;
+    }
+    .confirm-dialog {
+      width:100%; max-width:320px;
+      border-radius:20px; overflow:hidden;
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.10) 0%,
+        rgba(255,255,255,.05) 50%,
+        rgba(255,255,255,.08) 100%
+      );
+      backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      box-shadow:
+        0 24px 80px rgba(0,0,0,.5),
+        inset 0 .5px 0 rgba(255,255,255,.25),
+        inset 0 -1px 0 rgba(255,255,255,.03);
+      border: .5px solid rgba(255,255,255,.15);
+      animation: dialogIn .3s var(--ease-out);
+    }
+    .confirm-body { padding:28px 24px 20px; text-align:center; }
+    .confirm-title { font-size:17px; font-weight:700; color:rgba(255,255,255,.92); line-height:1.4; }
+    .confirm-msg { font-size:13px; color:rgba(255,255,255,.38); margin-top:6px; line-height:1.5; }
+    .confirm-actions {
+      display:flex;
+      border-top:.5px solid rgba(255,255,255,.08);
+    }
+    .confirm-actions button {
+      flex:1; padding:16px 8px;
+      border:none; background:transparent;
+      font-size:16px; font-family:inherit;
+      cursor:pointer; transition: background .15s;
+    }
+    .confirm-actions button:active { background:rgba(255,255,255,.06); }
+    .confirm-actions button + button { border-left:.5px solid rgba(255,255,255,.08); }
+    .confirm-actions .confirm-cancel { color:rgba(255,255,255,.55); font-weight:500; }
+    .confirm-actions .confirm-destructive { color:#FF6B6B; font-weight:700; }
+
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes fadeOut { from{opacity:1} to{opacity:0} }
+    @keyframes dialogIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+    @keyframes dialogOut { from{transform:scale(1);opacity:1} to{transform:scale(.92);opacity:0} }
+
+    /* ═══ Conflict group ═══ */
+    .conflict-group {
+      position:relative;
+      border-radius:22px; padding:12px 10px 4px;
+      margin-bottom:8px;
+      background:rgba(255,80,80,.04);
+      border:.5px solid rgba(255,80,80,.12);
+    }
   </style>
 
   <script crossorigin="anonymous" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -483,8 +542,8 @@
       );
     }
 
-    // Schedule timeline card
-    function TimelineCard({item, conflict, gap}) {
+    // Schedule timeline card (single, no conflict wrapper)
+    function TimelineCard({item, gap}) {
       const c = STAGES[item.stage]?.bg||"#888";
       const dur = t2m(item.end)-t2m(item.start);
       return (
@@ -499,14 +558,6 @@
                 {gap} 分鐘
               </span>
               <div style={{flex:1, height:.5, background:"rgba(255,255,255,.06)"}}/>
-            </div>
-          )}
-          {gap!==null&&gap<0&&(
-            <div style={{
-              textAlign:"center", padding:"8px 0",
-              fontSize:11, color:"#FF6B6B", fontWeight:600,
-            }}>
-              時間重疊
             </div>
           )}
           <div style={{
@@ -531,13 +582,6 @@
                   {item.start} – {item.end}
                 </span>
                 <Badge stage={item.stage} large/>
-                {conflict&&(
-                  <span style={{
-                    fontSize:10, fontWeight:700,
-                    background:"rgba(255,80,80,.12)", color:"#FF6B6B",
-                    padding:"2px 8px", borderRadius:6,
-                  }}>衝突</span>
-                )}
               </div>
               <div style={{fontSize:17,fontWeight:700,marginTop:8,lineHeight:1.3}}>
                 {item.artist}
@@ -551,6 +595,67 @@
       );
     }
 
+    // Conflict group wrapper — groups overlapping items visually
+    function ConflictGroup({items}) {
+      return (
+        <div className="conflict-group">
+          <div style={{
+            display:"flex", alignItems:"center", gap:6,
+            marginBottom:10, paddingLeft:4,
+          }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1.5L14.5 13H1.5L8 1.5Z" stroke="#FF6B6B" strokeWidth="1.5" strokeLinejoin="round"/>
+              <path d="M8 6.5V9.5" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round"/>
+              <circle cx="8" cy="11.5" r=".75" fill="#FF6B6B"/>
+            </svg>
+            <span style={{fontSize:12, fontWeight:700, color:"#FF6B6B"}}>
+              時間衝突
+            </span>
+            <span style={{fontSize:11, color:"rgba(255,80,80,.45)", fontWeight:500}}>
+              — 以下演出時間重疊，需擇一前往
+            </span>
+          </div>
+          {items.map(item=>(
+            <TimelineCard key={item.id} item={item} gap={null}/>
+          ))}
+        </div>
+      );
+    }
+
+    // Liquid glass confirm dialog
+    function ConfirmDialog({title, message, confirmLabel, onConfirm, onClose}) {
+      const [closing, setClosing] = useState(false);
+      const dismiss = useCallback(() => {
+        setClosing(true);
+        setTimeout(onClose, 220);
+      }, [onClose]);
+      const handleConfirm = useCallback(() => {
+        setClosing(true);
+        setTimeout(() => { onClose(); onConfirm(); }, 220);
+      }, [onClose, onConfirm]);
+      return ReactDOM.createPortal(
+        <div className="confirm-backdrop"
+          style={closing ? {animation:"fadeOut .22s ease-out forwards"} : {}}
+          onClick={dismiss}
+        >
+          <div className="confirm-dialog"
+            style={closing ? {animation:"dialogOut .22s var(--ease-out) forwards"} : {}}
+            onClick={e=>e.stopPropagation()}
+          >
+            <div className="confirm-body">
+              <div className="confirm-title">{title}</div>
+              {message && <div className="confirm-msg">{message}</div>}
+            </div>
+            <div className="confirm-actions">
+              <button className="confirm-cancel" onClick={dismiss}>取消</button>
+              <button className="confirm-destructive" onClick={handleConfirm}>{confirmLabel}</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      );
+    }
+
     /* ══════════ App ══════════ */
 
     function App() {
@@ -560,6 +665,7 @@
       const [stg,setStg]=useState("ALL");
       const [q,setQ]=useState("");
       const [rdy,setRdy]=useState(false);
+      const [showSheet,setShowSheet]=useState(false);
 
       useEffect(()=>{dbGet().then(v=>{setSel(v);setRdy(true)})},[]);
       useEffect(()=>{if(rdy)dbSet(sel)},[sel,rdy]);
@@ -708,6 +814,31 @@
                 ) : (
                   [1,2].map(d=>{
                     const items=sched[d]; if(!items?.length)return null;
+                    // Build segments: group overlapping conflicts together
+                    const segments = [];
+                    let i = 0;
+                    while (i < items.length) {
+                      if (confIds.has(items[i].id)) {
+                        // Collect all items that overlap with any item in the group
+                        const group = [items[i]];
+                        let j = i + 1;
+                        while (j < items.length) {
+                          const overlapsAny = group.some(g => clash(items[j], g));
+                          if (overlapsAny) { group.push(items[j]); j++; }
+                          else break;
+                        }
+                        if (group.length > 1) {
+                          segments.push({type:"conflict", items:group});
+                          i = j;
+                        } else {
+                          segments.push({type:"single", item:items[i]});
+                          i++;
+                        }
+                      } else {
+                        segments.push({type:"single", item:items[i]});
+                        i++;
+                      }
+                    }
                     return(
                       <div key={d} style={{marginBottom:24}}>
                         <div style={{
@@ -730,10 +861,30 @@
                             {items.length} 組
                           </span>
                         </div>
-                        {items.map((item,idx)=>{
-                          let gap=null;
-                          if(idx>0) gap=t2m(item.start)-t2m(items[idx-1].end);
-                          return <TimelineCard key={item.id} item={item} conflict={confIds.has(item.id)} gap={gap}/>;
+                        {segments.map((seg,si)=>{
+                          const prevEnd = si > 0
+                            ? t2m((segments[si-1].type==="conflict"
+                                ? segments[si-1].items[segments[si-1].items.length-1]
+                                : segments[si-1].item).end)
+                            : null;
+                          const curStart = t2m(seg.type==="conflict" ? seg.items[0].start : seg.item.start);
+                          const gap = prevEnd !== null ? curStart - prevEnd : null;
+
+                          if (seg.type === "conflict") {
+                            return (
+                              <React.Fragment key={"cg-"+si}>
+                                {gap!==null&&gap>0&&(
+                                  <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",justifyContent:"center"}}>
+                                    <div style={{flex:1,height:.5,background:"rgba(255,255,255,.06)"}}/>
+                                    <span style={{fontSize:11,color:"rgba(255,255,255,.2)",fontWeight:500}}>{gap} 分鐘</span>
+                                    <div style={{flex:1,height:.5,background:"rgba(255,255,255,.06)"}}/>
+                                  </div>
+                                )}
+                                <ConflictGroup items={seg.items}/>
+                              </React.Fragment>
+                            );
+                          }
+                          return <TimelineCard key={seg.item.id} item={seg.item} gap={gap}/>;
                         })}
                       </div>
                     );
@@ -741,7 +892,7 @@
                 )}
                 {sel.length>0&&(
                   <div style={{textAlign:"center",padding:"8px 0 20px"}}>
-                    <button className="press" onClick={()=>setSel([])} style={{
+                    <button className="press" onClick={()=>setShowSheet(true)} style={{
                       padding:"13px 32px", borderRadius:100,
                       border:".5px solid rgba(255,80,80,.2)",
                       background:"rgba(255,80,80,.08)",
@@ -752,6 +903,15 @@
                       清除所有選取
                     </button>
                   </div>
+                )}
+                {showSheet&&(
+                  <ConfirmDialog
+                    title="清除所有選取？"
+                    message={`已選的 ${sel.length} 組演出將全部移除，此操作無法復原。`}
+                    confirmLabel="清除"
+                    onConfirm={()=>setSel([])}
+                    onClose={()=>setShowSheet(false)}
+                  />
                 )}
               </div>
             )}
