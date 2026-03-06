@@ -223,6 +223,25 @@
     @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
     @keyframes sheetDown { from{transform:translateY(0)} to{transform:translateY(100%)} }
 
+    /* ═══ Stage slide transition ═══ */
+    .stage-slide {
+      will-change: transform, opacity;
+    }
+    .stage-slide-out-left {
+      transition: transform .2s cubic-bezier(.4,0,1,.6), opacity .2s cubic-bezier(.4,0,1,.6);
+      transform:translateX(-30px); opacity:0; pointer-events:none;
+    }
+    .stage-slide-out-right {
+      transition: transform .2s cubic-bezier(.4,0,1,.6), opacity .2s cubic-bezier(.4,0,1,.6);
+      transform:translateX(30px); opacity:0; pointer-events:none;
+    }
+    .stage-slide-enter-left  { transform:translateX(-20px); opacity:0; pointer-events:none; }
+    .stage-slide-enter-right { transform:translateX(20px);  opacity:0; pointer-events:none; }
+    .stage-slide-in {
+      transition: transform .3s cubic-bezier(.16,1,.3,1), opacity .3s cubic-bezier(.16,1,.3,1);
+      transform:translateX(0); opacity:1;
+    }
+
     /* ═══ Conflict group ═══ */
     .conflict-group {
       position:relative;
@@ -973,6 +992,32 @@
 
       const toggle=useCallback(id=>setSel(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]),[]);
       const togglePref=useCallback((id,groupIds)=>setPref(p=>{const n=new Set(p);groupIds.forEach(gid=>n.delete(gid));if(!p.has(id))n.add(id);return n}),[]);
+      // Swipe between stages with slide animation
+      const touchRef=useRef({x:0,y:0});
+      const [slideClass,setSlideClass]=useState("stage-slide-in");
+      const slideDir=useRef(0); // -1=left, 1=right
+      const onTouchStart=useCallback(e=>{
+        touchRef.current={x:e.touches[0].clientX,y:e.touches[0].clientY};
+      },[]);
+      const slideStage=useCallback((nextStg, dir)=>{
+        setSlideClass(dir<0 ? "stage-slide-out-left" : "stage-slide-out-right");
+        setTimeout(()=>{
+          setStg(nextStg);
+          setSlideClass(dir<0 ? "stage-slide-enter-right" : "stage-slide-enter-left");
+          requestAnimationFrame(()=>requestAnimationFrame(()=>setSlideClass("stage-slide-in")));
+        },200);
+      },[]);
+      const onTouchEnd=useCallback(e=>{
+        const dx=e.changedTouches[0].clientX-touchRef.current.x;
+        const dy=e.changedTouches[0].clientY-touchRef.current.y;
+        if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){
+          const stages=stgsDay;
+          const idx=stages.indexOf(stg);
+          if(dx<0 && idx<stages.length-1) slideStage(stages[idx+1], -1);
+          else if(dx>0 && idx>0) slideStage(stages[idx-1], 1);
+        }
+      },[stgsDay,stg,slideStage]);
+
       const scrollToConflict=useCallback(()=>{
         setView("sched");
         setTimeout(()=>{
@@ -1116,7 +1161,10 @@
                       label={s==="ALL"?"全部":STAGES[s]?.name}
                       active={stg===s}
                       color={s==="ALL"?null:STAGES[s]?.bg}
-                      onClick={()=>setStg(s)}
+                      onClick={()=>{
+                        if(s===stg) return;
+                        slideStage(s, stgsDay.indexOf(s)>stgsDay.indexOf(stg)?-1:1);
+                      }}
                     />
                   ))}
                 </div>
@@ -1127,7 +1175,9 @@
           {/* ══ Content ══ */}
           <div style={{padding:"12px 16px 0"}}>
             {view==="pick" ? (
-              <div style={{display:"flex",flexDirection:"column",gap:7}}>
+              <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
+                className={"stage-slide "+slideClass}
+                style={{display:"flex",flexDirection:"column",gap:7}}>
                 {list.length===0&&(
                   <div style={{
                     textAlign:"center", padding:"100px 20px",
