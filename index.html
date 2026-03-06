@@ -160,6 +160,69 @@
     @keyframes dialogIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
     @keyframes dialogOut { from{transform:scale(1);opacity:1} to{transform:scale(.92);opacity:0} }
 
+    /* ═══ Now playing pulse ═══ */
+    @keyframes glowBreath {
+      from { opacity: .35; }
+      to   { opacity: .75; }
+    }
+    .now-playing-glow {
+      position:absolute; inset:-1px; border-radius:19px;
+      pointer-events:none; z-index:0;
+      box-shadow: 0 0 28px var(--glow-color), 0 0 8px var(--glow-color);
+      animation: glowBreath 2.5s ease-in-out infinite alternate;
+      will-change: opacity;
+    }
+    .progress-bar-track {
+      position:absolute; bottom:10px; left:20px; right:18px; height:2px;
+      background:rgba(255,255,255,.06); border-radius:1px; overflow:hidden;
+    }
+    .progress-bar-fill {
+      height:100%; border-radius:1px;
+      transition: width 1s linear;
+    }
+
+    /* ═══ Now timeline ═══ */
+    .now-line {
+      display:flex; align-items:center; gap:8px;
+      padding:10px 0; position:relative;
+    }
+    .now-line::before {
+      content:''; position:absolute; left:0; right:0;
+      height:1.5px; background:linear-gradient(90deg, #FF6B6B, #FF6B6B80, transparent);
+    }
+    .now-line-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:#FF6B6B; flex-shrink:0;
+      box-shadow:0 0 8px rgba(255,80,80,.5);
+    }
+    .now-line-label {
+      font-size:11px; font-weight:700; color:#FF6B6B;
+      background:#0a0a0a; padding:0 8px; position:relative;
+    }
+
+    /* ═══ Time picker ═══ */
+    .time-picker-backdrop {
+      position:fixed; inset:0; z-index:9999;
+      background:rgba(0,0,0,.5);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      display:flex; align-items:flex-end; justify-content:center;
+      animation: fadeIn .2s ease-out;
+    }
+    .time-picker-sheet {
+      width:100%; max-width:520px;
+      border-radius:24px 24px 0 0;
+      padding:20px 18px calc(20px + var(--safe-bottom));
+      background: linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.05),rgba(255,255,255,.08));
+      backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      box-shadow: 0 -8px 40px rgba(0,0,0,.4), inset 0 .5px 0 rgba(255,255,255,.25);
+      border: .5px solid rgba(255,255,255,.15);
+      border-bottom:none;
+      animation: sheetUp .35s var(--ease-out);
+    }
+    @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    @keyframes sheetDown { from{transform:translateY(0)} to{transform:translateY(100%)} }
+
     /* ═══ Conflict group ═══ */
     .conflict-group {
       position:relative;
@@ -561,10 +624,13 @@
     }
 
     // Schedule timeline card (single, no conflict wrapper)
-    function TimelineCard({item, gap, preferred, dimmed, onClick}) {
+    // status: "ended" | "playing" | "upcoming" | null
+    function TimelineCard({item, gap, preferred, dimmed, onClick, status, progress}) {
       const c = STAGES[item.stage]?.bg||"#888";
       const dur = t2m(item.end)-t2m(item.start);
       const isClickable = !!onClick;
+      const isPlaying = status==="playing";
+      const isEnded = status==="ended";
       return (
         <>
           {gap!==null&&gap>0&&(
@@ -579,27 +645,36 @@
               <div style={{flex:1, height:.5, background:"rgba(255,255,255,.06)"}}/>
             </div>
           )}
-          <div onClick={onClick} style={{
-            position:"relative", marginBottom:8,
-            borderRadius:18, overflow:"hidden",
-            cursor: isClickable ? "pointer" : "default",
-            background: preferred
-              ? `linear-gradient(135deg, ${c}28, ${c}12)`
-              : `linear-gradient(135deg, ${c}14, ${c}08)`,
-            border: preferred
-              ? `.5px solid ${c}60`
-              : `.5px solid ${c}25`,
-            boxShadow: preferred
-              ? `0 4px 24px ${c}25, inset 0 .5px 0 rgba(255,255,255,.18)`
-              : `0 2px 16px ${c}10, inset 0 .5px 0 rgba(255,255,255,.1)`,
-            opacity: dimmed ? .4 : 1,
-            transition:"all .25s cubic-bezier(.16,1,.3,1)",
-          }}>
+          <div onClick={onClick}
+            style={{
+              position:"relative", marginBottom:8,
+              borderRadius:18, overflow:"hidden",
+              cursor: isClickable ? "pointer" : "default",
+              background: preferred
+                ? `linear-gradient(135deg, ${c}28, ${c}12)`
+                : isPlaying
+                  ? `linear-gradient(135deg, ${c}22, ${c}10)`
+                  : `linear-gradient(135deg, ${c}14, ${c}08)`,
+              border: preferred
+                ? `.5px solid ${c}60`
+                : isPlaying
+                  ? `.5px solid ${c}50`
+                  : `.5px solid ${c}25`,
+              boxShadow: preferred
+                ? `0 4px 24px ${c}25, inset 0 .5px 0 rgba(255,255,255,.18)`
+                : undefined,
+              opacity: dimmed ? .4 : isEnded ? .45 : 1,
+              transition:"all .25s cubic-bezier(.16,1,.3,1)",
+            }}>
+            {/* Glow layer — opacity-only animation for smooth GPU compositing */}
+            {isPlaying&&(
+              <div className="now-playing-glow" style={{"--glow-color":`${c}50`}}/>
+            )}
             {/* Color accent bar */}
             <div style={{
               position:"absolute", left:0, top:0, bottom:0,
-              width: preferred ? 4 : 3,
-              background:`linear-gradient(180deg, ${c}, ${c}${preferred?"":"88"})`,
+              width: preferred||isPlaying ? 4 : 3,
+              background:`linear-gradient(180deg, ${c}, ${c}${preferred||isPlaying?"":"88"})`,
               borderRadius:"3px 0 0 3px",
               transition:"width .25s",
             }}/>
@@ -617,7 +692,7 @@
                 </svg>
               </span>
             )}
-            <div style={{padding:"16px 18px 16px 20px"}}>
+            <div style={{padding:`16px 18px ${isPlaying?20:16}px 20px`, position:"relative", zIndex:1}}>
               <div style={{display:"flex",alignItems:"center",gap:10}}>
                 <span style={{
                   fontVariantNumeric:"tabular-nums", fontSize:13,
@@ -626,6 +701,20 @@
                   {item.start} – {item.end}
                 </span>
                 <Badge stage={item.stage} large/>
+                {isPlaying&&(
+                  <span style={{
+                    fontSize:10, fontWeight:700,
+                    background:`${c}25`, color:c,
+                    padding:"2px 8px", borderRadius:6,
+                    boxShadow:`inset 0 .5px 0 rgba(255,255,255,.1)`,
+                  }}>演出中</span>
+                )}
+                {isEnded&&(
+                  <span style={{
+                    fontSize:10, fontWeight:600,
+                    color:"rgba(255,255,255,.2)",
+                  }}>已結束</span>
+                )}
               </div>
               <div style={{fontSize:17,fontWeight:700,marginTop:8,lineHeight:1.3}}>
                 {item.artist}
@@ -634,13 +723,22 @@
                 {dur} 分鐘
               </div>
             </div>
+            {/* Progress bar for playing */}
+            {isPlaying&&(
+              <div className="progress-bar-track">
+                <div className="progress-bar-fill" style={{
+                  width:`${Math.min(100,Math.max(0,(progress||0)*100))}%`,
+                  background:"rgba(255,255,255,.25)",
+                }}/>
+              </div>
+            )}
           </div>
         </>
       );
     }
 
     // Conflict group wrapper — groups overlapping items visually
-    function ConflictGroup({items, pref, onPref, groupRef}) {
+    function ConflictGroup({items, pref, onPref, groupRef, getStatus, getProgress}) {
       const prefId = items.find(i => pref.has(i.id))?.id || null;
       return (
         <div className="conflict-group" ref={groupRef}>
@@ -660,15 +758,146 @@
               — 點選想去的演出
             </span>
           </div>
-          {items.map(item=>(
-            <TimelineCard
-              key={item.id} item={item} gap={null}
-              preferred={prefId===item.id}
-              dimmed={prefId!==null && prefId!==item.id}
-              onClick={()=>onPref(item.id, items.map(i=>i.id))}
-            />
-          ))}
+          {items.map(item=>{
+            const st = getStatus?.(item);
+            return (
+              <TimelineCard
+                key={item.id} item={item} gap={null}
+                preferred={prefId===item.id}
+                dimmed={prefId!==null && prefId!==item.id}
+                onClick={()=>onPref(item.id, items.map(i=>i.id))}
+                status={st} progress={st==="playing"?getProgress?.(item):0}
+              />
+            );
+          })}
         </div>
+      );
+    }
+
+    // Festival date mapping: day 1 = 3/21, day 2 = 3/22
+    const DAY_DATES = {1:"2026-03-21", 2:"2026-03-22"};
+    const getDayFromDate = (d) => {
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if(ds===DAY_DATES[1]) return 1;
+      if(ds===DAY_DATES[2]) return 2;
+      return null;
+    };
+    const fmtTime = (d) => `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+    // Time Picker — liquid glass bottom sheet
+    function TimePicker({simNow, onSet, onReset, onClose}) {
+      const [closing, setClosing] = useState(false);
+      const current = simNow || new Date();
+      const curDay = getDayFromDate(current) || 1;
+      const curH = current.getHours();
+      const curM = current.getMinutes();
+
+      const dismiss = useCallback(() => {
+        setClosing(true);
+        setTimeout(onClose, 280);
+      }, [onClose]);
+
+      const setTime = (day, h, m) => {
+        const [y,mo,d] = DAY_DATES[day].split('-').map(Number);
+        onSet(new Date(y, mo-1, d, h, m, 0));
+      };
+
+      const adjust = (dH, dM) => {
+        let h = curH + dH;
+        let m = curM + dM;
+        if (m >= 60) { m -= 60; h++; }
+        if (m < 0) { m += 60; h--; }
+        h = Math.max(0, Math.min(23, h));
+        setTime(curDay, h, m);
+      };
+
+      const presets = [
+        {label:"DAY 1 開場", day:1, h:12, m:40},
+        {label:"DAY 1 下午", day:1, h:15, m:0},
+        {label:"DAY 1 晚上", day:1, h:19, m:0},
+        {label:"DAY 2 開場", day:2, h:12, m:40},
+        {label:"DAY 2 下午", day:2, h:15, m:0},
+        {label:"DAY 2 晚上", day:2, h:19, m:0},
+      ];
+
+      return ReactDOM.createPortal(
+        <>
+          <div className="time-picker-backdrop"
+            style={closing ? {animation:"fadeOut .25s ease-out forwards"} : {}}
+            onClick={dismiss}
+          />
+          <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:10000,display:"flex",justifyContent:"center"}}>
+            <div className="time-picker-sheet"
+              style={closing ? {animation:"sheetDown .28s var(--ease-out) forwards"} : {}}
+              onClick={e=>e.stopPropagation()}
+            >
+              {/* Header */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18}}>
+                <span style={{fontSize:17,fontWeight:700,color:"rgba(255,255,255,.9)"}}>模擬時間</span>
+                <button onClick={dismiss} style={{
+                  background:"rgba(255,255,255,.08)",border:"none",borderRadius:50,
+                  width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",
+                  cursor:"pointer",color:"rgba(255,255,255,.4)",fontSize:18,fontFamily:"inherit",
+                }}>×</button>
+              </div>
+
+              {/* Current display */}
+              <div style={{
+                textAlign:"center", padding:"16px 0 20px",
+                fontSize:40, fontWeight:800, fontVariantNumeric:"tabular-nums",
+                color:"rgba(255,255,255,.92)", letterSpacing:2,
+              }}>
+                <span style={{fontSize:14,fontWeight:600,color:"rgba(255,255,255,.3)",display:"block",marginBottom:4}}>
+                  {curDay===1?"DAY 1 · 3/21 (六)":"DAY 2 · 3/22 (日)"}
+                </span>
+                {String(curH).padStart(2,'0')}:{String(curM).padStart(2,'0')}
+              </div>
+
+              {/* Manual adjuster */}
+              <div style={{display:"flex",justifyContent:"center",gap:12,marginBottom:20}}>
+                {[
+                  {label:"-1h",dH:-1,dM:0},{label:"-10m",dH:0,dM:-10},
+                  {label:"+10m",dH:0,dM:10},{label:"+1h",dH:1,dM:0},
+                ].map(a=>(
+                  <button key={a.label} className="press" onClick={()=>adjust(a.dH,a.dM)} style={{
+                    padding:"10px 16px", borderRadius:12, border:"none",
+                    background:"rgba(255,255,255,.06)", color:"rgba(255,255,255,.7)",
+                    fontSize:14, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
+                    boxShadow:"inset 0 .5px 0 rgba(255,255,255,.1)",
+                  }}>{a.label}</button>
+                ))}
+              </div>
+
+              {/* Presets */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:18}}>
+                {presets.map(p=>(
+                  <button key={p.label} className="press" onClick={()=>setTime(p.day,p.h,p.m)} style={{
+                    padding:"12px 8px", borderRadius:14, border:"none",
+                    background: curDay===p.day && curH===p.h && curM===p.m
+                      ? "rgba(244,162,97,.15)" : "rgba(255,255,255,.04)",
+                    color: curDay===p.day && curH===p.h && curM===p.m
+                      ? "#F4A261" : "rgba(255,255,255,.5)",
+                    fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
+                    boxShadow:"inset 0 .5px 0 rgba(255,255,255,.06)",
+                    lineHeight:1.4,
+                  }}>{p.label}</button>
+                ))}
+              </div>
+
+              {/* Reset */}
+              <button className="press" onClick={()=>{onReset();dismiss()}} style={{
+                width:"100%", padding:"14px", borderRadius:14, border:"none",
+                background: simNow ? "rgba(255,255,255,.06)" : "rgba(255,255,255,.03)",
+                color: simNow ? "rgba(255,255,255,.8)" : "rgba(255,255,255,.2)",
+                fontSize:15, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
+                boxShadow:"inset 0 .5px 0 rgba(255,255,255,.06)",
+              }}>
+                恢復即時
+              </button>
+            </div>
+          </div>
+        </>,
+        document.body
       );
     }
 
@@ -717,7 +946,22 @@
       const [rdy,setRdy]=useState(false);
       const [showSheet,setShowSheet]=useState(false);
       const [pref,setPref]=useState(new Set());
+      const [simNow,setSimNow]=useState(null);
+      const [now,setNow]=useState(new Date());
+      const [showTimePicker,setShowTimePicker]=useState(false);
+      const [lastTap,setLastTap]=useState(0);
       const firstConflictRef=useRef(null);
+
+      // Tick real clock every 30s
+      useEffect(()=>{
+        if(simNow) return;
+        const id=setInterval(()=>setNow(new Date()),30000);
+        return ()=>clearInterval(id);
+      },[simNow]);
+
+      const activeNow = simNow || now;
+      const activeDay = getDayFromDate(activeNow);
+      const activeMinutes = activeNow.getHours()*60+activeNow.getMinutes();
 
       useEffect(()=>{
         Promise.all([dbGet(), dbGetPref()]).then(([v,p])=>{
@@ -754,6 +998,19 @@
       const stgsDay=useMemo(()=>{const s=new Set();T.forEach(t=>{if(t.day===day)s.add(t.stage)});return["ALL",...Object.keys(STAGES).filter(k=>s.has(k))]},[day]);
       const nC=Math.floor(confIds.size/2);
 
+      // Compute show status relative to activeNow
+      const getStatus = useCallback((item) => {
+        if(item.day !== activeDay) return null;
+        const s=t2m(item.start), e=t2m(item.end);
+        if(activeMinutes >= e) return "ended";
+        if(activeMinutes >= s && activeMinutes < e) return "playing";
+        return "upcoming";
+      },[activeDay,activeMinutes]);
+      const getProgress = useCallback((item) => {
+        const s=t2m(item.start), e=t2m(item.end);
+        return (activeMinutes-s)/(e-s);
+      },[activeMinutes]);
+
       return (
         <div style={{
           position:"relative", zIndex:1,
@@ -777,7 +1034,16 @@
                   background:"linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
                   WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
                 }}>大港開唱</span>
-                <span style={{color:"rgba(255,255,255,.25)", fontWeight:600, fontSize:20, marginLeft:6}}>2026</span>
+                <span onClick={view==="sched"?()=>{
+                  const n=Date.now();
+                  if(n-lastTap<400) setShowTimePicker(true);
+                  setLastTap(n);
+                }:undefined} style={{
+                  color: simNow ? "#F4A261" : "rgba(255,255,255,.25)",
+                  fontWeight:600, fontSize:20, marginLeft:6,
+                  cursor: view==="sched" ? "default" : "auto",
+                  transition:"color .2s",
+                }}>2026{simNow&&" ⏱"}</span>
               </h1>
               <p style={{fontSize:13, color:"rgba(255,255,255,.32)", marginTop:4, fontWeight:500}}>
                 3/21–22 高雄駁二
@@ -797,7 +1063,13 @@
             {/* Mode toggle */}
             <Segment
               items={[{value:"pick",label:"選團"},{value:"sched",label:"行程表"}]}
-              value={view} onChange={setView}
+              value={view} onChange={v=>{
+                setView(v);
+                if(v==="sched") setTimeout(()=>{
+                  const el=document.querySelector('.now-line')||document.querySelector('.now-playing-glow')?.parentElement;
+                  if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+                },100);
+              }}
             />
 
             {view==="pick"&&(
@@ -934,31 +1206,57 @@
                             {items.length} 組
                           </span>
                         </div>
-                        {segments.map((seg,si)=>{
-                          const prevEnd = si > 0
-                            ? t2m((segments[si-1].type==="conflict"
-                                ? segments[si-1].items[segments[si-1].items.length-1]
-                                : segments[si-1].item).end)
-                            : null;
-                          const curStart = t2m(seg.type==="conflict" ? seg.items[0].start : seg.item.start);
-                          const gap = prevEnd !== null ? curStart - prevEnd : null;
+                        {(()=>{
+                          const out = [];
+                          const nowLine = <div key="now-line" className="now-line"><div className="now-line-dot"/><span className="now-line-label">現在 {fmtTime(activeNow)}</span></div>;
+                          let nowInserted = false;
 
-                          if (seg.type === "conflict") {
-                            return (
-                              <React.Fragment key={"cg-"+si}>
-                                {gap!==null&&gap>0&&(
-                                  <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",justifyContent:"center"}}>
-                                    <div style={{flex:1,height:.5,background:"rgba(255,255,255,.06)"}}/>
-                                    <span style={{fontSize:11,color:"rgba(255,255,255,.2)",fontWeight:500}}>{gap} 分鐘</span>
-                                    <div style={{flex:1,height:.5,background:"rgba(255,255,255,.06)"}}/>
-                                  </div>
-                                )}
-                                <ConflictGroup items={seg.items} pref={pref} onPref={togglePref}/>
-                              </React.Fragment>
-                            );
+                          // Helper: get the latest end time of a segment
+                          const segEnd = s => t2m((s.type==="conflict" ? s.items[s.items.length-1] : s.item).end);
+                          const segStart = s => t2m(s.type==="conflict" ? s.items[0].start : s.item.start);
+
+                          segments.forEach((seg,si)=>{
+                            const prevEnd = si > 0 ? segEnd(segments[si-1]) : null;
+                            const curStart = segStart(seg);
+                            const gap = prevEnd !== null ? curStart - prevEnd : null;
+
+                            // Insert NOW line: between segments, in the gap where activeMinutes falls
+                            if(!nowInserted && d===activeDay && prevEnd!==null && activeMinutes >= prevEnd && activeMinutes < curStart) {
+                              nowInserted = true;
+                              out.push(nowLine);
+                            }
+
+                            if (seg.type === "conflict") {
+                              out.push(
+                                <React.Fragment key={"cg-"+si}>
+                                  {gap!==null&&gap>0&&(
+                                    <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",justifyContent:"center"}}>
+                                      <div style={{flex:1,height:.5,background:"rgba(255,255,255,.06)"}}/>
+                                      <span style={{fontSize:11,color:"rgba(255,255,255,.2)",fontWeight:500}}>{gap} 分鐘</span>
+                                      <div style={{flex:1,height:.5,background:"rgba(255,255,255,.06)"}}/>
+                                    </div>
+                                  )}
+                                  <ConflictGroup items={seg.items} pref={pref} onPref={togglePref} getStatus={getStatus} getProgress={getProgress}/>
+                                </React.Fragment>
+                              );
+                            } else {
+                              const st = getStatus(seg.item);
+                              out.push(
+                                <TimelineCard key={seg.item.id} item={seg.item} gap={gap}
+                                  status={st} progress={st==="playing"?getProgress(seg.item):0}/>
+                              );
+                            }
+                          });
+                          // NOW line after all segments if all ended
+                          if(!nowInserted && d===activeDay && segments.length>0 && activeMinutes >= segEnd(segments[segments.length-1])) {
+                            out.push(nowLine);
                           }
-                          return <TimelineCard key={seg.item.id} item={seg.item} gap={gap}/>;
-                        })}
+                          // NOW line before all segments if before first show
+                          if(!nowInserted && d===activeDay && segments.length>0 && activeMinutes < segStart(segments[0])) {
+                            out.unshift(nowLine);
+                          }
+                          return out;
+                        })()}
                       </div>
                     );
                   })
@@ -976,6 +1274,14 @@
                       清除所有選取
                     </button>
                   </div>
+                )}
+                {showTimePicker&&(
+                  <TimePicker
+                    simNow={simNow}
+                    onSet={d=>{setSimNow(d);setNow(d)}}
+                    onReset={()=>{setSimNow(null);setNow(new Date())}}
+                    onClose={()=>setShowTimePicker(false)}
+                  />
                 )}
                 {showSheet&&(
                   <ConfirmDialog
