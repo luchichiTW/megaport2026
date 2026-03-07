@@ -861,15 +861,12 @@
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       margin: 0 -16px;
-    }
-    .tt-grid {
-      position: relative;
       display: flex;
     }
     .tt-time-col {
       position: sticky;
       left: 0;
-      z-index: 3;
+      z-index: 5;
       width: 45px;
       flex-shrink: 0;
       background: var(--bg-page);
@@ -2087,40 +2084,38 @@
 
       return (
         <div className="tt-wrap" style={{ maxHeight: "calc(100dvh - 200px)" }}>
-          <div className="tt-grid" style={{ height: totalH + HEADER_H }}>
-            <div className="tt-time-col" style={{ height: totalH + HEADER_H }}>
-              {lines.map(l => (
-                <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
-                  {l.isHour ? `${Math.floor(l.m/60)}:00` : `${Math.floor(l.m/60)}:30`}
-                </div>
-              ))}
-            </div>
-            <div className="tt-stages">
-              {stages.map(stg => {
-                const items = dayItems.filter(t => t.stage === stg);
-                return (
-                  <div key={stg} className="tt-stage-col" style={{ height: totalH + HEADER_H }}>
-                    <div className="tt-stage-header" style={{ background: STAGES[stg].bg }}>
-                      {STAGES[stg].name}
-                    </div>
-                    {lines.map(l => (
-                      <div key={l.m} className={l.isHour ? "tt-hour-line" : "tt-half-line"}
-                        style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }} />
-                    ))}
-                    {items.map(item => (
-                      <TtBlock key={item.id} item={item} stg={stg}
-                        selected={sel.includes(item.id)}
-                        dimmed={dimIds.has(item.id)}
-                        conflict={confIds.has(item.id)}
-                        top={toY(item.start)}
-                        height={Math.max(toH(item.start, item.end) - 2, 14)}
-                        toggle={toggle}
-                      />
-                    ))}
+          <div className="tt-time-col" style={{ height: totalH + HEADER_H }}>
+            {lines.map(l => (
+              <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
+                {l.isHour ? `${Math.floor(l.m/60)}:00` : `${Math.floor(l.m/60)}:30`}
+              </div>
+            ))}
+          </div>
+          <div className="tt-stages" style={{ position: "relative", height: totalH + HEADER_H }}>
+            {stages.map(stg => {
+              const items = dayItems.filter(t => t.stage === stg);
+              return (
+                <div key={stg} className="tt-stage-col" style={{ height: totalH + HEADER_H }}>
+                  <div className="tt-stage-header" style={{ background: STAGES[stg].bg }}>
+                    {STAGES[stg].name}
                   </div>
-                );
-              })}
-            </div>
+                  {lines.map(l => (
+                    <div key={l.m} className={l.isHour ? "tt-hour-line" : "tt-half-line"}
+                      style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }} />
+                  ))}
+                  {items.map(item => (
+                    <TtBlock key={item.id} item={item} stg={stg}
+                      selected={sel.includes(item.id)}
+                      dimmed={dimIds.has(item.id)}
+                      conflict={confIds.has(item.id)}
+                      top={toY(item.start)}
+                      height={Math.max(toH(item.start, item.end) - 2, 14)}
+                      toggle={toggle}
+                    />
+                  ))}
+                </div>
+              );
+            })}
             {/* Now line */}
             {day === activeDay && activeMinutes >= minTime && activeMinutes <= maxTime && (
               <div style={{
@@ -2130,7 +2125,7 @@
               }}>
                 <div style={{
                   position: "absolute", left: 0, right: 0, height: 1.5,
-                  background: "linear-gradient(90deg, #FF6B6B, #FF6B6B80, transparent)",
+                  background: "#FF6B6B",
                 }} />
                 <div style={{
                   position: "absolute", left: 0, top: -3.5,
