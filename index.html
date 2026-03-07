@@ -854,6 +854,7 @@
   </script>
 
   <script src="./schedule.js"></script>
+  <script src="./artists.js"></script>
   <script type="text/babel">
     const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
@@ -1157,17 +1158,15 @@
       const [closing, setClosing] = useState(false);
       const c = STAGES[item.stage]?.bg || "#888";
       const dur = t2m(item.end) - t2m(item.start);
+      const desc = typeof ARTIST_DESC!=="undefined" && ARTIST_DESC[item.artist] || null;
       const dismiss = useCallback(() => { setClosing(true); setTimeout(onClose, 260) }, [onClose]);
 
       const vw = window.innerWidth, vh = window.innerHeight;
-      const w = Math.min(vw * .85, 320);
-      // Center horizontally near touch, clamp to screen
+      const w = Math.min(vw * .85, 340);
       let left = Math.max(12, Math.min(pos.x - w / 2, vw - w - 12));
-      // Place above touch if room, else below
       const above = pos.y > vh / 2;
-      let top = above ? pos.y - 80 : pos.y + 24;
+      let top = above ? Math.max(12, pos.y - (desc ? 280 : 80)) : pos.y + 24;
       top = Math.max(12, Math.min(top, vh - 100));
-      // Transform origin toward the touch point
       const ox = ((pos.x - left) / w * 100).toFixed(0) + "%";
       const oy = above ? "100%" : "0%";
 
@@ -1178,19 +1177,32 @@
             style={{
               left, top,
               "--origin-x": ox, "--origin-y": oy,
+              maxHeight: desc ? "70vh" : "auto",
+              display: "flex", flexDirection: "column",
               ...(closing ? { animation: "tooltipOut .2s var(--ease-out) forwards" } : {}),
             }}
             onClick={e => e.stopPropagation()}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexShrink: 0 }}>
               <Badge stage={item.stage} large />
               <span style={{ fontSize: 13, color: "var(--text-3)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                 {item.start} – {item.end}
               </span>
               <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{dur} 分鐘</span>
             </div>
-            <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.45, color: "var(--text)", letterSpacing: "-.01em" }}>
+            <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.45, color: "var(--text)", letterSpacing: "-.01em", flexShrink: 0 }}>
               {item.artist}
             </div>
+            {desc && (
+              <div className="no-scrollbar" style={{
+                fontSize: 13, color: "var(--text-3)", lineHeight: 1.65,
+                marginTop: 10, paddingTop: 10,
+                borderTop: ".5px solid var(--dim)",
+                overflowY: "auto", flexShrink: 1,
+                WebkitOverflowScrolling: "touch",
+              }}>
+                {desc.split("\n").map((p, i) => p.trim() ? <p key={i} style={{ margin: "0 0 8px" }}>{p}</p> : null)}
+              </div>
+            )}
           </div>
         </div>,
         document.body
@@ -1203,8 +1215,11 @@
       const isClickable = !!onClick;
       const isPlaying = status === "playing";
       const isEnded = status === "ended";
+      const [tooltip,setTooltip]=useState(null);
+      const lp=useLongPress((pos)=>setTooltip(pos||{x:0,y:200}));
       return (
         <>
+          {tooltip&&<ArtistTooltip item={item} pos={tooltip} onClose={()=>setTooltip(null)}/>}
           {gap !== null && gap > 0 && (
             <div style={{
               display: "flex", alignItems: "center", gap: 8,
@@ -1217,8 +1232,11 @@
               <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
             </div>
           )}
-          <div onClick={onClick}
+          <div onClick={e=>{if(!lp.prevented.current&&onClick)onClick(e)}}
+            onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
+            onContextMenu={e=>e.preventDefault()}
             style={{
+              WebkitUserSelect:"none",userSelect:"none",
               position: "relative", marginBottom: 8,
               borderRadius: 18, overflow: "hidden",
               cursor: isClickable ? "pointer" : "default",
