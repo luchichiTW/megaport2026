@@ -2603,6 +2603,14 @@
       const [day, setDay] = useState(1);
       const [stg, setStg] = useState("ALL");
       const [pickMode, setPickMode] = useState("table");
+
+      // Lock body scroll when timetable is visible
+      useEffect(() => {
+        const lock = view === "pick" && pickMode === "table";
+        document.body.style.overflow = lock ? "hidden" : "";
+        return () => { document.body.style.overflow = ""; };
+      }, [view, pickMode]);
+
       const [q, setQ] = useState("");
       const [showSearch, setShowSearch] = useState(false);
       const searchRef = useRef(null);
