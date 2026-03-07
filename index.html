@@ -833,6 +833,40 @@
       margin-bottom: 8px;
       background: rgba(255, 80, 80, .04);
       border: .5px solid rgba(255, 80, 80, .12);
+      transition: background .3s, border-color .3s, padding .3s, border-radius .3s;
+    }
+    .conflict-group.collapsed {
+      background: transparent;
+      border-color: transparent;
+      padding: 0;
+      border-radius: 0;
+    }
+    .conflict-item-wrap {
+      max-height: 200px;
+      opacity: 1;
+      overflow: hidden;
+      transition: max-height .35s cubic-bezier(.16,1,.3,1), opacity .25s, margin .3s;
+    }
+    .conflict-item-wrap.hidden {
+      max-height: 0;
+      opacity: 0;
+      margin-bottom: 0 !important;
+    }
+    .conflict-stack {
+      position: relative;
+      cursor: pointer;
+    }
+    .conflict-stack-layer {
+      position: absolute;
+      left: 0; right: 0; top: 0; bottom: 0;
+      border-radius: 18px;
+      pointer-events: none;
+      transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .35s;
+      border: .5px solid var(--glass-border);
+      background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: var(--glass-shadow), inset 0 .5px 0 var(--glass-hi);
     }
 
     /* ═══ Theme toggle ═══ */
@@ -1540,34 +1574,68 @@
     // Conflict group wrapper — groups overlapping items visually
     function ConflictGroup({ items, pref, onPref, groupRef, getStatus, getProgress }) {
       const prefId = items.find(i => pref.has(i.id))?.id || null;
+      const collapsed = prefId !== null;
+      const otherCount = items.length - 1;
       return (
-        <div className="conflict-group" ref={groupRef}>
-          <div style={{
-            display: "flex", alignItems: "center", gap: 6,
-            marginBottom: 10, paddingLeft: 4,
-          }}>
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path d="M8 1.5L14.5 13H1.5L8 1.5Z" stroke="#FF6B6B" strokeWidth="1.5" strokeLinejoin="round" />
-              <path d="M8 6.5V9.5" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round" />
-              <circle cx="8" cy="11.5" r=".75" fill="#FF6B6B" />
-            </svg>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#FF6B6B" }}>
-              時間衝突
-            </span>
-            <span style={{ fontSize: 11, color: "rgba(255,80,80,.5)", fontWeight: 500 }}>
-              — 點選想去的演出
-            </span>
+        <div className={`conflict-group${collapsed ? " collapsed" : ""}`} ref={groupRef}>
+          <div className={`conflict-item-wrap${collapsed ? " hidden" : ""}`} style={{ marginBottom: collapsed ? 0 : 10 }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 6,
+              paddingLeft: 4, paddingBottom: 10,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1.5L14.5 13H1.5L8 1.5Z" stroke="#FF6B6B" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M8 6.5V9.5" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="8" cy="11.5" r=".75" fill="#FF6B6B" />
+              </svg>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#FF6B6B" }}>
+                時間衝突
+              </span>
+              <span style={{ fontSize: 11, color: "rgba(255,80,80,.5)", fontWeight: 500 }}>
+                — 點選想去的演出
+              </span>
+            </div>
           </div>
           {items.map(item => {
+            const isPref = prefId === item.id;
+            const isOther = collapsed && !isPref;
             const st = getStatus?.(item);
+            const c = STAGES[item.stage]?.bg || "#888";
+            if (isPref && collapsed) {
+              const layers = Math.min(otherCount, 2);
+              return (
+                <div key={item.id} className="conflict-stack"
+                  onClick={() => onPref(prefId, items.map(i => i.id))}
+                  style={{ marginBottom: layers * 6 + 8 }}>
+                  {Array.from({ length: layers }, (_, i) => (
+                    <div key={i} className="conflict-stack-layer" style={{
+                      transform: `translateY(${(i + 1) * 6}px) scaleX(${1 - (i + 1) * 0.025})`,
+                      opacity: 0.7 - i * 0.25,
+                      zIndex: -(i + 1),
+                      borderColor: `${c}${i === 0 ? "30" : "18"}`,
+                      background: `linear-gradient(135deg, ${c}${i === 0 ? "0C" : "06"}, var(--glass-mid), ${c}${i === 0 ? "08" : "04"})`,
+                    }} />
+                  ))}
+                  <TimelineCard
+                    item={item} gap={null}
+                    preferred={true}
+                    dimmed={false}
+                    onClick={() => {}}
+                    status={st} progress={st === "playing" ? getProgress?.(item) : 0}
+                  />
+                </div>
+              );
+            }
             return (
-              <TimelineCard
-                key={item.id} item={item} gap={null}
-                preferred={prefId === item.id}
-                dimmed={prefId !== null && prefId !== item.id}
-                onClick={() => onPref(item.id, items.map(i => i.id))}
-                status={st} progress={st === "playing" ? getProgress?.(item) : 0}
-              />
+              <div key={item.id} className={`conflict-item-wrap${isOther ? " hidden" : ""}`}>
+                <TimelineCard
+                  item={item} gap={null}
+                  preferred={false}
+                  dimmed={false}
+                  onClick={() => onPref(item.id, items.map(i => i.id))}
+                  status={st} progress={st === "playing" ? getProgress?.(item) : 0}
+                />
+              </div>
             );
           })}
         </div>
@@ -2121,7 +2189,7 @@
       const [view, setView] = useState("pick");
       const [day, setDay] = useState(1);
       const [stg, setStg] = useState("ALL");
-      const [pickMode, setPickMode] = useState("list");
+      const [pickMode, setPickMode] = useState("table");
       const [q, setQ] = useState("");
       const [showSearch, setShowSearch] = useState(false);
       const searchRef = useRef(null);
@@ -2250,7 +2318,11 @@
         setView("sched");
         setTimeout(() => {
           const el = document.getElementById('sched-day-' + d);
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (!el) return;
+          const header = document.querySelector('.liquid-glass');
+          const offset = header ? header.getBoundingClientRect().height + 8 : 0;
+          const top = el.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: "smooth" });
         }, 100);
       }, []);
 
@@ -2810,23 +2882,6 @@
             return <>
               <div className="res-backdrop" onClick={dismiss} />
               <div className="res-sheet" onTouchStart={onDragStart} onTouchMove={onDragMove} onTouchEnd={onDragEnd}>
-                <div className="res-handle" />
-                <div style={{
-                  padding: "14px 18px 6px",
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                }}>
-                  <button className="press" onClick={dismiss} style={{
-                    width: 30, height: 30, borderRadius: 100,
-                    border: "none",
-                    background: "var(--surface-hi)", color: "var(--text-3)",
-                    fontSize: 16, cursor: "pointer", fontFamily: "inherit",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
-                      <path d="M18 6 6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
                 <div style={{ padding: "8px 16px calc(16px + var(--safe-bottom))", display: "flex", flexDirection: "column", gap: 14 }}>
                   {[
                     { src: "./img/megaport_festival_2026_map.jpg", label: "場地地圖" },
