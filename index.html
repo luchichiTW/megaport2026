@@ -555,12 +555,12 @@
     .now-line {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       padding: 10px 0;
       position: relative;
     }
 
-    .now-line::before {
+    .now-line::after {
       content: '';
       position: absolute;
       left: 0;
@@ -576,15 +576,23 @@
       background: #FF6B6B;
       flex-shrink: 0;
       box-shadow: 0 0 8px rgba(255, 80, 80, .5);
+      position: relative;
+      z-index: 1;
     }
 
     .now-line-label {
       font-size: 11px;
       font-weight: 700;
       color: #FF6B6B;
-      background: var(--now-bg);
-      padding: 0 8px;
+      flex-shrink: 0;
       position: relative;
+      z-index: 1;
+      background: var(--now-bg);
+      padding: 0 4px 0 0;
+    }
+
+    .now-line-line {
+      flex: 1;
     }
 
     /* ═══ Resource sheet ═══ */
@@ -1251,10 +1259,12 @@
     }
 
     // Artist card — glass card with tinted selection
-    function Card({ item, selected, dimmed, conflict, onToggle, showBadge = true }) {
+    function Card({ item, selected, dimmed, conflict, onToggle, showBadge = true, status, progress }) {
       const c = STAGES[item.stage]?.bg || "#888";
       const [tooltip, setTooltip] = useState(null);
       const lp = useLongPress((pos) => setTooltip(pos || { x: 0, y: 200 }));
+      const isPlaying = status === "playing";
+      const isEnded = status === "ended";
       return (
         <>
           {tooltip && <ArtistTooltip item={item} onClose={() => setTooltip(null)} />}
@@ -1265,39 +1275,44 @@
             style={{
               WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none",
               display: "flex", alignItems: "center", gap: 11,
-              width: "100%", padding: "15px 16px",
+              width: "100%", padding: "13px 16px",
               borderRadius: 18, cursor: "pointer", textAlign: "left",
               position: "relative", color: "inherit", fontFamily: "inherit",
+              overflow: "hidden",
               background: selected
                 ? `linear-gradient(135deg, ${c}20, ${c}0A)`
-                : "var(--surface)",
+                : isPlaying
+                  ? `linear-gradient(135deg, ${c}12, ${c}06)`
+                  : "var(--surface)",
               border: selected
                 ? `.5px solid ${c}50`
-                : `.5px solid var(--surface-border)`,
+                : isPlaying
+                  ? `.5px solid ${c}30`
+                  : `.5px solid var(--surface-border)`,
               boxShadow: selected
                 ? `0 4px 24px ${c}18, inset 0 .5px 0 var(--surface-hi), inset 0 0 0 .5px ${c}20`
                 : `inset 0 .5px 0 var(--surface-hi)`,
               backdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
               WebkitBackdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
-              opacity: dimmed && !selected ? .35 : 1,
+              opacity: dimmed && !selected ? .35 : isEnded && !selected ? .45 : 1,
               transition: "all .25s cubic-bezier(.16,1,.3,1)",
             }}>
-            {/* check badge */}
-            {selected && (
-              <span style={{
-                position: "absolute", top: -7, right: -7,
-                width: 24, height: 24, borderRadius: "50%",
-                background: `linear-gradient(145deg, ${c}, ${c}BB)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 12, color: "#fff", fontWeight: 700,
-                boxShadow: `0 3px 12px ${c}60, inset 0 1px 0 rgba(255,255,255,.3)`,
-                transition: "transform .3s cubic-bezier(.175,.885,.32,1.275)",
-              }}>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            {/* selection indicator */}
+            <span style={{
+              width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: selected ? `linear-gradient(145deg, ${c}, ${c}BB)` : "transparent",
+              border: selected ? "none" : `.5px solid var(--text-5)`,
+              boxShadow: selected ? `0 2px 8px ${c}40, inset 0 1px 0 rgba(255,255,255,.3)` : "none",
+              transition: "all .25s cubic-bezier(.175,.885,.32,1.275)",
+              opacity: selected ? 1 : 0.4,
+            }}>
+              {selected && (
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
                   <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </span>
-            )}
+              )}
+            </span>
 
             <span style={{
               fontVariantNumeric: "tabular-nums", fontSize: 13,
@@ -1316,13 +1331,42 @@
               {item.artist}
             </span>
 
-            {conflict && selected && (
+            {isPlaying && (
+              <span style={{
+                fontSize: 10, fontWeight: 700, flexShrink: 0,
+                background: `${c}25`, color: c,
+                padding: "2px 8px", borderRadius: 6,
+              }}>演出中</span>
+            )}
+            {isEnded && (
+              <span style={{
+                fontSize: 10, fontWeight: 600, flexShrink: 0,
+                color: "var(--text-5)",
+              }}>已結束</span>
+            )}
+
+            {conflict && selected && !isPlaying && !isEnded && (
               <span style={{
                 fontSize: 10, fontWeight: 700, flexShrink: 0,
                 background: "rgba(255,80,80,.12)", color: "#FF6B6B",
                 padding: "3px 9px", borderRadius: 8,
                 boxShadow: `inset 0 .5px 0 var(--dim)`,
               }}>衝突</span>
+            )}
+
+            {/* Progress bar */}
+            {isPlaying && (
+              <div style={{
+                position: "absolute", left: 0, right: 0, bottom: 0, height: 2,
+                background: "var(--divider)",
+              }}>
+                <div style={{
+                  width: `${Math.min(100, Math.max(0, (progress || 0) * 100))}%`,
+                  height: "100%",
+                  background: c,
+                  transition: "width 1s linear",
+                }} />
+              </div>
             )}
           </button>
         </>
@@ -1653,6 +1697,16 @@
 
     // Festival date mapping: day 1 = 3/21, day 2 = 3/22
     const DAY_DATES = { 1: "2026-03-21", 2: "2026-03-22" };
+    // Earliest event start as a Date (day 1, earliest start minus 30 min)
+    const FESTIVAL_EARLIEST = (() => {
+      const earliest = T.reduce((min, t) => {
+        const m = t2m(t.start);
+        return (!min || (t.day < min.day) || (t.day === min.day && m < min.m)) ? { day: t.day, m, start: t.start } : min;
+      }, null);
+      const [y, mo, d] = DAY_DATES[earliest.day].split('-').map(Number);
+      const dt = new Date(y, mo - 1, d, Math.floor((earliest.m - 30) / 60), (earliest.m - 30) % 60);
+      return dt;
+    })();
     const getDayFromDate = (d) => {
       const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       if (ds === DAY_DATES[1]) return 1;
@@ -2222,7 +2276,9 @@
         return () => clearInterval(id);
       }, [simNow]);
 
-      const activeNow = simNow || now;
+      const rawNow = simNow || now;
+      const isClamped = !simNow && rawNow < FESTIVAL_EARLIEST;
+      const activeNow = isClamped ? FESTIVAL_EARLIEST : rawNow;
       const activeDay = getDayFromDate(activeNow);
       const activeMinutes = activeNow.getHours() * 60 + activeNow.getMinutes();
 
@@ -2563,16 +2619,18 @@
                       textAlign: "center", padding: "100px 20px",
                       color: "var(--text-5)", fontSize: 16, fontWeight: 500,
                     }}>找不到符合的藝人</div>
-                  ) : list.map(item => (
-                    <Card
+                  ) : list.map(item => {
+                    const st = getStatus(item);
+                    return <Card
                       key={item.id} item={item}
                       selected={sel.includes(item.id)}
                       dimmed={dimIds.has(item.id)}
                       conflict={confIds.has(item.id)}
                       onToggle={toggle}
                       showBadge
-                    />
-                  ))}
+                      status={st} progress={st === "playing" ? getProgress(item) : 0}
+                    />;
+                  })}
                 </div>
               ) : (
               <div ref={swipeElRef} style={{ overflow: "hidden", margin: "0 -16px", padding: "0 16px", touchAction: swiping ? "none" : "pan-y" }}
@@ -2596,16 +2654,29 @@
                           textAlign: "center", padding: "100px 20px",
                           color: "var(--text-5)", fontSize: 16, fontWeight: 500,
                         }}>此舞台本日無演出</div>
-                      ) : items.map(item => (
-                        <Card
-                          key={item.id} item={item}
-                          selected={sel.includes(item.id)}
-                          dimmed={dimIds.has(item.id)}
-                          conflict={confIds.has(item.id)}
-                          onToggle={toggle}
-                          showBadge={stg === "ALL"}
-                        />
-                      ))}
+                      ) : (() => {
+                        const out = [];
+                        let nowInserted = false;
+                        items.forEach((item, idx) => {
+                          if (!nowInserted && day === activeDay && t2m(item.start) > activeMinutes) {
+                            nowInserted = true;
+                            out.push(<div key="now-line" className="now-line">{!isClamped && <div className="now-line-dot" />}<span className="now-line-label">{isClamped ? "🚢 活動即將開始" : `現在 ${fmtTime(activeNow)}`}</span><div className="now-line-line" /></div>);
+                          }
+                          const st = getStatus(item);
+                          out.push(
+                            <Card
+                              key={item.id} item={item}
+                              selected={sel.includes(item.id)}
+                              dimmed={dimIds.has(item.id)}
+                              conflict={confIds.has(item.id)}
+                              onToggle={toggle}
+                              showBadge={stg === "ALL"}
+                              status={st} progress={st === "playing" ? getProgress(item) : 0}
+                            />
+                          );
+                        });
+                        return out;
+                      })()}
                     </div>
                   ))}
                 </div>
@@ -2613,6 +2684,23 @@
               )
             ) : (
               <div>
+                {isClamped && (() => {
+                  const em = T.reduce((min, t) => t.day === 1 && t2m(t.start) < min ? t2m(t.start) : min, 9999);
+                  const eTime = `${Math.floor(em/60)}:${String(em%60).padStart(2,'0')}`;
+                  return (
+                    <div style={{
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                      padding: "10px 14px", margin: "0 0 12px",
+                      borderRadius: 14,
+                      background: "var(--surface)",
+                      border: ".5px solid var(--surface-border)",
+                      fontSize: 12, fontWeight: 500, color: "var(--text-4)",
+                    }}>
+                      <span style={{ fontSize: 14 }}>⏳</span>
+                      <span>活動尚未開始，時間軸將於 <b style={{ color: "var(--text-2)" }}>{DAY_DATES[1].slice(5)} {eTime}</b> 自動開始追蹤</span>
+                    </div>
+                  );
+                })()}
                 {sel.length === 0 ? (
                   <div style={{ padding: "60px 20px" }}>
                     <div style={{
@@ -2693,7 +2781,7 @@
                         </div>
                         {(() => {
                           const out = [];
-                          const nowLine = <div key="now-line" className="now-line"><div className="now-line-dot" /><span className="now-line-label">現在 {fmtTime(activeNow)}</span></div>;
+                          const nowLine = <div key="now-line" className="now-line">{!isClamped && <div className="now-line-dot" />}<span className="now-line-label">{isClamped ? "🚢 活動即將開始" : `現在 ${fmtTime(activeNow)}`}</span><div className="now-line-line" /></div>;
                           let nowInserted = false;
 
                           // Find all artists currently performing
