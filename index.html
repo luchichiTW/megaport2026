@@ -914,6 +914,18 @@
       transform: translateY(-50%);
       white-space: nowrap;
     }
+    .tt-time-col-r {
+      position: sticky;
+      right: 0;
+      z-index: 5;
+      width: 45px;
+      flex-shrink: 0;
+      background: var(--bg-page);
+    }
+    .tt-time-col-r .tt-time-label {
+      right: auto;
+      left: 8px;
+    }
     .tt-stages {
       display: flex;
       flex-shrink: 0;
@@ -942,12 +954,17 @@
       left: 2px;
       right: 2px;
       border-radius: 6px;
-      padding: 3px 4px;
+      padding: 2px 3px;
       font-size: 11px;
       font-weight: 600;
-      line-height: 1.2;
+      line-height: 1.15;
       color: var(--text);
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      word-break: break-all;
       cursor: pointer;
       -webkit-user-select: none;
       user-select: none;
@@ -2179,6 +2196,13 @@
                 }} />
               </div>
             )}
+          </div>
+          <div className="tt-time-col-r" style={{ height: totalH + HEADER_H }}>
+            {lines.map(l => (
+              <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
+                {l.isHour ? `${Math.floor(l.m/60)}:00` : `${Math.floor(l.m/60)}:30`}
+              </div>
+            ))}
           </div>
         </div>
       );
