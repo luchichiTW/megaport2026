@@ -1576,8 +1576,10 @@
       const prefId = items.find(i => pref.has(i.id))?.id || null;
       const collapsed = prefId !== null;
       const otherCount = items.length - 1;
+      const latestEnd = Math.max(...items.map(i => t2m(i.end)));
+      const day = items[0]?.day;
       return (
-        <div className={`conflict-group${collapsed ? " collapsed" : ""}`} ref={groupRef}>
+        <div className={`conflict-group${collapsed ? " collapsed" : ""}`} ref={groupRef} data-end={latestEnd} data-day={day}>
           <div className={`conflict-item-wrap${collapsed ? " hidden" : ""}`} style={{ marginBottom: collapsed ? 0 : 10 }}>
             <div style={{
               display: "flex", alignItems: "center", gap: 6,
@@ -2310,10 +2312,17 @@
       const scrollToConflict = useCallback(() => {
         setView("sched");
         setTimeout(() => {
-          const el = document.querySelector('.conflict-group');
+          const all = document.querySelectorAll('.conflict-group:not(.collapsed)');
+          let el = null;
+          for (const g of all) {
+            const gDay = Number(g.dataset.day);
+            const gEnd = Number(g.dataset.end);
+            if (gDay > activeDay || (gDay === activeDay && gEnd > activeMinutes)) { el = g; break; }
+          }
+          if (!el) el = all[all.length - 1];
           if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 100);
-      }, []);
+      }, [activeDay, activeMinutes]);
       const scrollToDay = useCallback((d) => {
         setView("sched");
         setTimeout(() => {
