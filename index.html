@@ -672,6 +672,9 @@
       -webkit-user-select: none;
       user-select: none;
       width: min(85vw, 320px);
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%);
       padding: 16px 20px;
       border-radius: 14px;
       background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
@@ -679,30 +682,30 @@
       -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.15);
       border: .5px solid var(--glass-border);
       box-shadow: 0 12px 48px rgba(0, 0, 0, .35), 0 2px 8px rgba(0, 0, 0, .12), inset 0 .5px 0 var(--glass-hi);
-      transform-origin: var(--origin-x, 50%) var(--origin-y, 0%);
+      transform-origin: 50% 50%;
       animation: tooltipIn .35s cubic-bezier(.175, .885, .32, 1.275) both;
     }
 
     @keyframes tooltipIn {
       from {
-        transform: scale(.4);
+        transform: translate(-50%, -50%) scale(.4);
         opacity: 0
       }
 
       to {
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1
       }
     }
 
     @keyframes tooltipOut {
       from {
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1
       }
 
       to {
-        transform: scale(.6);
+        transform: translate(-50%, -50%) scale(.6);
         opacity: 0
       }
     }
@@ -1061,7 +1064,7 @@
       const lp = useLongPress((pos) => setTooltip(pos || { x: 0, y: 200 }));
       return (
         <>
-          {tooltip && <ArtistTooltip item={item} pos={tooltip} onClose={() => setTooltip(null)} />}
+          {tooltip && <ArtistTooltip item={item} onClose={() => setTooltip(null)} />}
           <button className="press"
             onClick={e => { if (!lp.prevented.current) onToggle(item.id) }}
             onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
@@ -1154,29 +1157,34 @@
       return { onTouchStart: onStart, onTouchEnd: onEnd, onTouchMove: onMove, prevented };
     }
 
-    function ArtistTooltip({ item, pos, onClose }) {
+    function ArtistTooltip({ item, onClose }) {
       const [closing, setClosing] = useState(false);
-      const c = STAGES[item.stage]?.bg || "#888";
       const dur = t2m(item.end) - t2m(item.start);
       const desc = typeof ARTIST_DESC!=="undefined" && ARTIST_DESC[item.artist] || null;
       const dismiss = useCallback(() => { setClosing(true); setTimeout(onClose, 260) }, [onClose]);
+      const backdropRef = useRef(null);
+      const descRef = useRef(null);
 
-      const vw = window.innerWidth, vh = window.innerHeight;
-      const w = Math.min(vw * .85, 340);
-      let left = Math.max(12, Math.min(pos.x - w / 2, vw - w - 12));
-      const above = pos.y > vh / 2;
-      let top = above ? Math.max(12, pos.y - (desc ? 280 : 80)) : pos.y + 24;
-      top = Math.max(12, Math.min(top, vh - 100));
-      const ox = ((pos.x - left) / w * 100).toFixed(0) + "%";
-      const oy = above ? "100%" : "0%";
+      useEffect(() => {
+        const el = backdropRef.current;
+        if (!el) return;
+        const prevent = e => {
+          if (descRef.current && descRef.current.contains(e.target)) return;
+          e.preventDefault();
+        };
+        el.addEventListener("touchmove", prevent, { passive: false });
+        document.body.style.overflow = "hidden";
+        return () => {
+          el.removeEventListener("touchmove", prevent);
+          document.body.style.overflow = "";
+        };
+      }, []);
 
       return ReactDOM.createPortal(
-        <div className="lp-tooltip-backdrop" onClick={dismiss}
+        <div ref={backdropRef} className="lp-tooltip-backdrop" onClick={dismiss}
           style={closing ? { animation: "lpBackdropOut .22s ease-in forwards" } : {}}>
           <div className="lp-tooltip"
             style={{
-              left, top,
-              "--origin-x": ox, "--origin-y": oy,
               maxHeight: desc ? "70vh" : "auto",
               display: "flex", flexDirection: "column",
               ...(closing ? { animation: "tooltipOut .2s var(--ease-out) forwards" } : {}),
@@ -1193,7 +1201,7 @@
               {item.artist}
             </div>
             {desc && (
-              <div className="no-scrollbar" style={{
+              <div ref={descRef} className="no-scrollbar" style={{
                 fontSize: 13, color: "var(--text-3)", lineHeight: 1.65,
                 marginTop: 10, paddingTop: 10,
                 borderTop: ".5px solid var(--dim)",
@@ -1219,7 +1227,7 @@
       const lp=useLongPress((pos)=>setTooltip(pos||{x:0,y:200}));
       return (
         <>
-          {tooltip&&<ArtistTooltip item={item} pos={tooltip} onClose={()=>setTooltip(null)}/>}
+          {tooltip&&<ArtistTooltip item={item} onClose={()=>setTooltip(null)}/>}
           {gap !== null && gap > 0 && (
             <div style={{
               display: "flex", alignItems: "center", gap: 8,
