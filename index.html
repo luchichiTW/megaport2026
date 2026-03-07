@@ -1217,25 +1217,42 @@
       );
     }
 
-    function SuggestionCard({ item, onAdd }) {
+    function SuggestionCard({ item, selected, onToggle }) {
       const sc = STAGES[item.stage]?.bg || "#888";
       const [tooltip, setTooltip] = useState(null);
       const lp = useLongPress(() => setTooltip(true));
       return (
         <>
           {tooltip && <ArtistTooltip item={item} onClose={() => setTooltip(null)} />}
-          <div className="press" onClick={e => { if (!lp.prevented.current) onAdd(item.id) }}
+          <div className="press" onClick={e => { if (!lp.prevented.current) onToggle(item.id) }}
             onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
             onContextMenu={e => e.preventDefault()}
             style={{
               flexShrink: 0, padding: "10px 14px",
               borderRadius: 14, cursor: "pointer",
-              background: `linear-gradient(135deg, ${sc}18, ${sc}0A)`,
-              border: `.5px solid ${sc}30`,
+              background: selected
+                ? `linear-gradient(135deg, ${sc}30, ${sc}18)`
+                : `linear-gradient(135deg, ${sc}18, ${sc}0A)`,
+              border: selected ? `.5px solid ${sc}60` : `.5px solid ${sc}30`,
+              boxShadow: selected ? `0 2px 12px ${sc}20` : "none",
               minWidth: 120, maxWidth: 180,
               transition: "all .2s",
               WebkitUserSelect: "none", userSelect: "none",
+              position: "relative",
             }}>
+            {selected && (
+              <span style={{
+                position: "absolute", top: 6, right: 6,
+                width: 18, height: 18, borderRadius: "50%",
+                background: `linear-gradient(145deg, ${sc}, ${sc}BB)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: `0 1px 6px ${sc}40`,
+              }}>
+                <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+                  <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
               <Badge stage={item.stage} />
               <span style={{ fontSize: 11, color: "var(--text-4)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
@@ -1912,7 +1929,7 @@
                             display: "flex", gap: 8, overflowX: "auto",
                             padding: "2px 0 4px",
                           }}>
-                            {playing.map(t => <SuggestionCard key={t.id} item={t} onAdd={toggle} />)}
+                            {playing.map(t => <SuggestionCard key={t.id} item={t} selected={sel.includes(t.id)} onToggle={toggle} />)}
                           </div>
                         </div>
                       );
@@ -1973,16 +1990,13 @@
                           const nowLine = <div key="now-line" className="now-line"><div className="now-line-dot" /><span className="now-line-label">現在 {fmtTime(activeNow)}</span></div>;
                           let nowInserted = false;
 
-                          // Find artists currently performing that user hasn't picked
+                          // Find all artists currently performing
                           const nowPlaying = d === activeDay
-                            ? T.filter(t => t.day === d && !sel.includes(t.id) && activeMinutes >= t2m(t.start) && activeMinutes < t2m(t.end))
+                            ? T.filter(t => t.day === d && activeMinutes >= t2m(t.start) && activeMinutes < t2m(t.end))
                                 .sort((a, b) => t2m(a.end) - t2m(b.end))
                             : [];
 
-                          // Check if user has anything playing right now
-                          const userHasNowPlaying = d === activeDay && items.some(it => activeMinutes >= t2m(it.start) && activeMinutes < t2m(it.end));
-
-                          const suggestions = !userHasNowPlaying && nowPlaying.length > 0
+                          const suggestions = nowPlaying.length > 0
                             ? <div key="suggestions" style={{ margin: "6px 0 10px" }}>
                                 <div style={{ fontSize: 12, color: "var(--text-5)", fontWeight: 600, marginBottom: 8, textAlign: "center" }}>
                                   現在有演出
@@ -1991,7 +2005,7 @@
                                   display: "flex", gap: 8, overflowX: "auto",
                                   padding: "2px 0 4px",
                                 }}>
-                                  {nowPlaying.map(t => <SuggestionCard key={t.id} item={t} onAdd={toggle} />)}
+                                  {nowPlaying.map(t => <SuggestionCard key={t.id} item={t} selected={sel.includes(t.id)} onToggle={toggle} />)}
                                 </div>
                               </div>
                             : null;
@@ -1999,6 +2013,8 @@
                           // Helper: get the latest end time of a segment
                           const segEnd = s => t2m((s.type === "conflict" ? s.items[s.items.length - 1] : s.item).end);
                           const segStart = s => t2m(s.type === "conflict" ? s.items[0].start : s.item.start);
+
+                          let suggestionsInserted = false;
 
                           segments.forEach((seg, si) => {
                             const prevEnd = si > 0 ? segEnd(segments[si - 1]) : null;
@@ -2009,7 +2025,7 @@
                             if (!nowInserted && d === activeDay && prevEnd !== null && activeMinutes >= prevEnd && activeMinutes < curStart) {
                               nowInserted = true;
                               out.push(nowLine);
-                              if (suggestions) out.push(suggestions);
+                              if (suggestions) { out.push(suggestions); suggestionsInserted = true; }
                             }
 
                             if (seg.type === "conflict") {
@@ -2025,23 +2041,32 @@
                                   <ConflictGroup items={seg.items} pref={pref} onPref={togglePref} getStatus={getStatus} getProgress={getProgress} />
                                 </React.Fragment>
                               );
+                              // Show suggestions after a currently-playing conflict group
+                              if (!suggestionsInserted && suggestions && d === activeDay) {
+                                const anyPlaying = seg.items.some(it => getStatus(it) === "playing");
+                                if (anyPlaying) { out.push(suggestions); suggestionsInserted = true; }
+                              }
                             } else {
                               const st = getStatus(seg.item);
                               out.push(
                                 <TimelineCard key={seg.item.id} item={seg.item} gap={gap}
                                   status={st} progress={st === "playing" ? getProgress(seg.item) : 0} />
                               );
+                              // Show suggestions after a currently-playing card
+                              if (!suggestionsInserted && suggestions && st === "playing") {
+                                out.push(suggestions); suggestionsInserted = true;
+                              }
                             }
                           });
                           // NOW line after all segments if all ended
                           if (!nowInserted && d === activeDay && segments.length > 0 && activeMinutes >= segEnd(segments[segments.length - 1])) {
                             out.push(nowLine);
-                            if (suggestions) out.push(suggestions);
+                            if (suggestions && !suggestionsInserted) out.push(suggestions);
                           }
                           // NOW line before all segments if before first show
                           if (!nowInserted && d === activeDay && segments.length > 0 && activeMinutes < segStart(segments[0])) {
                             out.unshift(nowLine);
-                            if (suggestions) out.splice(1, 0, suggestions);
+                            if (suggestions && !suggestionsInserted) out.splice(1, 0, suggestions);
                           }
                           return out;
                         })()}
