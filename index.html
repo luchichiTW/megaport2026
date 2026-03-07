@@ -916,18 +916,6 @@
       transform: translateY(-50%);
       white-space: nowrap;
     }
-    .tt-time-col-r {
-      position: sticky;
-      right: 0;
-      z-index: 5;
-      width: 45px;
-      flex-shrink: 0;
-      background: var(--bg-page);
-    }
-    .tt-time-col-r .tt-time-label {
-      right: auto;
-      left: 8px;
-    }
     .tt-stages {
       display: flex;
       flex-shrink: 0;
@@ -2198,13 +2186,6 @@
                 }} />
               </div>
             )}
-          </div>
-          <div className="tt-time-col-r" style={{ height: totalH + HEADER_H }}>
-            {lines.map(l => (
-              <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
-                {l.isHour ? `${Math.floor(l.m/60)}:00` : `${Math.floor(l.m/60)}:30`}
-              </div>
-            ))}
           </div>
         </div>
       );

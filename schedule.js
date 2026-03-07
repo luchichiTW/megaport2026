@@ -14,7 +14,7 @@ const T=[
   {id:"1-SO-1",day:1,stage:"SO",artist:"椅子樂團",start:"12:30",end:"13:10"},
   {id:"1-SO-2",day:1,stage:"SO",artist:"The Birthday [JP]",start:"14:10",end:"14:50"},
   {id:"1-SO-3",day:1,stage:"SO",artist:"Aooo [JP]",start:"15:50",end:"16:30"},
-  {id:"1-SO-4",day:1,stage:"SO",artist:"滅火器",start:"17:30",end:"18:00"},
+  {id:"1-SO-4",day:1,stage:"SO",artist:"滅火器",start:"17:30",end:"18:10"},
   {id:"1-SO-5",day:1,stage:"SO",artist:"milet [JP]",start:"19:10",end:"19:50"},
   {id:"1-SO-6",day:1,stage:"SO",artist:"血肉果汁機 ft. 陳亞蘭",start:"21:10",end:"21:50"},
 
