@@ -1234,7 +1234,7 @@
     }
 
     // Artist card — glass card with tinted selection
-    function Card({ item, selected, dimmed, conflict, onToggle }) {
+    function Card({ item, selected, dimmed, conflict, onToggle, showBadge = true }) {
       const c = STAGES[item.stage]?.bg || "#888";
       const [tooltip, setTooltip] = useState(null);
       const lp = useLongPress((pos) => setTooltip(pos || { x: 0, y: 200 }));
@@ -1289,7 +1289,7 @@
               {item.start}–{item.end}
             </span>
 
-            <Badge stage={item.stage} />
+            {showBadge && <Badge stage={item.stage} />}
 
             <span style={{
               fontSize: 15, fontWeight: 600, flex: 1,
@@ -2482,6 +2482,7 @@
                           dimmed={dimIds.has(item.id)}
                           conflict={confIds.has(item.id)}
                           onToggle={toggle}
+                          showBadge={stg === "ALL"}
                         />
                       ))}
                     </div>
