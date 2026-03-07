@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>大港開唱 2026</title>
 
   <link rel="manifest" href="./manifest.json">
@@ -14,45 +16,45 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap">
 
   <style>
-
     :root {
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --spring: cubic-bezier(.175,.885,.32,1.275);
-      --ease-out: cubic-bezier(.16,1,.3,1);
+      --spring: cubic-bezier(.175, .885, .32, 1.275);
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
 
       /* ═══ Theme tokens (dark default) ═══ */
       --bg: #000;
       --bg-page: #050508;
-      --text: rgba(255,255,255,.92);
-      --text-2: rgba(255,255,255,.55);
-      --text-3: rgba(255,255,255,.38);
-      --text-4: rgba(255,255,255,.25);
-      --text-5: rgba(255,255,255,.15);
-      --glass-start: rgba(255,255,255,.10);
-      --glass-mid: rgba(255,255,255,.05);
-      --glass-end: rgba(255,255,255,.08);
-      --glass-border: rgba(255,255,255,.15);
-      --glass-hi: rgba(255,255,255,.25);
-      --glass-lo: rgba(255,255,255,.03);
-      --glass-shadow: 0 8px 32px rgba(0,0,0,.25);
-      --surface: rgba(255,255,255,.03);
-      --surface-border: rgba(255,255,255,.06);
-      --surface-hi: rgba(255,255,255,.06);
-      --surface-hover: rgba(255,255,255,.07);
-      --divider: rgba(255,255,255,.06);
-      --dim: rgba(255,255,255,.08);
-      --overlay: rgba(0,0,0,.5);
+      --text: rgba(255, 255, 255, .92);
+      --text-2: rgba(255, 255, 255, .55);
+      --text-3: rgba(255, 255, 255, .38);
+      --text-4: rgba(255, 255, 255, .25);
+      --text-5: rgba(255, 255, 255, .15);
+      --glass-start: rgba(255, 255, 255, .10);
+      --glass-mid: rgba(255, 255, 255, .05);
+      --glass-end: rgba(255, 255, 255, .08);
+      --glass-border: rgba(255, 255, 255, .15);
+      --glass-hi: rgba(255, 255, 255, .25);
+      --glass-lo: rgba(255, 255, 255, .03);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, .25);
+      --surface: rgba(255, 255, 255, .03);
+      --surface-border: rgba(255, 255, 255, .06);
+      --surface-hi: rgba(255, 255, 255, .06);
+      --surface-hover: rgba(255, 255, 255, .07);
+      --divider: rgba(255, 255, 255, .06);
+      --dim: rgba(255, 255, 255, .08);
+      --overlay: rgba(0, 0, 0, .5);
       --now-bg: #0a0a0a;
-      --seg-bg: rgba(255,255,255,.06);
-      --seg-border: rgba(255,255,255,.08);
-      --seg-ind: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.10));
-      --seg-ind-shadow: 0 2px 8px rgba(0,0,0,.2);
-      --seg-ind-hi: rgba(255,255,255,.3);
-      --confirm-shadow: 0 24px 80px rgba(0,0,0,.5);
+      --seg-bg: rgba(255, 255, 255, .06);
+      --seg-border: rgba(255, 255, 255, .08);
+      --seg-ind: linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .10));
+      --seg-ind-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+      --seg-ind-hi: rgba(255, 255, 255, .3);
+      --confirm-shadow: 0 24px 80px rgba(0, 0, 0, .5);
       --orb-blend: screen;
       --orb-opacity: 1;
       --badge-text: #fff;
@@ -61,45 +63,53 @@
     [data-theme="light"] {
       --bg: #f2f2f7;
       --bg-page: #e5e5ea;
-      --text: rgba(0,0,0,.88);
-      --text-2: rgba(0,0,0,.50);
-      --text-3: rgba(0,0,0,.38);
-      --text-4: rgba(0,0,0,.25);
-      --text-5: rgba(0,0,0,.12);
-      --glass-start: rgba(255,255,255,.72);
-      --glass-mid: rgba(255,255,255,.55);
-      --glass-end: rgba(255,255,255,.62);
-      --glass-border: rgba(255,255,255,.55);
-      --glass-hi: rgba(255,255,255,.85);
-      --glass-lo: rgba(0,0,0,.02);
-      --glass-shadow: 0 8px 32px rgba(0,0,0,.06);
-      --surface: rgba(255,255,255,.55);
-      --surface-border: rgba(0,0,0,.05);
-      --surface-hi: rgba(255,255,255,.70);
-      --surface-hover: rgba(255,255,255,.65);
-      --divider: rgba(0,0,0,.06);
-      --dim: rgba(0,0,0,.06);
-      --overlay: rgba(0,0,0,.25);
+      --text: rgba(0, 0, 0, .88);
+      --text-2: rgba(0, 0, 0, .50);
+      --text-3: rgba(0, 0, 0, .38);
+      --text-4: rgba(0, 0, 0, .25);
+      --text-5: rgba(0, 0, 0, .12);
+      --glass-start: rgba(255, 255, 255, .72);
+      --glass-mid: rgba(255, 255, 255, .55);
+      --glass-end: rgba(255, 255, 255, .62);
+      --glass-border: rgba(255, 255, 255, .55);
+      --glass-hi: rgba(255, 255, 255, .85);
+      --glass-lo: rgba(0, 0, 0, .02);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, .06);
+      --surface: rgba(255, 255, 255, .55);
+      --surface-border: rgba(0, 0, 0, .05);
+      --surface-hi: rgba(255, 255, 255, .70);
+      --surface-hover: rgba(255, 255, 255, .65);
+      --divider: rgba(0, 0, 0, .06);
+      --dim: rgba(0, 0, 0, .06);
+      --overlay: rgba(0, 0, 0, .25);
       --now-bg: #f2f2f7;
-      --seg-bg: rgba(0,0,0,.04);
-      --seg-border: rgba(0,0,0,.06);
-      --seg-ind: linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.75));
-      --seg-ind-shadow: 0 2px 8px rgba(0,0,0,.05);
-      --seg-ind-hi: rgba(255,255,255,.95);
-      --confirm-shadow: 0 24px 80px rgba(0,0,0,.15);
+      --seg-bg: rgba(0, 0, 0, .04);
+      --seg-border: rgba(0, 0, 0, .06);
+      --seg-ind: linear-gradient(180deg, rgba(255, 255, 255, .90), rgba(255, 255, 255, .75));
+      --seg-ind-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+      --seg-ind-hi: rgba(255, 255, 255, .95);
+      --confirm-shadow: 0 24px 80px rgba(0, 0, 0, .15);
       --orb-blend: multiply;
       --orb-opacity: .3;
       --badge-text: #fff;
     }
 
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     html {
       background: var(--bg);
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
-    html::-webkit-scrollbar { display:none; }
+
+    html::-webkit-scrollbar {
+      display: none;
+    }
 
     body {
       font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Noto Sans TC', system-ui, sans-serif;
@@ -110,36 +120,74 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
-    body::-webkit-scrollbar { display:none; }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
 
     /* ═══ Ambient light canvas ═══ */
     .ambient-wrap {
-      position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
       background: var(--bg-page);
     }
+
     .orb {
-      position:absolute; border-radius:50%; filter:blur(80px);
-      mix-blend-mode:var(--orb-blend); opacity:var(--orb-opacity);
-      will-change:transform;
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      mix-blend-mode: var(--orb-blend);
+      opacity: var(--orb-opacity);
+      will-change: transform;
     }
+
     .orb-1 {
-      width:420px; height:420px; top:-120px; left:-60px;
-      background:radial-gradient(circle, rgba(230,57,70,.35), transparent 70%);
+      width: 420px;
+      height: 420px;
+      top: -120px;
+      left: -60px;
+      background: radial-gradient(circle, rgba(230, 57, 70, .35), transparent 70%);
       animation: float1 16s ease-in-out infinite alternate;
     }
+
     .orb-2 {
-      width:350px; height:350px; bottom:-80px; right:-40px;
-      background:radial-gradient(circle, rgba(244,162,97,.28), transparent 70%);
+      width: 350px;
+      height: 350px;
+      bottom: -80px;
+      right: -40px;
+      background: radial-gradient(circle, rgba(244, 162, 97, .28), transparent 70%);
       animation: float2 20s ease-in-out infinite alternate;
     }
+
     .orb-3 {
-      width:300px; height:300px; top:40%; left:50%;
-      background:radial-gradient(circle, rgba(108,123,216,.2), transparent 70%);
+      width: 300px;
+      height: 300px;
+      top: 40%;
+      left: 50%;
+      background: radial-gradient(circle, rgba(108, 123, 216, .2), transparent 70%);
       animation: float3 18s ease-in-out infinite alternate;
     }
-    @keyframes float1 { to { transform:translate(100px,80px) scale(1.15); } }
-    @keyframes float2 { to { transform:translate(-80px,-100px) scale(1.2); } }
-    @keyframes float3 { to { transform:translate(-60px,50px) scale(1.1); } }
+
+    @keyframes float1 {
+      to {
+        transform: translate(100px, 80px) scale(1.15);
+      }
+    }
+
+    @keyframes float2 {
+      to {
+        transform: translate(-80px, -100px) scale(1.2);
+      }
+    }
+
+    @keyframes float3 {
+      to {
+        transform: translate(-60px, 50px) scale(1.1);
+      }
+    }
 
     /* ═══ Liquid Glass material ═══ */
     .liquid-glass {
@@ -151,45 +199,85 @@
     }
 
     /* ═══ Scrollbar hide ═══ */
-    .no-scrollbar { scrollbar-width:none; -ms-overflow-style:none; }
-    .no-scrollbar::-webkit-scrollbar { display:none; }
+    .no-scrollbar {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
 
     /* ═══ iOS install banner ═══ */
     .ios-banner {
-      position:fixed; z-index:999;
+      position: fixed;
+      z-index: 999;
       bottom: calc(90px + var(--safe-bottom));
-      left:16px; right:16px;
-      border-radius:20px; padding:18px 20px;
-      display:flex; align-items:center; gap:14px;
+      left: 16px;
+      right: 16px;
+      border-radius: 20px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
       animation: bannerIn .5s var(--ease-out);
     }
+
     .ios-banner .x {
-      position:absolute; top:10px; right:14px;
-      background:none; border:none;
-      color:var(--text-4); font-size:22px;
-      cursor:pointer; padding:4px; line-height:1;
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-4);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
     }
+
     @keyframes bannerIn {
-      from { transform:translateY(140px) scale(.95); opacity:0; }
-      to   { transform:translateY(0) scale(1); opacity:1; }
+      from {
+        transform: translateY(140px) scale(.95);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
     }
 
     /* ═══ Press feedback ═══ */
-    .press { transition: transform .15s var(--ease-out), opacity .15s; }
-    .press:active { transform: scale(.97); opacity:.85; }
+    .press {
+      transition: transform .15s var(--ease-out), opacity .15s;
+    }
+
+    .press:active {
+      transform: scale(.97);
+      opacity: .85;
+    }
 
     /* ═══ Confirm Dialog (liquid glass) ═══ */
     .confirm-backdrop {
-      position:fixed; inset:0; z-index:9999;
-      background:var(--overlay);
-      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-      display:flex; align-items:center; justify-content:center;
-      padding:24px;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--overlay);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
       animation: fadeIn .2s ease-out;
     }
+
     .confirm-dialog {
-      width:100%; max-width:320px;
-      border-radius:20px; overflow:hidden;
+      width: 100%;
+      max-width: 320px;
+      border-radius: 20px;
+      overflow: hidden;
       background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
       backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
       -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
@@ -197,177 +285,512 @@
       border: .5px solid var(--glass-border);
       animation: dialogIn .3s var(--ease-out);
     }
-    .confirm-body { padding:28px 24px 20px; text-align:center; }
-    .confirm-title { font-size:17px; font-weight:700; color:var(--text); line-height:1.4; }
-    .confirm-msg { font-size:13px; color:var(--text-3); margin-top:6px; line-height:1.5; }
-    .confirm-actions {
-      display:flex;
-      border-top:.5px solid var(--dim);
-    }
-    .confirm-actions button {
-      flex:1; padding:16px 8px;
-      border:none; background:transparent;
-      font-size:16px; font-family:inherit;
-      cursor:pointer; transition: background .15s;
-    }
-    .confirm-actions button:active { background:var(--surface-hi); }
-    .confirm-actions button + button { border-left:.5px solid var(--dim); }
-    .confirm-actions .confirm-cancel { color:var(--text-2); font-weight:500; }
-    .confirm-actions .confirm-destructive { color:#FF6B6B; font-weight:700; }
 
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-    @keyframes fadeOut { from{opacity:1} to{opacity:0} }
-    @keyframes dialogIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
-    @keyframes dialogOut { from{transform:scale(1);opacity:1} to{transform:scale(.92);opacity:0} }
+    .confirm-body {
+      padding: 28px 24px 20px;
+      text-align: center;
+    }
+
+    .confirm-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .confirm-msg {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .confirm-actions {
+      display: flex;
+      border-top: .5px solid var(--dim);
+    }
+
+    .confirm-actions button {
+      flex: 1;
+      padding: 16px 8px;
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .confirm-actions button:active {
+      background: var(--surface-hi);
+    }
+
+    .confirm-actions button+button {
+      border-left: .5px solid var(--dim);
+    }
+
+    .confirm-actions .confirm-cancel {
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    .confirm-actions .confirm-destructive {
+      color: #FF6B6B;
+      font-weight: 700;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1
+      }
+
+      to {
+        opacity: 0
+      }
+    }
+
+    @keyframes dialogIn {
+      from {
+        transform: scale(.92);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    @keyframes dialogOut {
+      from {
+        transform: scale(1);
+        opacity: 1
+      }
+
+      to {
+        transform: scale(.92);
+        opacity: 0
+      }
+    }
+
+    /* ═══ Onboarding ═══ */
+    .onboard-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: var(--overlay);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeIn .35s ease-out;
+    }
+
+    .onboard-card {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
+      backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
+      box-shadow: var(--confirm-shadow), inset 0 .5px 0 var(--glass-hi);
+      border: .5px solid var(--glass-border);
+      animation: dialogIn .4s var(--ease-out);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .onboard-body {
+      padding: 32px 28px 24px;
+      text-align: center;
+    }
+
+    .onboard-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .onboard-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .onboard-desc {
+      font-size: 14px;
+      color: var(--text-3);
+      line-height: 1.6;
+    }
+
+    .onboard-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 0 20px;
+    }
+
+    .onboard-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-5);
+      transition: all .3s var(--ease-out);
+    }
+
+    .onboard-dot.active {
+      width: 20px;
+      border-radius: 4px;
+      background: var(--text-2);
+    }
+
+    .onboard-actions {
+      padding: 0 28px 28px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .onboard-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s ease-out;
+    }
+
+    .onboard-btn:active {
+      transform: scale(.97);
+    }
+
+    .onboard-btn-secondary {
+      background: var(--surface);
+      color: var(--text-3);
+      border: .5px solid var(--surface-border);
+      box-shadow: inset 0 .5px 0 var(--surface-hi);
+    }
+
+    .onboard-btn-primary {
+      background: linear-gradient(135deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .05));
+      color: var(--text);
+      font-weight: 700;
+      border: .5px solid var(--glass-border);
+      box-shadow: inset 0 .5px 0 var(--glass-hi);
+    }
+
+    .onboard-step-enter {
+      animation: onboardStepIn .3s var(--ease-out);
+    }
+
+    @keyframes onboardStepIn {
+      from {
+        transform: translateX(30px);
+        opacity: 0
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1
+      }
+    }
 
     /* ═══ Now playing pulse ═══ */
     @keyframes glowBreath {
-      from { opacity: .35; }
-      to   { opacity: .75; }
+      from {
+        opacity: .35;
+      }
+
+      to {
+        opacity: .75;
+      }
     }
+
     .now-playing-glow {
-      position:absolute; inset:-1px; border-radius:19px;
-      pointer-events:none; z-index:0;
+      position: absolute;
+      inset: -1px;
+      border-radius: 19px;
+      pointer-events: none;
+      z-index: 0;
       box-shadow: 0 0 28px var(--glow-color), 0 0 8px var(--glow-color);
       animation: glowBreath 2.5s ease-in-out infinite alternate;
       will-change: opacity;
     }
+
     .progress-bar-track {
-      position:absolute; bottom:10px; left:20px; right:18px; height:2px;
-      background:var(--divider); border-radius:1px; overflow:hidden;
+      position: absolute;
+      bottom: 10px;
+      left: 20px;
+      right: 18px;
+      height: 2px;
+      background: var(--divider);
+      border-radius: 1px;
+      overflow: hidden;
     }
+
     .progress-bar-fill {
-      height:100%; border-radius:1px;
+      height: 100%;
+      border-radius: 1px;
       transition: width 1s linear;
     }
 
     /* ═══ Now timeline ═══ */
     .now-line {
-      display:flex; align-items:center; gap:8px;
-      padding:10px 0; position:relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0;
+      position: relative;
     }
+
     .now-line::before {
-      content:''; position:absolute; left:0; right:0;
-      height:1.5px; background:linear-gradient(90deg, #FF6B6B, #FF6B6B80, transparent);
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1.5px;
+      background: linear-gradient(90deg, #FF6B6B, #FF6B6B80, transparent);
     }
+
     .now-line-dot {
-      width:8px; height:8px; border-radius:50%;
-      background:#FF6B6B; flex-shrink:0;
-      box-shadow:0 0 8px rgba(255,80,80,.5);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FF6B6B;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(255, 80, 80, .5);
     }
+
     .now-line-label {
-      font-size:11px; font-weight:700; color:#FF6B6B;
-      background:var(--now-bg); padding:0 8px; position:relative;
+      font-size: 11px;
+      font-weight: 700;
+      color: #FF6B6B;
+      background: var(--now-bg);
+      padding: 0 8px;
+      position: relative;
     }
 
     /* ═══ Time picker ═══ */
     .time-picker-backdrop {
-      position:fixed; inset:0; z-index:9999;
-      background:var(--overlay);
-      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-      display:flex; align-items:flex-end; justify-content:center;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--overlay);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
       animation: fadeIn .2s ease-out;
     }
+
     .time-picker-sheet {
-      width:100%; max-width:520px;
-      border-radius:24px 24px 0 0;
-      padding:20px 18px calc(20px + var(--safe-bottom));
+      width: 100%;
+      max-width: 520px;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 18px calc(20px + var(--safe-bottom));
       background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
       backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
       -webkit-backdrop-filter: blur(50px) saturate(200%) brightness(1.1);
-      box-shadow: 0 -8px 40px rgba(0,0,0,.2), inset 0 .5px 0 var(--glass-hi);
+      box-shadow: 0 -8px 40px rgba(0, 0, 0, .2), inset 0 .5px 0 var(--glass-hi);
       border: .5px solid var(--glass-border);
-      border-bottom:none;
+      border-bottom: none;
       animation: sheetUp .35s var(--ease-out);
     }
-    @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-    @keyframes sheetDown { from{transform:translateY(0)} to{transform:translateY(100%)} }
+
+    @keyframes sheetUp {
+      from {
+        transform: translateY(100%)
+      }
+
+      to {
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes sheetDown {
+      from {
+        transform: translateY(0)
+      }
+
+      to {
+        transform: translateY(100%)
+      }
+    }
 
     /* ═══ Long-press tooltip ═══ */
     .lp-tooltip-backdrop {
-      position:fixed; inset:0; z-index:9998;
-      background:rgba(0,0,0,.25);
-      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(0, 0, 0, .25);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       animation: lpBackdropIn .28s ease-out both;
     }
-    @keyframes lpBackdropIn { from{opacity:0} to{opacity:1} }
-    @keyframes lpBackdropOut { from{opacity:1} to{opacity:0} }
+
+    @keyframes lpBackdropIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes lpBackdropOut {
+      from {
+        opacity: 1
+      }
+
+      to {
+        opacity: 0
+      }
+    }
+
     .lp-tooltip {
-      position:fixed; z-index:9999;
-      -webkit-user-select:none; user-select:none;
-      width:min(85vw, 320px);
-      padding:16px 20px;
-      border-radius:14px;
+      position: fixed;
+      z-index: 9999;
+      -webkit-user-select: none;
+      user-select: none;
+      width: min(85vw, 320px);
+      padding: 16px 20px;
+      border-radius: 14px;
       background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
       backdrop-filter: blur(60px) saturate(200%) brightness(1.15);
       -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.15);
       border: .5px solid var(--glass-border);
-      box-shadow: 0 12px 48px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.12), inset 0 .5px 0 var(--glass-hi);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, .35), 0 2px 8px rgba(0, 0, 0, .12), inset 0 .5px 0 var(--glass-hi);
       transform-origin: var(--origin-x, 50%) var(--origin-y, 0%);
-      animation: tooltipIn .35s cubic-bezier(.175,.885,.32,1.275) both;
+      animation: tooltipIn .35s cubic-bezier(.175, .885, .32, 1.275) both;
     }
+
     @keyframes tooltipIn {
-      from { transform:scale(.4); opacity:0 }
-      to   { transform:scale(1);  opacity:1 }
+      from {
+        transform: scale(.4);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
     }
+
     @keyframes tooltipOut {
-      from { transform:scale(1);  opacity:1 }
-      to   { transform:scale(.6); opacity:0 }
+      from {
+        transform: scale(1);
+        opacity: 1
+      }
+
+      to {
+        transform: scale(.6);
+        opacity: 0
+      }
     }
 
     /* ═══ Stage slide transition ═══ */
     .stage-slide {
       will-change: transform, opacity;
     }
+
     .stage-slide-out-left {
-      transition: transform .2s cubic-bezier(.4,0,1,.6), opacity .2s cubic-bezier(.4,0,1,.6);
-      transform:translateX(-30px); opacity:0; pointer-events:none;
+      transition: transform .2s cubic-bezier(.4, 0, 1, .6), opacity .2s cubic-bezier(.4, 0, 1, .6);
+      transform: translateX(-30px);
+      opacity: 0;
+      pointer-events: none;
     }
+
     .stage-slide-out-right {
-      transition: transform .2s cubic-bezier(.4,0,1,.6), opacity .2s cubic-bezier(.4,0,1,.6);
-      transform:translateX(30px); opacity:0; pointer-events:none;
+      transition: transform .2s cubic-bezier(.4, 0, 1, .6), opacity .2s cubic-bezier(.4, 0, 1, .6);
+      transform: translateX(30px);
+      opacity: 0;
+      pointer-events: none;
     }
-    .stage-slide-enter-left  { transform:translateX(-20px); opacity:0; pointer-events:none; }
-    .stage-slide-enter-right { transform:translateX(20px);  opacity:0; pointer-events:none; }
+
+    .stage-slide-enter-left {
+      transform: translateX(-20px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stage-slide-enter-right {
+      transform: translateX(20px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
     .stage-slide-in {
-      transition: transform .3s cubic-bezier(.16,1,.3,1), opacity .3s cubic-bezier(.16,1,.3,1);
-      transform:translateX(0); opacity:1;
+      transition: transform .3s cubic-bezier(.16, 1, .3, 1), opacity .3s cubic-bezier(.16, 1, .3, 1);
+      transform: translateX(0);
+      opacity: 1;
     }
 
     /* ═══ Conflict group ═══ */
     .conflict-group {
-      position:relative;
-      border-radius:22px; padding:12px 10px 4px;
-      margin-bottom:8px;
-      background:rgba(255,80,80,.04);
-      border:.5px solid rgba(255,80,80,.12);
+      position: relative;
+      border-radius: 22px;
+      padding: 12px 10px 4px;
+      margin-bottom: 8px;
+      background: rgba(255, 80, 80, .04);
+      border: .5px solid rgba(255, 80, 80, .12);
     }
 
     /* ═══ Theme toggle ═══ */
     .theme-btn {
-      background:var(--seg-bg); border:.5px solid var(--seg-border);
-      border-radius:10px; width:34px; height:34px;
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; color:var(--text-3);
-      transition:all .2s; flex-shrink:0;
+      background: var(--seg-bg);
+      border: .5px solid var(--seg-border);
+      border-radius: 10px;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-3);
+      transition: all .2s;
+      flex-shrink: 0;
     }
-    .theme-btn:active { transform:scale(.92); opacity:.7; }
+
+    .theme-btn:active {
+      transform: scale(.92);
+      opacity: .7;
+    }
   </style>
 
   <script>
     // Apply saved theme before first paint to prevent flash
-    (function(){
-      var s=localStorage.getItem('theme-pref')||'system';
-      var dark=s==='dark'||(s==='system'&&matchMedia('(prefers-color-scheme:dark)').matches);
-      document.documentElement.setAttribute('data-theme',dark?'dark':'light');
-      var m=document.getElementById('meta-theme');
-      if(m)m.content=dark?'#000000':'#f2f2f7';
+    (function () {
+      var s = localStorage.getItem('theme-pref') || 'system';
+      var dark = s === 'dark' || (s === 'system' && matchMedia('(prefers-color-scheme:dark)').matches);
+      document.documentElement.dataset('data-theme', dark ? 'dark' : 'light');
+      var m = document.getElementById('meta-theme');
+      if (m) m.content = dark ? '#000000' : '#f2f2f7';
     })();
   </script>
   <script crossorigin="anonymous" src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin="anonymous" src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script crossorigin="anonymous" src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
+
 <body>
 
   <!-- Ambient light -->
@@ -381,20 +804,20 @@
 
   <!-- iOS install prompt -->
   <script>
-    (function(){
+    (function () {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
       const isStandalone = navigator.standalone === true ||
         matchMedia('(display-mode:standalone)').matches;
 
-      if(isIOS && !isStandalone && !sessionStorage.getItem('pwa-x')){
+      if (isIOS && !isStandalone && !sessionStorage.getItem('pwa-x')) {
         const banner = document.createElement('div');
         banner.className = 'ios-banner liquid-glass';
 
         const closeBtn = document.createElement('button');
         closeBtn.className = 'x';
         closeBtn.textContent = '\u00d7';
-        closeBtn.addEventListener('click', function() {
+        closeBtn.addEventListener('click', function () {
           banner.remove();
           sessionStorage.setItem('pwa-x', '1');
         });
@@ -410,7 +833,7 @@
 
         const desc = document.createElement('div');
         desc.style.cssText = 'font-size:12px;color:var(--text-3);margin-top:3px;line-height:1.5';
-        desc.textContent = '點擊 分享 → 加入主畫面';
+        desc.textContent = '點選「分享」→「加入主畫面」';
 
         textWrap.appendChild(title);
         textWrap.appendChild(desc);
@@ -423,8 +846,8 @@
   </script>
 
   <script>
-    if('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(function(err) {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(function (err) {
         console.warn('SW registration failed:', err);
       });
     }
@@ -434,8 +857,8 @@
   <script type="text/babel">
     const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
-    const t2m=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};
-    const clash=(a,b)=>a.day===b.day&&t2m(a.start)<t2m(b.end)&&t2m(b.start)<t2m(a.end);
+    const t2m = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m };
+    const clash = (a, b) => a.day === b.day && t2m(a.start) < t2m(b.end) && t2m(b.start) < t2m(a.end);
 
     const openDB = () => new Promise((resolve, reject) => {
       const req = indexedDB.open("mp2026", 1);
@@ -482,7 +905,7 @@
       try {
         const db = await openDB();
         db.transaction("s", "readwrite").objectStore("s").put(value, "pref");
-      } catch {}
+      } catch { }
     };
 
     /* ══════════════════════════════════════
@@ -491,98 +914,98 @@
 
     // Theme helpers
     function getResolvedTheme(pref) {
-      if(pref==='light'||pref==='dark') return pref;
+      if (pref === 'light' || pref === 'dark') return pref;
       return matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
     }
     function applyTheme(resolved) {
       document.documentElement.setAttribute('data-theme', resolved);
-      const m=document.getElementById('meta-theme');
-      if(m) m.content = resolved==='dark' ? '#000000' : '#f2f2f7';
+      const m = document.getElementById('meta-theme');
+      if (m) m.content = resolved === 'dark' ? '#000000' : '#f2f2f7';
     }
     function useTheme() {
-      const [pref,setPrefState]=useState(()=>localStorage.getItem('theme-pref')||'system');
-      const [resolved,setResolved]=useState(()=>getResolvedTheme(pref));
-      const setPref=useCallback((p)=>{
+      const [pref, setPrefState] = useState(() => localStorage.getItem('theme-pref') || 'system');
+      const [resolved, setResolved] = useState(() => getResolvedTheme(pref));
+      const setPref = useCallback((p) => {
         setPrefState(p);
-        localStorage.setItem('theme-pref',p);
-        const r=getResolvedTheme(p);
+        localStorage.setItem('theme-pref', p);
+        const r = getResolvedTheme(p);
         setResolved(r);
         applyTheme(r);
-      },[]);
-      useEffect(()=>{
-        const mq=matchMedia('(prefers-color-scheme:dark)');
-        const handler=()=>{
-          const cur=localStorage.getItem('theme-pref')||'system';
-          if(cur==='system'){
-            const r=getResolvedTheme('system');
+      }, []);
+      useEffect(() => {
+        const mq = matchMedia('(prefers-color-scheme:dark)');
+        const handler = () => {
+          const cur = localStorage.getItem('theme-pref') || 'system';
+          if (cur === 'system') {
+            const r = getResolvedTheme('system');
             setResolved(r);
             applyTheme(r);
           }
         };
-        mq.addEventListener('change',handler);
-        return ()=>mq.removeEventListener('change',handler);
-      },[]);
-      const cycle=useCallback(()=>{
-        const next={system:'light',light:'dark',dark:'system'}[pref];
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
+      }, []);
+      const cycle = useCallback(() => {
+        const next = { system: 'light', light: 'dark', dark: 'system' }[pref];
         setPref(next);
-      },[pref,setPref]);
-      return {pref,resolved,cycle};
+      }, [pref, setPref]);
+      return { pref, resolved, cycle };
     }
 
     // Theme icon component
-    function ThemeIcon({pref}) {
-      if(pref==='light') return (
+    function ThemeIcon({ pref }) {
+      if (pref === 'light') return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-4.22-6.78 1.42-1.42M4.22 19.78l1.42-1.42M4.22 4.22 5.64 5.64m12.72 12.72 1.42 1.42"/>
+          <circle cx="12" cy="12" r="5" /><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-4.22-6.78 1.42-1.42M4.22 19.78l1.42-1.42M4.22 4.22 5.64 5.64m12.72 12.72 1.42 1.42" />
         </svg>
       );
-      if(pref==='dark') return (
+      if (pref === 'dark') return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
       );
       // system
       return (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/>
+          <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8m-4-4v4" />
         </svg>
       );
     }
 
     // Segmented Control — Apple-style with floating indicator
-    function Segment({items, value, onChange, size="md"}) {
-      const idx = items.findIndex(i=>i.value===value);
+    function Segment({ items, value, onChange, size = "md" }) {
+      const idx = items.findIndex(i => i.value === value);
       const count = items.length;
-      const pad = size==="sm" ? 2 : 3;
-      const py = size==="sm" ? "6px" : "9px";
-      const fs = size==="sm" ? 12 : 14;
+      const pad = size === "sm" ? 2 : 3;
+      const py = size === "sm" ? "6px" : "9px";
+      const fs = size === "sm" ? 12 : 14;
       return (
         <div style={{
-          position:"relative", display:"flex", padding:pad,
-          borderRadius: size==="sm" ? 10 : 12,
-          background:"var(--seg-bg)",
-          border:".5px solid var(--seg-border)",
+          position: "relative", display: "flex", padding: pad,
+          borderRadius: size === "sm" ? 10 : 12,
+          background: "var(--seg-bg)",
+          border: ".5px solid var(--seg-border)",
         }}>
           {/* sliding indicator */}
           <div style={{
-            position:"absolute",
-            top:pad, bottom:pad,
-            left: `calc(${pad}px + ${idx/count*100}%)`,
-            width:`calc(${100/count}% - ${pad}px)`,
-            borderRadius: size==="sm" ? 8 : 10,
-            background:"var(--seg-ind)",
-            boxShadow:"var(--seg-ind-shadow), inset 0 .5px 0 var(--seg-ind-hi)",
-            transition:"left .35s cubic-bezier(.16,1,.3,1)",
-          }}/>
-          {items.map(item=>(
-            <button key={item.value} onClick={()=>onChange(item.value)} style={{
-              flex:1, position:"relative", zIndex:1,
-              padding:`${py} 0`, border:"none", borderRadius:10,
-              background:"transparent", cursor:"pointer",
-              fontSize:fs, fontWeight:600, fontFamily:"inherit",
-              color: value===item.value ? "var(--text)" : "var(--text-3)",
-              transition:"color .25s",
-              letterSpacing: size==="sm" ? 0 : .2,
+            position: "absolute",
+            top: pad, bottom: pad,
+            left: `calc(${pad}px + ${idx / count * 100}%)`,
+            width: `calc(${100 / count}% - ${pad}px)`,
+            borderRadius: size === "sm" ? 8 : 10,
+            background: "var(--seg-ind)",
+            boxShadow: "var(--seg-ind-shadow), inset 0 .5px 0 var(--seg-ind-hi)",
+            transition: "left .35s cubic-bezier(.16,1,.3,1)",
+          }} />
+          {items.map(item => (
+            <button key={item.value} onClick={() => onChange(item.value)} style={{
+              flex: 1, position: "relative", zIndex: 1,
+              padding: `${py} 0`, border: "none", borderRadius: 10,
+              background: "transparent", cursor: "pointer",
+              fontSize: fs, fontWeight: 600, fontFamily: "inherit",
+              color: value === item.value ? "var(--text)" : "var(--text-3)",
+              transition: "color .25s",
+              letterSpacing: size === "sm" ? 0 : .2,
             }}>
               {item.label}
             </button>
@@ -592,20 +1015,20 @@
     }
 
     // Pill filter chip
-    function Pill({label, active, color, onClick}) {
+    function Pill({ label, active, color, onClick }) {
       return (
         <button className="press" onClick={onClick} style={{
-          padding:"7px 16px", borderRadius:100, border:"none",
-          fontSize:12, fontWeight:600, cursor:"pointer",
-          whiteSpace:"nowrap", flexShrink:0, fontFamily:"inherit",
+          padding: "7px 16px", borderRadius: 100, border: "none",
+          fontSize: 12, fontWeight: 600, cursor: "pointer",
+          whiteSpace: "nowrap", flexShrink: 0, fontFamily: "inherit",
           background: active
-            ? `linear-gradient(135deg, ${color||"var(--text-4)"}30, ${color||"var(--text-5)"}18)`
+            ? `linear-gradient(135deg, ${color || "var(--text-4)"}30, ${color || "var(--text-5)"}18)`
             : "var(--surface)",
-          color: active ? (color||"var(--text)") : "var(--text-4)",
+          color: active ? (color || "var(--text)") : "var(--text-4)",
           boxShadow: active
-            ? `0 0 0 .5px ${color||"var(--text-4)"}50, 0 2px 8px ${color||"rgba(0,0,0,.15)"}30, inset 0 .5px 0 var(--glass-hi)`
+            ? `0 0 0 .5px ${color || "var(--text-4)"}50, 0 2px 8px ${color || "rgba(0,0,0,.15)"}30, inset 0 .5px 0 var(--glass-hi)`
             : `0 0 0 .5px var(--surface-border)`,
-          transition:"all .2s cubic-bezier(.16,1,.3,1)",
+          transition: "all .2s cubic-bezier(.16,1,.3,1)",
         }}>
           {label}
         </button>
@@ -613,17 +1036,17 @@
     }
 
     // Stage badge — frosted colored chip
-    function Badge({stage, large}) {
-      const s=STAGES[stage]; if(!s) return null;
+    function Badge({ stage, large }) {
+      const s = STAGES[stage]; if (!s) return null;
       return (
         <span style={{
-          display:"inline-flex", alignItems:"center",
-          background:`linear-gradient(135deg, ${s.bg}DD, ${s.bg}99)`,
-          color:"var(--badge-text)", padding:large?"3px 11px":"2px 8px",
-          borderRadius:large?8:6, fontSize:large?11:10,
-          fontWeight:700, letterSpacing:.4, whiteSpace:"nowrap",
-          flexShrink:0,
-          boxShadow:`0 1px 4px ${s.bg}50, inset 0 .5px 0 rgba(255,255,255,.25)`,
+          display: "inline-flex", alignItems: "center",
+          background: `linear-gradient(135deg, ${s.bg}DD, ${s.bg}99)`,
+          color: "var(--badge-text)", padding: large ? "3px 11px" : "2px 8px",
+          borderRadius: large ? 8 : 6, fontSize: large ? 11 : 10,
+          fontWeight: 700, letterSpacing: .4, whiteSpace: "nowrap",
+          flexShrink: 0,
+          boxShadow: `0 1px 4px ${s.bg}50, inset 0 .5px 0 rgba(255,255,255,.25)`,
         }}>
           {s.name}
         </span>
@@ -631,140 +1054,141 @@
     }
 
     // Artist card — glass card with tinted selection
-    function Card({item, selected, dimmed, conflict, onToggle}) {
-      const c = STAGES[item.stage]?.bg||"#888";
-      const [tooltip,setTooltip]=useState(null);
-      const lp=useLongPress((pos)=>setTooltip(pos||{x:0,y:200}));
+    function Card({ item, selected, dimmed, conflict, onToggle }) {
+      const c = STAGES[item.stage]?.bg || "#888";
+      const [tooltip, setTooltip] = useState(null);
+      const lp = useLongPress((pos) => setTooltip(pos || { x: 0, y: 200 }));
       return (
         <>
-        {tooltip&&<ArtistTooltip item={item} pos={tooltip} onClose={()=>setTooltip(null)}/>}
-        <button className="press"
-          onClick={e=>{if(!lp.prevented.current)onToggle(item.id)}}
-          onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
-          onContextMenu={e=>e.preventDefault()}
-          style={{WebkitUserSelect:"none",userSelect:"none",
-          display:"flex", alignItems:"center", gap:11,
-          width:"100%", padding:"15px 16px",
-          borderRadius:18, cursor:"pointer", textAlign:"left",
-          position:"relative", color:"inherit", fontFamily:"inherit",
-          background: selected
-            ? `linear-gradient(135deg, ${c}20, ${c}0A)`
-            : "var(--surface)",
-          border: selected
-            ? `.5px solid ${c}50`
-            : `.5px solid var(--surface-border)`,
-          boxShadow: selected
-            ? `0 4px 24px ${c}18, inset 0 .5px 0 var(--surface-hi), inset 0 0 0 .5px ${c}20`
-            : `inset 0 .5px 0 var(--surface-hi)`,
-          backdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
-          WebkitBackdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
-          opacity: dimmed&&!selected ? .35 : 1,
-          transition:"all .25s cubic-bezier(.16,1,.3,1)",
-        }}>
-          {/* check badge */}
-          {selected && (
-            <span style={{
-              position:"absolute", top:-7, right:-7,
-              width:24, height:24, borderRadius:"50%",
-              background:`linear-gradient(145deg, ${c}, ${c}BB)`,
-              display:"flex", alignItems:"center", justifyContent:"center",
-              fontSize:12, color:"#fff", fontWeight:700,
-              boxShadow:`0 3px 12px ${c}60, inset 0 1px 0 rgba(255,255,255,.3)`,
-              transition:"transform .3s cubic-bezier(.175,.885,.32,1.275)",
+          {tooltip && <ArtistTooltip item={item} pos={tooltip} onClose={() => setTooltip(null)} />}
+          <button className="press"
+            onClick={e => { if (!lp.prevented.current) onToggle(item.id) }}
+            onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
+            onContextMenu={e => e.preventDefault()}
+            style={{
+              WebkitUserSelect: "none", userSelect: "none",
+              display: "flex", alignItems: "center", gap: 11,
+              width: "100%", padding: "15px 16px",
+              borderRadius: 18, cursor: "pointer", textAlign: "left",
+              position: "relative", color: "inherit", fontFamily: "inherit",
+              background: selected
+                ? `linear-gradient(135deg, ${c}20, ${c}0A)`
+                : "var(--surface)",
+              border: selected
+                ? `.5px solid ${c}50`
+                : `.5px solid var(--surface-border)`,
+              boxShadow: selected
+                ? `0 4px 24px ${c}18, inset 0 .5px 0 var(--surface-hi), inset 0 0 0 .5px ${c}20`
+                : `inset 0 .5px 0 var(--surface-hi)`,
+              backdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
+              WebkitBackdropFilter: selected ? "blur(30px) saturate(200%)" : "none",
+              opacity: dimmed && !selected ? .35 : 1,
+              transition: "all .25s cubic-bezier(.16,1,.3,1)",
             }}>
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-          )}
+            {/* check badge */}
+            {selected && (
+              <span style={{
+                position: "absolute", top: -7, right: -7,
+                width: 24, height: 24, borderRadius: "50%",
+                background: `linear-gradient(145deg, ${c}, ${c}BB)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 12, color: "#fff", fontWeight: 700,
+                boxShadow: `0 3px 12px ${c}60, inset 0 1px 0 rgba(255,255,255,.3)`,
+                transition: "transform .3s cubic-bezier(.175,.885,.32,1.275)",
+              }}>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            )}
 
-          <span style={{
-            fontVariantNumeric:"tabular-nums", fontSize:13,
-            color:"var(--text-3)", minWidth:85, fontWeight:500,
-          }}>
-            {item.start}–{item.end}
-          </span>
-
-          <Badge stage={item.stage}/>
-
-          <span style={{
-            fontSize:15, fontWeight:600, flex:1,
-            overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
-            lineHeight:1.3,
-          }}>
-            {item.artist}
-          </span>
-
-          {conflict&&selected&&(
             <span style={{
-              fontSize:10, fontWeight:700, flexShrink:0,
-              background:"rgba(255,80,80,.12)", color:"#FF6B6B",
-              padding:"3px 9px", borderRadius:8,
-              boxShadow:`inset 0 .5px 0 var(--dim)`,
-            }}>衝突</span>
-          )}
-        </button>
+              fontVariantNumeric: "tabular-nums", fontSize: 13,
+              color: "var(--text-3)", minWidth: 85, fontWeight: 500,
+            }}>
+              {item.start}–{item.end}
+            </span>
+
+            <Badge stage={item.stage} />
+
+            <span style={{
+              fontSize: 15, fontWeight: 600, flex: 1,
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              lineHeight: 1.3,
+            }}>
+              {item.artist}
+            </span>
+
+            {conflict && selected && (
+              <span style={{
+                fontSize: 10, fontWeight: 700, flexShrink: 0,
+                background: "rgba(255,80,80,.12)", color: "#FF6B6B",
+                padding: "3px 9px", borderRadius: 8,
+                boxShadow: `inset 0 .5px 0 var(--dim)`,
+              }}>衝突</span>
+            )}
+          </button>
         </>
       );
     }
 
     // Schedule timeline card (single, no conflict wrapper)
     // status: "ended" | "playing" | "upcoming" | null
-    function useLongPress(cb, ms=500) {
-      const timer=useRef(null);
-      const prevented=useRef(false);
-      const onStart=useCallback(e=>{
-        prevented.current=false;
-        const t=e.touches?.[0];
-        const pos=t?{x:t.clientX,y:t.clientY}:null;
-        timer.current=setTimeout(()=>{prevented.current=true;cb(pos)},ms);
-      },[cb,ms]);
-      const onEnd=useCallback(()=>{clearTimeout(timer.current)},[]);
-      const onMove=useCallback(e=>{
-        if(timer.current){
-          const t=e.touches?.[0];
-          if(t){clearTimeout(timer.current)}
+    function useLongPress(cb, ms = 500) {
+      const timer = useRef(null);
+      const prevented = useRef(false);
+      const onStart = useCallback(e => {
+        prevented.current = false;
+        const t = e.touches?.[0];
+        const pos = t ? { x: t.clientX, y: t.clientY } : null;
+        timer.current = setTimeout(() => { prevented.current = true; cb(pos) }, ms);
+      }, [cb, ms]);
+      const onEnd = useCallback(() => { clearTimeout(timer.current) }, []);
+      const onMove = useCallback(e => {
+        if (timer.current) {
+          const t = e.touches?.[0];
+          if (t) { clearTimeout(timer.current) }
         }
-      },[]);
-      return {onTouchStart:onStart,onTouchEnd:onEnd,onTouchMove:onMove,prevented};
+      }, []);
+      return { onTouchStart: onStart, onTouchEnd: onEnd, onTouchMove: onMove, prevented };
     }
 
-    function ArtistTooltip({item, pos, onClose}) {
-      const [closing,setClosing]=useState(false);
-      const c=STAGES[item.stage]?.bg||"#888";
-      const dur=t2m(item.end)-t2m(item.start);
-      const dismiss=useCallback(()=>{setClosing(true);setTimeout(onClose,260)},[onClose]);
+    function ArtistTooltip({ item, pos, onClose }) {
+      const [closing, setClosing] = useState(false);
+      const c = STAGES[item.stage]?.bg || "#888";
+      const dur = t2m(item.end) - t2m(item.start);
+      const dismiss = useCallback(() => { setClosing(true); setTimeout(onClose, 260) }, [onClose]);
 
-      const vw=window.innerWidth, vh=window.innerHeight;
-      const w=Math.min(vw*.85, 320);
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const w = Math.min(vw * .85, 320);
       // Center horizontally near touch, clamp to screen
-      let left=Math.max(12, Math.min(pos.x-w/2, vw-w-12));
+      let left = Math.max(12, Math.min(pos.x - w / 2, vw - w - 12));
       // Place above touch if room, else below
-      const above=pos.y>vh/2;
-      let top=above ? pos.y-80 : pos.y+24;
-      top=Math.max(12, Math.min(top, vh-100));
+      const above = pos.y > vh / 2;
+      let top = above ? pos.y - 80 : pos.y + 24;
+      top = Math.max(12, Math.min(top, vh - 100));
       // Transform origin toward the touch point
-      const ox=((pos.x-left)/w*100).toFixed(0)+"%";
-      const oy=above?"100%":"0%";
+      const ox = ((pos.x - left) / w * 100).toFixed(0) + "%";
+      const oy = above ? "100%" : "0%";
 
       return ReactDOM.createPortal(
         <div className="lp-tooltip-backdrop" onClick={dismiss}
-          style={closing?{animation:"lpBackdropOut .22s ease-in forwards"}:{}}>
+          style={closing ? { animation: "lpBackdropOut .22s ease-in forwards" } : {}}>
           <div className="lp-tooltip"
             style={{
               left, top,
-              "--origin-x":ox, "--origin-y":oy,
-              ...(closing?{animation:"tooltipOut .2s var(--ease-out) forwards"}:{}),
+              "--origin-x": ox, "--origin-y": oy,
+              ...(closing ? { animation: "tooltipOut .2s var(--ease-out) forwards" } : {}),
             }}
-            onClick={e=>e.stopPropagation()}>
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-              <Badge stage={item.stage} large/>
-              <span style={{fontSize:13,color:"var(--text-3)",fontWeight:600,fontVariantNumeric:"tabular-nums"}}>
+            onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <Badge stage={item.stage} large />
+              <span style={{ fontSize: 13, color: "var(--text-3)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                 {item.start} – {item.end}
               </span>
-              <span style={{fontSize:11,color:"var(--text-5)",fontWeight:500}}>{dur} 分鐘</span>
+              <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{dur} 分鐘</span>
             </div>
-            <div style={{fontSize:17,fontWeight:700,lineHeight:1.45,color:"var(--text)",letterSpacing:"-.01em"}}>
+            <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.45, color: "var(--text)", letterSpacing: "-.01em" }}>
               {item.artist}
             </div>
           </div>
@@ -773,30 +1197,30 @@
       );
     }
 
-    function TimelineCard({item, gap, preferred, dimmed, onClick, status, progress}) {
-      const c = STAGES[item.stage]?.bg||"#888";
-      const dur = t2m(item.end)-t2m(item.start);
+    function TimelineCard({ item, gap, preferred, dimmed, onClick, status, progress }) {
+      const c = STAGES[item.stage]?.bg || "#888";
+      const dur = t2m(item.end) - t2m(item.start);
       const isClickable = !!onClick;
-      const isPlaying = status==="playing";
-      const isEnded = status==="ended";
+      const isPlaying = status === "playing";
+      const isEnded = status === "ended";
       return (
         <>
-          {gap!==null&&gap>0&&(
+          {gap !== null && gap > 0 && (
             <div style={{
-              display:"flex", alignItems:"center", gap:8,
-              padding:"8px 0", justifyContent:"center",
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "8px 0", justifyContent: "center",
             }}>
-              <div style={{flex:1, height:.5, background:"var(--divider)"}}/>
-              <span style={{fontSize:11, color:"var(--text-5)", fontWeight:500}}>
+              <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
+              <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>
                 {gap} 分鐘
               </span>
-              <div style={{flex:1, height:.5, background:"var(--divider)"}}/>
+              <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
             </div>
           )}
           <div onClick={onClick}
             style={{
-              position:"relative", marginBottom:8,
-              borderRadius:18, overflow:"hidden",
+              position: "relative", marginBottom: 8,
+              borderRadius: 18, overflow: "hidden",
               cursor: isClickable ? "pointer" : "default",
               background: preferred
                 ? `linear-gradient(135deg, ${c}28, ${c}12)`
@@ -812,68 +1236,68 @@
                 ? `0 4px 24px ${c}25, inset 0 .5px 0 var(--surface-hi)`
                 : undefined,
               opacity: dimmed ? .4 : isEnded ? .45 : 1,
-              transition:"all .25s cubic-bezier(.16,1,.3,1)",
+              transition: "all .25s cubic-bezier(.16,1,.3,1)",
             }}>
-            {isPlaying&&(
-              <div className="now-playing-glow" style={{"--glow-color":`${c}50`}}/>
+            {isPlaying && (
+              <div className="now-playing-glow" style={{ "--glow-color": `${c}50` }} />
             )}
             <div style={{
-              position:"absolute", left:0, top:0, bottom:0,
-              width: preferred||isPlaying ? 4 : 3,
-              background:`linear-gradient(180deg, ${c}, ${c}${preferred||isPlaying?"":"88"})`,
-              borderRadius:"3px 0 0 3px",
-              transition:"width .25s",
-            }}/>
+              position: "absolute", left: 0, top: 0, bottom: 0,
+              width: preferred || isPlaying ? 4 : 3,
+              background: `linear-gradient(180deg, ${c}, ${c}${preferred || isPlaying ? "" : "88"})`,
+              borderRadius: "3px 0 0 3px",
+              transition: "width .25s",
+            }} />
             {preferred && (
               <span style={{
-                position:"absolute", top:12, right:14,
-                width:22, height:22, borderRadius:"50%",
-                background:`linear-gradient(145deg, ${c}, ${c}BB)`,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                boxShadow:`0 2px 10px ${c}50, inset 0 1px 0 rgba(255,255,255,.3)`,
+                position: "absolute", top: 12, right: 14,
+                width: 22, height: 22, borderRadius: "50%",
+                background: `linear-gradient(145deg, ${c}, ${c}BB)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: `0 2px 10px ${c}50, inset 0 1px 0 rgba(255,255,255,.3)`,
               }}>
                 <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                  <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2.5 6.5L5 9L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
             )}
-            <div style={{padding:`16px 18px ${isPlaying?20:16}px 20px`, position:"relative", zIndex:1}}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{ padding: `16px 18px ${isPlaying ? 20 : 16}px 20px`, position: "relative", zIndex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{
-                  fontVariantNumeric:"tabular-nums", fontSize:13,
-                  color:"var(--text-3)", fontWeight:600,
+                  fontVariantNumeric: "tabular-nums", fontSize: 13,
+                  color: "var(--text-3)", fontWeight: 600,
                 }}>
                   {item.start} – {item.end}
                 </span>
-                <Badge stage={item.stage} large/>
-                {isPlaying&&(
+                <Badge stage={item.stage} large />
+                {isPlaying && (
                   <span style={{
-                    fontSize:10, fontWeight:700,
-                    background:`${c}25`, color:c,
-                    padding:"2px 8px", borderRadius:6,
-                    boxShadow:`inset 0 .5px 0 var(--surface-hi)`,
+                    fontSize: 10, fontWeight: 700,
+                    background: `${c}25`, color: c,
+                    padding: "2px 8px", borderRadius: 6,
+                    boxShadow: `inset 0 .5px 0 var(--surface-hi)`,
                   }}>演出中</span>
                 )}
-                {isEnded&&(
+                {isEnded && (
                   <span style={{
-                    fontSize:10, fontWeight:600,
-                    color:"var(--text-5)",
+                    fontSize: 10, fontWeight: 600,
+                    color: "var(--text-5)",
                   }}>已結束</span>
                 )}
               </div>
-              <div style={{fontSize:17,fontWeight:700,marginTop:8,lineHeight:1.3}}>
+              <div style={{ fontSize: 17, fontWeight: 700, marginTop: 8, lineHeight: 1.3 }}>
                 {item.artist}
               </div>
-              <div style={{fontSize:12,color:"var(--text-4)",marginTop:4,fontWeight:500}}>
+              <div style={{ fontSize: 12, color: "var(--text-4)", marginTop: 4, fontWeight: 500 }}>
                 {dur} 分鐘
               </div>
             </div>
-            {isPlaying&&(
+            {isPlaying && (
               <div className="progress-bar-track">
                 <div className="progress-bar-fill" style={{
-                  width:`${Math.min(100,Math.max(0,(progress||0)*100))}%`,
-                  background:"var(--text-4)",
-                }}/>
+                  width: `${Math.min(100, Math.max(0, (progress || 0) * 100))}%`,
+                  background: "var(--text-4)",
+                }} />
               </div>
             )}
           </div>
@@ -882,35 +1306,35 @@
     }
 
     // Conflict group wrapper — groups overlapping items visually
-    function ConflictGroup({items, pref, onPref, groupRef, getStatus, getProgress}) {
+    function ConflictGroup({ items, pref, onPref, groupRef, getStatus, getProgress }) {
       const prefId = items.find(i => pref.has(i.id))?.id || null;
       return (
         <div className="conflict-group" ref={groupRef}>
           <div style={{
-            display:"flex", alignItems:"center", gap:6,
-            marginBottom:10, paddingLeft:4,
+            display: "flex", alignItems: "center", gap: 6,
+            marginBottom: 10, paddingLeft: 4,
           }}>
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path d="M8 1.5L14.5 13H1.5L8 1.5Z" stroke="#FF6B6B" strokeWidth="1.5" strokeLinejoin="round"/>
-              <path d="M8 6.5V9.5" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round"/>
-              <circle cx="8" cy="11.5" r=".75" fill="#FF6B6B"/>
+              <path d="M8 1.5L14.5 13H1.5L8 1.5Z" stroke="#FF6B6B" strokeWidth="1.5" strokeLinejoin="round" />
+              <path d="M8 6.5V9.5" stroke="#FF6B6B" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="8" cy="11.5" r=".75" fill="#FF6B6B" />
             </svg>
-            <span style={{fontSize:12, fontWeight:700, color:"#FF6B6B"}}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#FF6B6B" }}>
               時間衝突
             </span>
-            <span style={{fontSize:11, color:"rgba(255,80,80,.5)", fontWeight:500}}>
+            <span style={{ fontSize: 11, color: "rgba(255,80,80,.5)", fontWeight: 500 }}>
               — 點選想去的演出
             </span>
           </div>
-          {items.map(item=>{
+          {items.map(item => {
             const st = getStatus?.(item);
             return (
               <TimelineCard
                 key={item.id} item={item} gap={null}
-                preferred={prefId===item.id}
-                dimmed={prefId!==null && prefId!==item.id}
-                onClick={()=>onPref(item.id, items.map(i=>i.id))}
-                status={st} progress={st==="playing"?getProgress?.(item):0}
+                preferred={prefId === item.id}
+                dimmed={prefId !== null && prefId !== item.id}
+                onClick={() => onPref(item.id, items.map(i => i.id))}
+                status={st} progress={st === "playing" ? getProgress?.(item) : 0}
               />
             );
           })}
@@ -919,17 +1343,17 @@
     }
 
     // Festival date mapping: day 1 = 3/21, day 2 = 3/22
-    const DAY_DATES = {1:"2026-03-21", 2:"2026-03-22"};
+    const DAY_DATES = { 1: "2026-03-21", 2: "2026-03-22" };
     const getDayFromDate = (d) => {
-      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      if(ds===DAY_DATES[1]) return 1;
-      if(ds===DAY_DATES[2]) return 2;
+      const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      if (ds === DAY_DATES[1]) return 1;
+      if (ds === DAY_DATES[2]) return 2;
       return null;
     };
-    const fmtTime = (d) => `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const fmtTime = (d) => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 
     // Time Picker — liquid glass bottom sheet
-    function TimePicker({simNow, onSet, onReset, onClose}) {
+    function TimePicker({ simNow, onSet, onReset, onClose }) {
       const [closing, setClosing] = useState(false);
       const current = simNow || new Date();
       const curDay = getDayFromDate(current) || 1;
@@ -942,8 +1366,8 @@
       }, [onClose]);
 
       const setTime = (day, h, m) => {
-        const [y,mo,d] = DAY_DATES[day].split('-').map(Number);
-        onSet(new Date(y, mo-1, d, h, m, 0));
+        const [y, mo, d] = DAY_DATES[day].split('-').map(Number);
+        onSet(new Date(y, mo - 1, d, h, m, 0));
       };
 
       const adjust = (dH, dM) => {
@@ -956,85 +1380,85 @@
       };
 
       const presets = [
-        {label:"DAY 1 開場", day:1, h:12, m:40},
-        {label:"DAY 1 下午", day:1, h:15, m:0},
-        {label:"DAY 1 晚上", day:1, h:19, m:0},
-        {label:"DAY 2 開場", day:2, h:12, m:40},
-        {label:"DAY 2 下午", day:2, h:15, m:0},
-        {label:"DAY 2 晚上", day:2, h:19, m:0},
+        { label: "DAY 1 開場", day: 1, h: 12, m: 40 },
+        { label: "DAY 1 下午", day: 1, h: 15, m: 0 },
+        { label: "DAY 1 晚上", day: 1, h: 19, m: 0 },
+        { label: "DAY 2 開場", day: 2, h: 12, m: 40 },
+        { label: "DAY 2 下午", day: 2, h: 15, m: 0 },
+        { label: "DAY 2 晚上", day: 2, h: 19, m: 0 },
       ];
 
       return ReactDOM.createPortal(
         <>
           <div className="time-picker-backdrop"
-            style={closing ? {animation:"fadeOut .25s ease-out forwards"} : {}}
+            style={closing ? { animation: "fadeOut .25s ease-out forwards" } : {}}
             onClick={dismiss}
           />
-          <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:10000,display:"flex",justifyContent:"center"}}>
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 10000, display: "flex", justifyContent: "center" }}>
             <div className="time-picker-sheet"
-              style={closing ? {animation:"sheetDown .28s var(--ease-out) forwards"} : {}}
-              onClick={e=>e.stopPropagation()}
+              style={closing ? { animation: "sheetDown .28s var(--ease-out) forwards" } : {}}
+              onClick={e => e.stopPropagation()}
             >
               {/* Header */}
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18}}>
-                <span style={{fontSize:17,fontWeight:700,color:"var(--text)"}}>模擬時間</span>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                <span style={{ fontSize: 17, fontWeight: 700, color: "var(--text)" }}>模擬時間</span>
                 <button onClick={dismiss} style={{
-                  background:"var(--dim)",border:"none",borderRadius:50,
-                  width:30,height:30,display:"flex",alignItems:"center",justifyContent:"center",
-                  cursor:"pointer",color:"var(--text-3)",fontSize:18,fontFamily:"inherit",
+                  background: "var(--dim)", border: "none", borderRadius: 50,
+                  width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", color: "var(--text-3)", fontSize: 18, fontFamily: "inherit",
                 }}>×</button>
               </div>
 
               {/* Current display */}
               <div style={{
-                textAlign:"center", padding:"16px 0 20px",
-                fontSize:40, fontWeight:800, fontVariantNumeric:"tabular-nums",
-                color:"var(--text)", letterSpacing:2,
+                textAlign: "center", padding: "16px 0 20px",
+                fontSize: 40, fontWeight: 800, fontVariantNumeric: "tabular-nums",
+                color: "var(--text)", letterSpacing: 2,
               }}>
-                <span style={{fontSize:14,fontWeight:600,color:"var(--text-4)",display:"block",marginBottom:4}}>
-                  {curDay===1?"DAY 1 · 3/21 (六)":"DAY 2 · 3/22 (日)"}
+                <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-4)", display: "block", marginBottom: 4 }}>
+                  {curDay === 1 ? "DAY 1 · 3/21 (六)" : "DAY 2 · 3/22 (日)"}
                 </span>
-                {String(curH).padStart(2,'0')}:{String(curM).padStart(2,'0')}
+                {String(curH).padStart(2, '0')}:{String(curM).padStart(2, '0')}
               </div>
 
               {/* Manual adjuster */}
-              <div style={{display:"flex",justifyContent:"center",gap:12,marginBottom:20}}>
+              <div style={{ display: "flex", justifyContent: "center", gap: 12, marginBottom: 20 }}>
                 {[
-                  {label:"-1h",dH:-1,dM:0},{label:"-10m",dH:0,dM:-10},
-                  {label:"+10m",dH:0,dM:10},{label:"+1h",dH:1,dM:0},
-                ].map(a=>(
-                  <button key={a.label} className="press" onClick={()=>adjust(a.dH,a.dM)} style={{
-                    padding:"10px 16px", borderRadius:12, border:"none",
-                    background:"var(--seg-bg)", color:"var(--text-2)",
-                    fontSize:14, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
-                    boxShadow:`inset 0 .5px 0 var(--surface-hi)`,
+                  { label: "-1h", dH: -1, dM: 0 }, { label: "-10m", dH: 0, dM: -10 },
+                  { label: "+10m", dH: 0, dM: 10 }, { label: "+1h", dH: 1, dM: 0 },
+                ].map(a => (
+                  <button key={a.label} className="press" onClick={() => adjust(a.dH, a.dM)} style={{
+                    padding: "10px 16px", borderRadius: 12, border: "none",
+                    background: "var(--seg-bg)", color: "var(--text-2)",
+                    fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                    boxShadow: `inset 0 .5px 0 var(--surface-hi)`,
                   }}>{a.label}</button>
                 ))}
               </div>
 
               {/* Presets */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:18}}>
-                {presets.map(p=>(
-                  <button key={p.label} className="press" onClick={()=>setTime(p.day,p.h,p.m)} style={{
-                    padding:"12px 8px", borderRadius:14, border:"none",
-                    background: curDay===p.day && curH===p.h && curM===p.m
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 18 }}>
+                {presets.map(p => (
+                  <button key={p.label} className="press" onClick={() => setTime(p.day, p.h, p.m)} style={{
+                    padding: "12px 8px", borderRadius: 14, border: "none",
+                    background: curDay === p.day && curH === p.h && curM === p.m
                       ? "rgba(244,162,97,.15)" : "var(--surface)",
-                    color: curDay===p.day && curH===p.h && curM===p.m
+                    color: curDay === p.day && curH === p.h && curM === p.m
                       ? "#F4A261" : "var(--text-2)",
-                    fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
-                    boxShadow:`inset 0 .5px 0 var(--surface-border)`,
-                    lineHeight:1.4,
+                    fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                    boxShadow: `inset 0 .5px 0 var(--surface-border)`,
+                    lineHeight: 1.4,
                   }}>{p.label}</button>
                 ))}
               </div>
 
               {/* Reset */}
-              <button className="press" onClick={()=>{onReset();dismiss()}} style={{
-                width:"100%", padding:"14px", borderRadius:14, border:"none",
+              <button className="press" onClick={() => { onReset(); dismiss() }} style={{
+                width: "100%", padding: "14px", borderRadius: 14, border: "none",
                 background: simNow ? "var(--seg-bg)" : "var(--surface)",
                 color: simNow ? "var(--text)" : "var(--text-5)",
-                fontSize:15, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
-                boxShadow:`inset 0 .5px 0 var(--surface-border)`,
+                fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                boxShadow: `inset 0 .5px 0 var(--surface-border)`,
               }}>
                 恢復即時
               </button>
@@ -1046,7 +1470,7 @@
     }
 
     // Liquid glass confirm dialog
-    function ConfirmDialog({title, message, confirmLabel, onConfirm, onClose}) {
+    function ConfirmDialog({ title, message, confirmLabel, onConfirm, onClose }) {
       const [closing, setClosing] = useState(false);
       const dismiss = useCallback(() => {
         setClosing(true);
@@ -1058,12 +1482,12 @@
       }, [onClose, onConfirm]);
       return ReactDOM.createPortal(
         <div className="confirm-backdrop"
-          style={closing ? {animation:"fadeOut .22s ease-out forwards"} : {}}
+          style={closing ? { animation: "fadeOut .22s ease-out forwards" } : {}}
           onClick={dismiss}
         >
           <div className="confirm-dialog"
-            style={closing ? {animation:"dialogOut .22s var(--ease-out) forwards"} : {}}
-            onClick={e=>e.stopPropagation()}
+            style={closing ? { animation: "dialogOut .22s var(--ease-out) forwards" } : {}}
+            onClick={e => e.stopPropagation()}
           >
             <div className="confirm-body">
               <div className="confirm-title">{title}</div>
@@ -1079,234 +1503,297 @@
       );
     }
 
+    /* ══════════ Onboarding ══════════ */
+
+    const ONBOARD_STEPS = [
+      { icon: "🚢", title: "歡迎來到大港開唱", desc: "你的專屬音樂祭行程助手，輕鬆選團、排行程、不錯過任何演出。" },
+      { icon: "👆", title: "點選加入行程", desc: "在「選團」頁面瀏覽所有演出，點一下即可加入或移除你的行程。" },
+      { icon: "👈", title: "左右滑動切換舞台", desc: "在選團頁面左右滑動，快速切換不同舞台的演出列表。" },
+      { icon: "📋", title: "查看我的行程", desc: "切換到「行程」頁面，依時間排列你選的演出，衝突時段會自動標示。" },
+      { icon: "📲", title: "加入主畫面", desc: "點選瀏覽器的「分享」按鈕，選擇「加入主畫面」，像 App 一樣隨時開啟。" },
+      { icon: "🔒", title: "完全離線、不蒐集資料", desc: "此網站為純靜態頁面，不會連線任何伺服器、不蒐集任何個人資料。加入主畫面後可完全離線使用。所有演出資料皆來自大港開唱官方 Instagram。", links: [{ url: "https://www.instagram.com/megaportfest/", label: "官方 Instagram" }, { url: "https://github.com/luchichiTW/megaport2026", label: "GitHub 原始碼" }] },
+    ];
+
+    function Onboarding({ onDone }) {
+      const [step, setStep] = useState(0);
+      const [closing, setClosing] = useState(false);
+      const [stepKey, setStepKey] = useState(0);
+      const isLast = step === ONBOARD_STEPS.length - 1;
+      const s = ONBOARD_STEPS[step];
+      const next = () => {
+        if (isLast) { setClosing(true); setTimeout(onDone, 280); return }
+        setStep(p => p + 1); setStepKey(k => k + 1);
+      };
+      const prev = () => { if (step > 0) { setStep(p => p - 1); setStepKey(k => k + 1) } };
+      const skip = () => { setClosing(true); setTimeout(onDone, 280) };
+      return ReactDOM.createPortal(
+        <div className="onboard-backdrop"
+          style={closing ? { animation: "fadeOut .25s ease-out forwards" } : {}}>
+          <div className="onboard-card"
+            style={closing ? { animation: "dialogOut .25s var(--ease-out) forwards" } : {}}>
+            <div key={stepKey} className="onboard-body onboard-step-enter">
+              <div className="onboard-icon">{s.icon}</div>
+              <div className="onboard-title">{s.title}</div>
+              <div className="onboard-desc">{s.desc}</div>
+              {s.links && <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 12 }}>
+                {s.links.map(l => <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" style={{
+                  fontSize: 13, fontWeight: 600, color: "var(--text-2)", textDecoration: "none",
+                  padding: "8px 16px", borderRadius: 10,
+                  background: "var(--surface)", border: ".5px solid var(--surface-border)",
+                  boxShadow: "inset 0 .5px 0 var(--surface-hi)",
+                }}>{l.label}</a>)}
+              </div>}
+            </div>
+            <div className="onboard-dots">
+              {ONBOARD_STEPS.map((_, i) => (
+                <div key={i} className={"onboard-dot" + (i === step ? " active" : "")} />
+              ))}
+            </div>
+            <div className="onboard-actions">
+              {step > 0 ? (
+                <button className="onboard-btn onboard-btn-secondary" onClick={prev}>上一步</button>
+              ) : (
+                <button className="onboard-btn onboard-btn-secondary" onClick={skip}>跳過</button>
+              )}
+              <button className="onboard-btn onboard-btn-primary" onClick={next}>
+                {isLast ? "開始使用" : "下一步"}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      );
+    }
+
     /* ══════════ App ══════════ */
 
     function App() {
-      const [sel,setSel]=useState([]);
-      const [view,setView]=useState("pick");
-      const [day,setDay]=useState(1);
-      const [stg,setStg]=useState("ALL");
-      const [q,setQ]=useState("");
-      const [rdy,setRdy]=useState(false);
-      const [showSheet,setShowSheet]=useState(false);
-      const [pref,setPref]=useState(new Set());
-      const [simNow,setSimNow]=useState(null);
-      const [now,setNow]=useState(new Date());
-      const [showTimePicker,setShowTimePicker]=useState(false);
-      const [lastTap,setLastTap]=useState(0);
-      const firstConflictRef=useRef(null);
-      const theme=useTheme();
+      const [sel, setSel] = useState([]);
+      const [view, setView] = useState("pick");
+      const [day, setDay] = useState(1);
+      const [stg, setStg] = useState("ALL");
+      const [q, setQ] = useState("");
+      const [rdy, setRdy] = useState(false);
+      const [showSheet, setShowSheet] = useState(false);
+      const [pref, setPref] = useState(new Set());
+      const [simNow, setSimNow] = useState(null);
+      const [now, setNow] = useState(new Date());
+      const [showTimePicker, setShowTimePicker] = useState(false);
+      const [lastTap, setLastTap] = useState(0);
+      const firstConflictRef = useRef(null);
+      const theme = useTheme();
+      const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
 
       // Tick real clock every 30s
-      useEffect(()=>{
-        if(simNow) return;
-        const id=setInterval(()=>setNow(new Date()),30000);
-        return ()=>clearInterval(id);
-      },[simNow]);
+      useEffect(() => {
+        if (simNow) return;
+        const id = setInterval(() => setNow(new Date()), 30000);
+        return () => clearInterval(id);
+      }, [simNow]);
 
       const activeNow = simNow || now;
       const activeDay = getDayFromDate(activeNow);
-      const activeMinutes = activeNow.getHours()*60+activeNow.getMinutes();
+      const activeMinutes = activeNow.getHours() * 60 + activeNow.getMinutes();
 
-      useEffect(()=>{
-        Promise.all([dbGet(), dbGetPref()]).then(([v,p])=>{
+      useEffect(() => {
+        Promise.all([dbGet(), dbGetPref()]).then(([v, p]) => {
           setSel(v); setPref(new Set(p)); setRdy(true);
         });
-      },[]);
-      useEffect(()=>{if(rdy)dbSet(sel)},[sel,rdy]);
-      useEffect(()=>{if(rdy)dbSetPref([...pref])},[pref,rdy]);
+      }, []);
+      useEffect(() => { if (rdy) dbSet(sel) }, [sel, rdy]);
+      useEffect(() => { if (rdy) dbSetPref([...pref]) }, [pref, rdy]);
 
-      const toggle=useCallback(id=>setSel(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]),[]);
-      const togglePref=useCallback((id,groupIds)=>setPref(p=>{const n=new Set(p);groupIds.forEach(gid=>n.delete(gid));if(!p.has(id))n.add(id);return n}),[]);
+      const toggle = useCallback(id => setSel(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]), []);
+      const togglePref = useCallback((id, groupIds) => setPref(p => { const n = new Set(p); groupIds.forEach(gid => n.delete(gid)); if (!p.has(id)) n.add(id); return n }), []);
       // Swipe between stages with slide animation
-      const pillsRef=useRef(null);
-      const touchRef=useRef({x:0,y:0});
-      const [slideClass,setSlideClass]=useState("stage-slide-in");
-      const slideDir=useRef(0); // -1=left, 1=right
-      const onTouchStart=useCallback(e=>{
-        touchRef.current={x:e.touches[0].clientX,y:e.touches[0].clientY};
-      },[]);
-      const slideStage=useCallback((nextStg, dir)=>{
-        setSlideClass(dir<0 ? "stage-slide-out-left" : "stage-slide-out-right");
-        setTimeout(()=>{
+      const pillsRef = useRef(null);
+      const touchRef = useRef({ x: 0, y: 0 });
+      const [slideClass, setSlideClass] = useState("stage-slide-in");
+      const slideDir = useRef(0); // -1=left, 1=right
+      const onTouchStart = useCallback(e => {
+        touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }, []);
+      const slideStage = useCallback((nextStg, dir) => {
+        setSlideClass(dir < 0 ? "stage-slide-out-left" : "stage-slide-out-right");
+        setTimeout(() => {
           setStg(nextStg);
-          setSlideClass(dir<0 ? "stage-slide-enter-right" : "stage-slide-enter-left");
-          requestAnimationFrame(()=>requestAnimationFrame(()=>setSlideClass("stage-slide-in")));
-        },200);
-      },[]);
-      const onTouchEnd=useCallback(e=>{
-        const dx=e.changedTouches[0].clientX-touchRef.current.x;
-        const dy=e.changedTouches[0].clientY-touchRef.current.y;
-        if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){
-          const stages=stgsDay;
-          const idx=stages.indexOf(stg);
-          if(dx<0 && idx<stages.length-1) slideStage(stages[idx+1], -1);
-          else if(dx>0 && idx>0) slideStage(stages[idx-1], 1);
+          setSlideClass(dir < 0 ? "stage-slide-enter-right" : "stage-slide-enter-left");
+          requestAnimationFrame(() => requestAnimationFrame(() => setSlideClass("stage-slide-in")));
+        }, 200);
+      }, []);
+      const onTouchEnd = useCallback(e => {
+        const dx = e.changedTouches[0].clientX - touchRef.current.x;
+        const dy = e.changedTouches[0].clientY - touchRef.current.y;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+          const stages = stgsDay;
+          const idx = stages.indexOf(stg);
+          if (dx < 0 && idx < stages.length - 1) slideStage(stages[idx + 1], -1);
+          else if (dx > 0 && idx > 0) slideStage(stages[idx - 1], 1);
         }
-      },[stgsDay,stg,slideStage]);
+      }, [stgsDay, stg, slideStage]);
 
-      useEffect(()=>{
-        const c=pillsRef.current;if(!c)return;
-        const active=c.querySelector('[data-stage-active="1"]');
-        if(active) active.scrollIntoView({behavior:"smooth",block:"nearest",inline:"center"});
-      },[stg]);
+      useEffect(() => {
+        const c = pillsRef.current; if (!c) return;
+        const active = c.querySelector('[data-stage-active="1"]');
+        if (active) active.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      }, [stg]);
 
-      const scrollToConflict=useCallback(()=>{
+      const scrollToConflict = useCallback(() => {
         setView("sched");
-        setTimeout(()=>{
-          const el=document.querySelector('.conflict-group');
-          if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
-        },100);
-      },[]);
-      const scrollToDay=useCallback((d)=>{
+        setTimeout(() => {
+          const el = document.querySelector('.conflict-group');
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      }, []);
+      const scrollToDay = useCallback((d) => {
         setView("sched");
-        setTimeout(()=>{
-          const el=document.getElementById('sched-day-'+d);
-          if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
-        },100);
-      },[]);
+        setTimeout(() => {
+          const el = document.getElementById('sched-day-' + d);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }, []);
 
-      const selItems=useMemo(()=>T.filter(t=>sel.includes(t.id)),[sel]);
-      const confIds=useMemo(()=>{const s=new Set();for(let i=0;i<selItems.length;i++)for(let j=i+1;j<selItems.length;j++)if(clash(selItems[i],selItems[j])){s.add(selItems[i].id);s.add(selItems[j].id)}return s},[selItems]);
-      const dimIds=useMemo(()=>{const s=new Set();T.forEach(t=>{if(sel.includes(t.id))return;for(const si of selItems)if(clash(t,si)){s.add(t.id);break}});return s},[sel,selItems]);
+      const selItems = useMemo(() => T.filter(t => sel.includes(t.id)), [sel]);
+      const confIds = useMemo(() => { const s = new Set(); for (let i = 0; i < selItems.length; i++)for (let j = i + 1; j < selItems.length; j++)if (clash(selItems[i], selItems[j])) { s.add(selItems[i].id); s.add(selItems[j].id) } return s }, [selItems]);
+      const dimIds = useMemo(() => { const s = new Set(); T.forEach(t => { if (sel.includes(t.id)) return; for (const si of selItems) if (clash(t, si)) { s.add(t.id); break } }); return s }, [sel, selItems]);
 
-      const list=useMemo(()=>T.filter(t=>{if(t.day!==day)return false;if(stg!=="ALL"&&t.stage!==stg)return false;if(q&&!t.artist.toLowerCase().includes(q.toLowerCase()))return false;return true}).sort((a,b)=>t2m(a.start)-t2m(b.start)),[day,stg,q]);
+      const list = useMemo(() => T.filter(t => { if (t.day !== day) return false; if (stg !== "ALL" && t.stage !== stg) return false; if (q && !t.artist.toLowerCase().includes(q.toLowerCase())) return false; return true }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, stg, q]);
 
-      const sched=useMemo(()=>{const d={1:[],2:[]};selItems.forEach(i=>d[i.day]?.push(i));Object.values(d).forEach(a=>a.sort((x,y)=>t2m(x.start)-t2m(y.start)));return d},[selItems]);
-      const stgsDay=useMemo(()=>{const s=new Set();T.forEach(t=>{if(t.day===day)s.add(t.stage)});return["ALL",...Object.keys(STAGES).filter(k=>s.has(k))]},[day]);
-      const nC=Math.floor(confIds.size/2);
+      const sched = useMemo(() => { const d = { 1: [], 2: [] }; selItems.forEach(i => d[i.day]?.push(i)); Object.values(d).forEach(a => a.sort((x, y) => t2m(x.start) - t2m(y.start))); return d }, [selItems]);
+      const stgsDay = useMemo(() => { const s = new Set(); T.forEach(t => { if (t.day === day) s.add(t.stage) }); return ["ALL", ...Object.keys(STAGES).filter(k => s.has(k))] }, [day]);
+      const nC = Math.floor(confIds.size / 2);
 
       // Compute show status relative to activeNow
       const getStatus = useCallback((item) => {
-        if(item.day !== activeDay) return null;
-        const s=t2m(item.start), e=t2m(item.end);
-        if(activeMinutes >= e) return "ended";
-        if(activeMinutes >= s && activeMinutes < e) return "playing";
+        if (item.day !== activeDay) return null;
+        const s = t2m(item.start), e = t2m(item.end);
+        if (activeMinutes >= e) return "ended";
+        if (activeMinutes >= s && activeMinutes < e) return "playing";
         return "upcoming";
-      },[activeDay,activeMinutes]);
+      }, [activeDay, activeMinutes]);
       const getProgress = useCallback((item) => {
-        const s=t2m(item.start), e=t2m(item.end);
-        return (activeMinutes-s)/(e-s);
-      },[activeMinutes]);
+        const s = t2m(item.start), e = t2m(item.end);
+        return (activeMinutes - s) / (e - s);
+      }, [activeMinutes]);
 
       return (
         <div style={{
-          position:"relative", zIndex:1,
-          minHeight:"100dvh", maxWidth:520, margin:"0 auto",
-          paddingBottom:`calc(90px + var(--safe-bottom))`,
+          position: "relative", zIndex: 1,
+          minHeight: "100dvh", maxWidth: 520, margin: "0 auto",
+          paddingBottom: `calc(90px + var(--safe-bottom))`,
         }}>
 
           {/* ══ Floating Header ══ */}
           <div className="liquid-glass" style={{
-            position:"sticky", top:0, zIndex:100,
-            padding:`calc(14px + var(--safe-top)) 18px 14px`,
-            borderRadius:"0 0 24px 24px",
-            borderTop:"none",
-            boxShadow:"var(--glass-shadow), inset 0 -1px 0 var(--glass-lo)",
+            position: "sticky", top: 0, zIndex: 100,
+            padding: `calc(14px + var(--safe-top)) 18px 14px`,
+            borderRadius: "0 0 24px 24px",
+            borderTop: "none",
+            boxShadow: "var(--glass-shadow), inset 0 -1px 0 var(--glass-lo)",
           }}>
             {/* Title row */}
-            <div style={{marginBottom:14, display:"flex", alignItems:"flex-start", justifyContent:"space-between"}}>
-              <div style={{flex:1, minWidth:0}}>
+            <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <h1 style={{
-                  fontSize:24, fontWeight:800, letterSpacing:-.5, lineHeight:1.2,
+                  fontSize: 24, fontWeight: 800, letterSpacing: -.5, lineHeight: 1.2,
                 }}>
                   <span style={{
-                    background:"linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
-                    WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+                    background: "linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
+                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                   }}>大港開唱</span>
-                  <span onClick={view==="sched"?()=>{
-                    const n=Date.now();
-                    if(n-lastTap<400) setShowTimePicker(true);
+                  <span onClick={view === "sched" ? () => {
+                    const n = Date.now();
+                    if (n - lastTap < 400) setShowTimePicker(true);
                     setLastTap(n);
-                  }:undefined} style={{
+                  } : undefined} style={{
                     color: simNow ? "#F4A261" : "var(--text-4)",
-                    fontWeight:600, fontSize:20, marginLeft:6,
-                    cursor: view==="sched" ? "default" : "auto",
-                    transition:"color .2s",
-                  }}>2026{simNow&&" ⏱"}</span>
+                    fontWeight: 600, fontSize: 20, marginLeft: 6,
+                    cursor: view === "sched" ? "default" : "auto",
+                    transition: "color .2s",
+                  }}>2026{simNow && " ⏱"}</span>
                 </h1>
-                <p style={{fontSize:13, color:"var(--text-3)", marginTop:4, fontWeight:500}}>
+                <p style={{ fontSize: 13, color: "var(--text-3)", marginTop: 4, fontWeight: 500 }}>
                   3/21–22 高雄駁二
-                  <span style={{margin:"0 6px", opacity:.3}}>·</span>
+                  <span style={{ margin: "0 6px", opacity: .3 }}>·</span>
                   已選 {sel.length} 組
-                  {nC>0&&(
+                  {nC > 0 && (
                     <span onClick={scrollToConflict} style={{
-                      marginLeft:8, display:"inline-block",
-                      background:"rgba(255,80,80,.15)", color:"#FF6B6B",
-                      fontSize:11, fontWeight:700, padding:"2px 9px", borderRadius:8,
-                      cursor:"pointer", transition:"background .15s",
+                      marginLeft: 8, display: "inline-block",
+                      background: "rgba(255,80,80,.15)", color: "#FF6B6B",
+                      fontSize: 11, fontWeight: 700, padding: "2px 9px", borderRadius: 8,
+                      cursor: "pointer", transition: "background .15s",
                     }}>{nC} 衝突</span>
                   )}
                 </p>
               </div>
               <button className="theme-btn" onClick={theme.cycle} title={
-                theme.pref==='system'?'跟隨系統':theme.pref==='light'?'淺色模式':'深色模式'
+                theme.pref === 'system' ? '跟隨系統' : theme.pref === 'light' ? '淺色模式' : '深色模式'
               }>
-                <ThemeIcon pref={theme.pref}/>
+                <ThemeIcon pref={theme.pref} />
               </button>
             </div>
 
             {/* Mode toggle */}
             <Segment
-              items={[{value:"pick",label:"選團"},{value:"sched",label:"行程表"}]}
-              value={view} onChange={v=>{
+              items={[{ value: "pick", label: "選團" }, { value: "sched", label: "行程表" }]}
+              value={view} onChange={v => {
                 setView(v);
-                if(v==="sched") setTimeout(()=>{
-                  const el=document.querySelector('.now-line')||document.querySelector('.now-playing-glow')?.parentElement;
-                  if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
-                },100);
+                if (v === "sched") setTimeout(() => {
+                  const el = document.querySelector('.now-line') || document.querySelector('.now-playing-glow')?.parentElement;
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 100);
               }}
             />
 
-            {view==="pick"&&(
+            {view === "pick" && (
               <>
                 {/* Day toggle */}
-                <div style={{marginTop:10}}>
+                <div style={{ marginTop: 10 }}>
                   <Segment
-                    items={[{value:1,label:"DAY 1 · 3/21 六"},{value:2,label:"DAY 2 · 3/22 日"}]}
-                    value={day} onChange={v=>{setDay(v);setStg("ALL")}} size="sm"
+                    items={[{ value: 1, label: "DAY 1 · 3/21 六" }, { value: 2, label: "DAY 2 · 3/22 日" }]}
+                    value={day} onChange={v => { setDay(v); setStg("ALL") }} size="sm"
                   />
                 </div>
 
                 {/* Search */}
-                <div style={{position:"relative",marginTop:10}}>
-                  <svg style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",opacity:.25}} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/>
+                <div style={{ position: "relative", marginTop: 10 }}>
+                  <svg style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", opacity: .25 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="7" /><path d="m21 21-4.35-4.35" />
                   </svg>
                   <input
-                    value={q} onChange={e=>setQ(e.target.value)}
+                    value={q} onChange={e => setQ(e.target.value)}
                     placeholder="搜尋藝人..."
                     style={{
-                      width:"100%", padding:"11px 14px 11px 36px",
-                      borderRadius:14, boxSizing:"border-box",
-                      border:`.5px solid var(--dim)`,
-                      background:"var(--surface)",
-                      color:"var(--text)", fontSize:15,
-                      outline:"none", fontFamily:"inherit",
-                      transition:"all .2s",
-                      boxShadow:`inset 0 .5px 0 var(--surface-border)`,
+                      width: "100%", padding: "11px 14px 11px 36px",
+                      borderRadius: 14, boxSizing: "border-box",
+                      border: `.5px solid var(--dim)`,
+                      background: "var(--surface)",
+                      color: "var(--text)", fontSize: 15,
+                      outline: "none", fontFamily: "inherit",
+                      transition: "all .2s",
+                      boxShadow: `inset 0 .5px 0 var(--surface-border)`,
                     }}
-                    onFocus={e=>{e.target.style.borderColor="var(--glass-border)";e.target.style.background="var(--surface-hover)"}}
-                    onBlur={e=>{e.target.style.borderColor="var(--dim)";e.target.style.background="var(--surface)"}}
+                    onFocus={e => { e.target.style.borderColor = "var(--glass-border)"; e.target.style.background = "var(--surface-hover)" }}
+                    onBlur={e => { e.target.style.borderColor = "var(--dim)"; e.target.style.background = "var(--surface)" }}
                   />
                 </div>
 
                 {/* Stage pills */}
                 <div ref={pillsRef} className="no-scrollbar" style={{
-                  display:"flex", gap:7, overflowX:"auto",
-                  paddingTop:10, paddingBottom:2,
+                  display: "flex", gap: 7, overflowX: "auto",
+                  paddingTop: 10, paddingBottom: 2,
                 }}>
-                  {stgsDay.map(s=>(
-                    <div key={s} data-stage-active={stg===s?"1":"0"}>
-                    <Pill
-                      label={s==="ALL"?"全部":STAGES[s]?.name}
-                      active={stg===s}
-                      color={s==="ALL"?null:STAGES[s]?.bg}
-                      onClick={()=>{
-                        if(s===stg) return;
-                        slideStage(s, stgsDay.indexOf(s)>stgsDay.indexOf(stg)?-1:1);
-                      }}
-                    />
+                  {stgsDay.map(s => (
+                    <div key={s} data-stage-active={stg === s ? "1" : "0"}>
+                      <Pill
+                        label={s === "ALL" ? "全部" : STAGES[s]?.name}
+                        active={stg === s}
+                        color={s === "ALL" ? null : STAGES[s]?.bg}
+                        onClick={() => {
+                          if (s === stg) return;
+                          slideStage(s, stgsDay.indexOf(s) > stgsDay.indexOf(stg) ? -1 : 1);
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -1315,20 +1802,20 @@
           </div>
 
           {/* ══ Content ══ */}
-          <div style={{padding:"12px 16px 0"}}>
-            {view==="pick" ? (
+          <div style={{ padding: "12px 16px 0" }}>
+            {view === "pick" ? (
               <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
-                className={"stage-slide "+slideClass}
-                style={{display:"flex",flexDirection:"column",gap:7,minHeight:"60vh"}}>
-                {list.length===0&&(
+                className={"stage-slide " + slideClass}
+                style={{ display: "flex", flexDirection: "column", gap: 7, minHeight: "60vh" }}>
+                {list.length === 0 && (
                   <div style={{
-                    textAlign:"center", padding:"100px 20px",
-                    color:"var(--text-5)", fontSize:16, fontWeight:500,
+                    textAlign: "center", padding: "100px 20px",
+                    color: "var(--text-5)", fontSize: 16, fontWeight: 500,
                   }}>
-                    {q?"找不到符合的藝人":"此舞台本日無演出"}
+                    {q ? "找不到符合的藝人" : "此舞台本日無演出"}
                   </div>
                 )}
-                {list.map(item=>(
+                {list.map(item => (
                   <Card
                     key={item.id} item={item}
                     selected={sel.includes(item.id)}
@@ -1340,17 +1827,17 @@
               </div>
             ) : (
               <div>
-                {sel.length===0 ? (
+                {sel.length === 0 ? (
                   <div style={{
-                    textAlign:"center", padding:"100px 20px",
-                    color:"var(--text-5)", fontSize:16,
-                    fontWeight:500, lineHeight:2,
+                    textAlign: "center", padding: "100px 20px",
+                    color: "var(--text-5)", fontSize: 16,
+                    fontWeight: 500, lineHeight: 2,
                   }}>
-                    還沒選任何演出<br/>切換到「選團」開始挑選
+                    還沒選任何演出<br />切換到「選團」開始挑選
                   </div>
                 ) : (
-                  [1,2].map(d=>{
-                    const items=sched[d]; if(!items?.length)return null;
+                  [1, 2].map(d => {
+                    const items = sched[d]; if (!items?.length) return null;
                     // Build segments: group overlapping conflicts together
                     const segments = [];
                     let i = 0;
@@ -1365,86 +1852,86 @@
                           else break;
                         }
                         if (group.length > 1) {
-                          segments.push({type:"conflict", items:group});
+                          segments.push({ type: "conflict", items: group });
                           i = j;
                         } else {
-                          segments.push({type:"single", item:items[i]});
+                          segments.push({ type: "single", item: items[i] });
                           i++;
                         }
                       } else {
-                        segments.push({type:"single", item:items[i]});
+                        segments.push({ type: "single", item: items[i] });
                         i++;
                       }
                     }
-                    return(
-                      <div key={d} id={"sched-day-"+d} style={{marginBottom:24}}>
+                    return (
+                      <div key={d} id={"sched-day-" + d} style={{ marginBottom: 24 }}>
                         <div style={{
-                          display:"flex", alignItems:"baseline", gap:8,
-                          margin:"20px 0 14px",
+                          display: "flex", alignItems: "baseline", gap: 8,
+                          margin: "20px 0 14px",
                         }}>
                           <h3 style={{
-                            fontSize:18, fontWeight:800,
-                            background: d===1
+                            fontSize: 18, fontWeight: 800,
+                            background: d === 1
                               ? "linear-gradient(135deg,#FF6B6B,#E63946)"
                               : "linear-gradient(135deg,#F4A261,#EF6C00)",
-                            WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+                            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                           }}>
-                            {d===1?"DAY 1":"DAY 2"}
+                            {d === 1 ? "DAY 1" : "DAY 2"}
                           </h3>
-                          <span style={{fontSize:13,color:"var(--text-4)",fontWeight:500}}>
-                            {d===1?"3/21 (六)":"3/22 (日)"}
+                          <span style={{ fontSize: 13, color: "var(--text-4)", fontWeight: 500 }}>
+                            {d === 1 ? "3/21 (六)" : "3/22 (日)"}
                           </span>
-                          <span style={{fontSize:12,color:"var(--text-5)",fontWeight:500}}>
+                          <span style={{ fontSize: 12, color: "var(--text-5)", fontWeight: 500 }}>
                             {items.length} 組
                           </span>
                         </div>
-                        {(()=>{
+                        {(() => {
                           const out = [];
-                          const nowLine = <div key="now-line" className="now-line"><div className="now-line-dot"/><span className="now-line-label">現在 {fmtTime(activeNow)}</span></div>;
+                          const nowLine = <div key="now-line" className="now-line"><div className="now-line-dot" /><span className="now-line-label">現在 {fmtTime(activeNow)}</span></div>;
                           let nowInserted = false;
 
                           // Helper: get the latest end time of a segment
-                          const segEnd = s => t2m((s.type==="conflict" ? s.items[s.items.length-1] : s.item).end);
-                          const segStart = s => t2m(s.type==="conflict" ? s.items[0].start : s.item.start);
+                          const segEnd = s => t2m((s.type === "conflict" ? s.items[s.items.length - 1] : s.item).end);
+                          const segStart = s => t2m(s.type === "conflict" ? s.items[0].start : s.item.start);
 
-                          segments.forEach((seg,si)=>{
-                            const prevEnd = si > 0 ? segEnd(segments[si-1]) : null;
+                          segments.forEach((seg, si) => {
+                            const prevEnd = si > 0 ? segEnd(segments[si - 1]) : null;
                             const curStart = segStart(seg);
                             const gap = prevEnd !== null ? curStart - prevEnd : null;
 
                             // Insert NOW line: between segments, in the gap where activeMinutes falls
-                            if(!nowInserted && d===activeDay && prevEnd!==null && activeMinutes >= prevEnd && activeMinutes < curStart) {
+                            if (!nowInserted && d === activeDay && prevEnd !== null && activeMinutes >= prevEnd && activeMinutes < curStart) {
                               nowInserted = true;
                               out.push(nowLine);
                             }
 
                             if (seg.type === "conflict") {
                               out.push(
-                                <React.Fragment key={"cg-"+si}>
-                                  {gap!==null&&gap>0&&(
-                                    <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 0",justifyContent:"center"}}>
-                                      <div style={{flex:1,height:.5,background:"var(--divider)"}}/>
-                                      <span style={{fontSize:11,color:"var(--text-5)",fontWeight:500}}>{gap} 分鐘</span>
-                                      <div style={{flex:1,height:.5,background:"var(--divider)"}}/>
+                                <React.Fragment key={"cg-" + si}>
+                                  {gap !== null && gap > 0 && (
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", justifyContent: "center" }}>
+                                      <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
+                                      <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{gap} 分鐘</span>
+                                      <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
                                     </div>
                                   )}
-                                  <ConflictGroup items={seg.items} pref={pref} onPref={togglePref} getStatus={getStatus} getProgress={getProgress}/>
+                                  <ConflictGroup items={seg.items} pref={pref} onPref={togglePref} getStatus={getStatus} getProgress={getProgress} />
                                 </React.Fragment>
                               );
                             } else {
                               const st = getStatus(seg.item);
                               out.push(
                                 <TimelineCard key={seg.item.id} item={seg.item} gap={gap}
-                                  status={st} progress={st==="playing"?getProgress(seg.item):0}/>
+                                  status={st} progress={st === "playing" ? getProgress(seg.item) : 0} />
                               );
                             }
                           });
                           // NOW line after all segments if all ended
-                          if(!nowInserted && d===activeDay && segments.length>0 && activeMinutes >= segEnd(segments[segments.length-1])) {
+                          if (!nowInserted && d === activeDay && segments.length > 0 && activeMinutes >= segEnd(segments[segments.length - 1])) {
                             out.push(nowLine);
                           }
                           // NOW line before all segments if before first show
-                          if(!nowInserted && d===activeDay && segments.length>0 && activeMinutes < segStart(segments[0])) {
+                          if (!nowInserted && d === activeDay && segments.length > 0 && activeMinutes < segStart(segments[0])) {
                             out.unshift(nowLine);
                           }
                           return out;
@@ -1453,35 +1940,35 @@
                     );
                   })
                 )}
-                {sel.length>0&&(
-                  <div style={{textAlign:"center",padding:"8px 0 20px"}}>
-                    <button className="press" onClick={()=>setShowSheet(true)} style={{
-                      padding:"13px 32px", borderRadius:100,
-                      border:".5px solid rgba(255,80,80,.2)",
-                      background:"rgba(255,80,80,.08)",
-                      color:"#FF6B6B", fontSize:15, fontWeight:600,
-                      cursor:"pointer", fontFamily:"inherit",
-                      boxShadow:`0 2px 12px rgba(255,80,80,.08), inset 0 .5px 0 var(--surface-border)`,
+                {sel.length > 0 && (
+                  <div style={{ textAlign: "center", padding: "8px 0 20px" }}>
+                    <button className="press" onClick={() => setShowSheet(true)} style={{
+                      padding: "13px 32px", borderRadius: 100,
+                      border: ".5px solid rgba(255,80,80,.2)",
+                      background: "rgba(255,80,80,.08)",
+                      color: "#FF6B6B", fontSize: 15, fontWeight: 600,
+                      cursor: "pointer", fontFamily: "inherit",
+                      boxShadow: `0 2px 12px rgba(255,80,80,.08), inset 0 .5px 0 var(--surface-border)`,
                     }}>
                       清除所有選取
                     </button>
                   </div>
                 )}
-                {showTimePicker&&(
+                {showTimePicker && (
                   <TimePicker
                     simNow={simNow}
-                    onSet={d=>{setSimNow(d);setNow(d)}}
-                    onReset={()=>{setSimNow(null);setNow(new Date())}}
-                    onClose={()=>setShowTimePicker(false)}
+                    onSet={d => { setSimNow(d); setNow(d) }}
+                    onReset={() => { setSimNow(null); setNow(new Date()) }}
+                    onClose={() => setShowTimePicker(false)}
                   />
                 )}
-                {showSheet&&(
+                {showSheet && (
                   <ConfirmDialog
                     title="清除所有選取？"
                     message={`已選的 ${sel.length} 組演出將全部移除，此操作無法復原。`}
                     confirmLabel="清除"
-                    onConfirm={()=>setSel([])}
-                    onClose={()=>setShowSheet(false)}
+                    onConfirm={() => setSel([])}
+                    onClose={() => setShowSheet(false)}
                   />
                 )}
               </div>
@@ -1490,41 +1977,43 @@
 
           {/* ══ Floating Tab Bar ══ */}
           <div className="liquid-glass" style={{
-            position:"fixed", bottom:0, left:0, right:0, zIndex:200,
-            borderRadius:"20px 20px 0 0",
-            borderBottom:"none",
-            boxShadow:"0 -4px 24px rgba(0,0,0,.08), inset 0 .5px 0 var(--glass-hi)",
-            padding:`14px 0 calc(14px + var(--safe-bottom))`,
-            display:"flex", justifyContent:"center", gap:20,
-            fontSize:13, fontWeight:500,
-            color:"var(--text-4)",
+            position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200,
+            borderRadius: "20px 20px 0 0",
+            borderBottom: "none",
+            boxShadow: "0 -4px 24px rgba(0,0,0,.08), inset 0 .5px 0 var(--glass-hi)",
+            padding: `14px 0 calc(14px + var(--safe-bottom))`,
+            display: "flex", justifyContent: "center", gap: 20,
+            fontSize: 13, fontWeight: 500,
+            color: "var(--text-4)",
           }}>
-            <span onClick={()=>scrollToDay(1)} style={{cursor:"pointer",padding:"4px 8px",margin:"-4px -8px",borderRadius:8}}>
-              DAY 1 <span style={{fontWeight:700,color:"var(--text-2)"}}>{sched[1]?.length||0}</span>
+            <span onClick={() => scrollToDay(1)} style={{ cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8 }}>
+              DAY 1 <span style={{ fontWeight: 700, color: "var(--text-2)" }}>{sched[1]?.length || 0}</span>
             </span>
-            <span style={{color:"var(--dim)"}}>|</span>
-            <span onClick={()=>scrollToDay(2)} style={{cursor:"pointer",padding:"4px 8px",margin:"-4px -8px",borderRadius:8}}>
-              DAY 2 <span style={{fontWeight:700,color:"var(--text-2)"}}>{sched[2]?.length||0}</span>
+            <span style={{ color: "var(--dim)" }}>|</span>
+            <span onClick={() => scrollToDay(2)} style={{ cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8 }}>
+              DAY 2 <span style={{ fontWeight: 700, color: "var(--text-2)" }}>{sched[2]?.length || 0}</span>
             </span>
-            {nC>0&&(
+            {nC > 0 && (
               <>
-                <span style={{color:"var(--dim)"}}>|</span>
+                <span style={{ color: "var(--dim)" }}>|</span>
                 <span onClick={scrollToConflict} style={{
-                  color:"#FF6B6B",fontWeight:700,cursor:"pointer",
-                  padding:"4px 8px", margin:"-4px -8px", borderRadius:8,
-                  transition:"background .15s",
-                }} onTouchStart={e=>e.currentTarget.style.background="rgba(255,80,80,.12)"}
-                   onTouchEnd={e=>e.currentTarget.style.background="transparent"}>
+                  color: "#FF6B6B", fontWeight: 700, cursor: "pointer",
+                  padding: "4px 8px", margin: "-4px -8px", borderRadius: 8,
+                  transition: "background .15s",
+                }} onTouchStart={e => e.currentTarget.style.background = "rgba(255,80,80,.12)"}
+                  onTouchEnd={e => e.currentTarget.style.background = "transparent"}>
                   {nC} 衝突
                 </span>
               </>
             )}
           </div>
+          {showOnboard && <Onboarding onDone={() => { localStorage.setItem("onboard-done", "1"); setShowOnboard(false) }} />}
         </div>
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
+
 </html>

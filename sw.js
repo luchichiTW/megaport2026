@@ -1,6 +1,7 @@
-const CACHE = "mp2026-v1";
+const CACHE = "mp2026-v2";
 const ASSETS = [
   "./index.html",
+  "./schedule.js",
   "./manifest.json",
   "./icon.svg",
   "./icon-180.png",
@@ -10,16 +11,20 @@ const ASSETS = [
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
-  self.skipWaiting();
+  globalThis.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    )
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)),
+        ),
+      ),
   );
-  self.clients.claim();
+  globalThis.clients.claim();
 });
 
 self.addEventListener("fetch", (e) => {
@@ -29,13 +34,13 @@ self.addEventListener("fetch", (e) => {
         const clone = r.clone();
         caches.open(CACHE).then(
           (c) => c.put(e.request, clone),
-          (err) => console.warn("Cache put failed:", err)
+          (err) => console.warn("Cache put failed:", err),
         );
         return r;
       })
       .catch((err) => {
         console.warn("Fetch failed, serving from cache:", err.message);
         return caches.match(e.request);
-      })
+      }),
   );
 });
