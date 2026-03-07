@@ -18,6 +18,14 @@ const T=[
   {id:"1-SO-5",day:1,stage:"SO",artist:"milet [JP]",start:"19:10",end:"19:50"},
   {id:"1-SO-6",day:1,stage:"SO",artist:"血肉果汁機 ft. 陳亞蘭",start:"21:10",end:"21:50"},
 
+  // 海龍王
+  {id:"1-DK-1",day:1,stage:"DK",artist:"NEE [JP]",start:"13:10",end:"13:50"},
+  {id:"1-DK-2",day:1,stage:"DK",artist:"jo0ji [JP]",start:"14:40",end:"15:20"},
+  {id:"1-DK-3",day:1,stage:"DK",artist:"黑狼人肉戰車那卡西",start:"16:00",end:"16:40"},
+  {id:"1-DK-4",day:1,stage:"DK",artist:"AVRALIZE [DE]",start:"17:20",end:"18:00"},
+  {id:"1-DK-5",day:1,stage:"DK",artist:"無妄合作社",start:"18:40",end:"19:20"},
+  {id:"1-DK-6",day:1,stage:"DK",artist:"Käärijä [FI]",start:"20:10",end:"21:00"},
+
   // 女神龍
   {id:"1-DG-1",day:1,stage:"DG",artist:"海豚刑警",start:"12:30",end:"13:10"},
   {id:"1-DG-2",day:1,stage:"DG",artist:"漂流出口",start:"13:50",end:"14:30"},
@@ -27,21 +35,13 @@ const T=[
   {id:"1-DG-6",day:1,stage:"DG",artist:"李竺芯 ft. 妮妮雅·瘋",start:"19:30",end:"20:00"},
   {id:"1-DG-7",day:1,stage:"DG",artist:"謝金燕",start:"21:00",end:"21:40"},
 
-  // 海龍王
-  {id:"1-DK-1",day:1,stage:"DK",artist:"NEE [JP]",start:"13:10",end:"13:50"},
-  {id:"1-DK-2",day:1,stage:"DK",artist:"jo0ji [JP]",start:"14:40",end:"15:20"},
-  {id:"1-DK-3",day:1,stage:"DK",artist:"黑狼人肉戰車那卡西",start:"16:00",end:"16:40"},
-  {id:"1-DK-4",day:1,stage:"DK",artist:"AVRALIZE [DE]",start:"17:20",end:"18:00"},
-  {id:"1-DK-5",day:1,stage:"DK",artist:"無妄合作社",start:"18:40",end:"19:20"},
-  {id:"1-DK-6",day:1,stage:"DK",artist:"Käärijä [FI]",start:"20:10",end:"21:00"},
-
   // 海波浪
   {id:"1-HB-1",day:1,stage:"HB",artist:"倒車入庫",start:"13:10",end:"13:50"},
   {id:"1-HB-2",day:1,stage:"HB",artist:"DSPS",start:"14:30",end:"15:10"},
-  {id:"1-HB-2",day:1,stage:"HB",artist:"Yokkorio",start:"15:50",end:"16:30"},
-  {id:"1-HB-3",day:1,stage:"HB",artist:"Mong Tong × XTRUX",start:"17:10",end:"17:50"},
-  {id:"1-HB-4",day:1,stage:"HB",artist:"體熊專科。Major in Body Bear",start:"18:40",end:"19:20"},
-  {id:"1-HB-5",day:1,stage:"HB",artist:"宅邦戰隊 OTAKUNI 學園祭",start:"20:10",end:"21:40"},
+  {id:"1-HB-3",day:1,stage:"HB",artist:"Yokkorio",start:"15:50",end:"16:30"},
+  {id:"1-HB-4",day:1,stage:"HB",artist:"Mong Tong × XTRUX",start:"17:10",end:"17:50"},
+  {id:"1-HB-5",day:1,stage:"HB",artist:"體熊專科。Major in Body Bear",start:"18:40",end:"19:20"},
+  {id:"1-HB-6",day:1,stage:"HB",artist:"宅邦戰隊 OTAKUNI 學園祭",start:"20:10",end:"21:40"},
 
   // 卡魔麥
   {id:"1-KM-1",day:1,stage:"KM",artist:"COLD DEW",start:"13:10",end:"13:50"},
@@ -92,76 +92,76 @@ const T=[
   // ── Day 2 (03/22) ──
 
   // 南霸天
-  {id:"2-SO-1",day:2,stage:"SO",artist:"結束バンド [JP]",start:"12:40",end:"13:10"},
-  {id:"2-SO-2",day:2,stage:"SO",artist:"芒果醬",start:"14:10",end:"14:40"},
-  {id:"2-SO-3",day:2,stage:"SO",artist:"康士坦的變化球",start:"16:00",end:"16:30"},
+  {id:"2-SO-1",day:2,stage:"SO",artist:"結束バンド [JP]",start:"12:30",end:"13:10"},
+  {id:"2-SO-2",day:2,stage:"SO",artist:"芒果醬",start:"14:10",end:"14:50"},
+  {id:"2-SO-3",day:2,stage:"SO",artist:"康士坦的變化球",start:"15:50",end:"16:30"},
   {id:"2-SO-4",day:2,stage:"SO",artist:"怕胖團 ft. 陽帆",start:"17:30",end:"18:10"},
   {id:"2-SO-5",day:2,stage:"SO",artist:"拍謝少年 ft. AYUNi D from PEDRO",start:"19:10",end:"19:50"},
   {id:"2-SO-6",day:2,stage:"SO",artist:"落日飛車",start:"21:10",end:"21:50"},
 
-  // 女神龍
-  {id:"2-DG-1",day:2,stage:"DG",artist:"HUSH",start:"12:40",end:"13:20"},
-  {id:"2-DG-2",day:2,stage:"DG",artist:"TOOBOE [JP]",start:"14:10",end:"14:50"},
-  {id:"2-DG-3",day:2,stage:"DG",artist:"Gummy B × 陳嫺靜",start:"15:20",end:"16:00"},
-  {id:"2-DG-4",day:2,stage:"DG",artist:"當代電影大師",start:"16:50",end:"17:20"},
-  {id:"2-DG-5",day:2,stage:"DG",artist:"鄭宜農",start:"18:00",end:"18:30"},
-  {id:"2-DG-6",day:2,stage:"DG",artist:"BAND-MAID [JP]",start:"19:40",end:"20:00"},
-  {id:"2-DG-7",day:2,stage:"DG",artist:"AiNA THE END [JP]",start:"21:00",end:"21:50"},
-
   // 海龍王
   {id:"2-DK-1",day:2,stage:"DK",artist:"EmptyORio",start:"13:20",end:"14:00"},
   {id:"2-DK-2",day:2,stage:"DK",artist:"ゲシュタルト乙女 urban session ft. yurinasia",start:"14:40",end:"15:20"},
-  {id:"2-DK-3",day:2,stage:"DK",artist:"隨性 ft. 婷文",start:"16:00",end:"16:30"},
-  {id:"2-DK-4",day:2,stage:"DK",artist:"NOVELISTS [FR]",start:"17:20",end:"17:50"},
-  {id:"2-DK-5",day:2,stage:"DK",artist:"巨大的轟鳴",start:"18:50",end:"19:10"},
-  {id:"2-DK-6",day:2,stage:"DK",artist:"Hiromi's Sonicwonder [JP・US・FR]",start:"20:10",end:"21:00"},
+  {id:"2-DK-3",day:2,stage:"DK",artist:"隨性 ft. 婷文",start:"16:00",end:"16:40"},
+  {id:"2-DK-4",day:2,stage:"DK",artist:"NOVELISTS [FR]",start:"17:20",end:"18:00"},
+  {id:"2-DK-5",day:2,stage:"DK",artist:"巨大的轟鳴",start:"18:40",end:"19:20"},
+  {id:"2-DK-6",day:2,stage:"DK",artist:"Hiromi's Sonicwonder [JP・US・FR]",start:"20:10",end:"21:10"},
+
+  // 女神龍
+  {id:"2-DG-1",day:2,stage:"DG",artist:"HUSH",start:"12:40",end:"13:20"},
+  {id:"2-DG-2",day:2,stage:"DG",artist:"TOOBOE [JP]",start:"14:00",end:"14:40"},
+  {id:"2-DG-3",day:2,stage:"DG",artist:"Gummy B × 陳嫺靜",start:"15:20",end:"16:00"},
+  {id:"2-DG-4",day:2,stage:"DG",artist:"當代電影大師",start:"16:40",end:"17:20"},
+  {id:"2-DG-5",day:2,stage:"DG",artist:"鄭宜農",start:"18:00",end:"18:40"},
+  {id:"2-DG-6",day:2,stage:"DG",artist:"BAND-MAID [JP]",start:"19:30",end:"20:10"},
+  {id:"2-DG-7",day:2,stage:"DG",artist:"AiNA THE END [JP]",start:"21:00",end:"21:40"},
 
   // 海波浪
   {id:"2-HB-1",day:2,stage:"HB",artist:"黃宇寒",start:"13:10",end:"13:50"},
-  {id:"2-HB-2",day:2,stage:"HB",artist:"KINAKO & 東京中央線",start:"14:40",end:"15:10"},
-  {id:"2-HB-3",day:2,stage:"HB",artist:"多米多羅 ft. 可凡",start:"16:00",end:"16:30"},
+  {id:"2-HB-2",day:2,stage:"HB",artist:"KINAKO & 東京中央線",start:"14:30",end:"15:10"},
+  {id:"2-HB-3",day:2,stage:"HB",artist:"多米多羅 ft. 可凡",start:"15:50",end:"16:30"},
   {id:"2-HB-4",day:2,stage:"HB",artist:"FunkyMo ft. 小尾巴",start:"17:10",end:"17:50"},
-  {id:"2-HB-5",day:2,stage:"HB",artist:"粉紅噪音",start:"18:40",end:"19:10"},
-  {id:"2-HB-6",day:2,stage:"HB",artist:"派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO",start:"20:10",end:"21:10"},
+  {id:"2-HB-5",day:2,stage:"HB",artist:"粉紅噪音",start:"18:30",end:"19:10"},
+  {id:"2-HB-6",day:2,stage:"HB",artist:"派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO",start:"20:10",end:"21:40"},
 
   // 卡魔麥
   {id:"2-KM-1",day:2,stage:"KM",artist:"TSS [FR]",start:"13:10",end:"13:50"},
-  {id:"2-KM-2",day:2,stage:"KM",artist:"薄荷葉 ft. JB",start:"15:10",end:"15:40"},
-  {id:"2-KM-3",day:2,stage:"KM",artist:"五月五日 [KR]",start:"16:40",end:"17:10"},
-  {id:"2-KM-4",day:2,stage:"KM",artist:"Infernal Chaos",start:"18:20",end:"18:50"},
-
+  {id:"2-KM-2",day:2,stage:"KM",artist:"恆月三途",start:"14:50",end:"15:30"},
+  {id:"2-KM-3",day:2,stage:"KM",artist:"五月五日 [KR]",start:"16:30",end:"17:10"},
+  {id:"2-KM-4",day:2,stage:"KM",artist:"Infernal Chaos",start:"18:10",end:"18:50"},
+  {id:"2-KM-5",day:2,stage:"KM",artist:"忘憂水",start:"19:50",end:"20:30"},
+  
   // 出頭天
-  {id:"2-CT-1",day:2,stage:"CT",artist:"畫室",start:"13:50",end:"14:10"},
-  {id:"2-CT-2",day:2,stage:"CT",artist:"恆月三途",start:"15:00",end:"15:20"},
-  {id:"2-CT-3",day:2,stage:"CT",artist:"馬尾 ft. 立長",start:"16:30",end:"17:00"},
-  {id:"2-CT-4",day:2,stage:"CT",artist:"洪安妮",start:"17:50",end:"18:10"},
-  {id:"2-CT-5",day:2,stage:"CT",artist:"忘憂水",start:"20:00",end:"20:30"},
+  {id:"2-CT-1",day:2,stage:"CT",artist:"畫室",start:"13:40",end:"14:20"},
+  {id:"2-CT-2",day:2,stage:"CT",artist:"薄荷葉 ft. JB",start:"15:00",end:"15:40"},
+  {id:"2-CT-3",day:2,stage:"CT",artist:"馬尾 ft. 立長",start:"16:20",end:"17:00"},
+  {id:"2-CT-4",day:2,stage:"CT",artist:"洪安妮",start:"17:40",end:"18:20"},
 
   // 大雄丸
-  {id:"2-DX-1",day:2,stage:"DX",artist:"陪嗨吉放歌 vol.1 唱吉｜迪拉｜李毅誠",start:"13:10",end:"13:50"},
-  {id:"2-DX-2",day:2,stage:"DX",artist:"丸長世代 柯家洋｜阿舌",start:"15:10",end:"15:50"},
-  {id:"2-DX-3",day:2,stage:"DX",artist:"還有夜間限定 小兔｜阿賢",start:"17:20",end:"17:50"},
+  {id:"2-DX-1",day:2,stage:"DX",artist:"陪嗨吉放歌 vol.1 呱吉｜迪拉｜李毅誠",start:"13:00",end:"14:00"},
+  {id:"2-DX-2",day:2,stage:"DX",artist:"丸長世代 柯家洋｜阿舌",start:"15:00",end:"16:00"},
+  {id:"2-DX-3",day:2,stage:"DX",artist:"還有夜間限定 小堯｜阿賢",start:"17:00",end:"18:00"},
 
   // 藍寶石
-  {id:"2-BS-1",day:2,stage:"BS",artist:"LEIGHT NINE",start:"14:10",end:"14:50"},
+  {id:"2-BS-1",day:2,stage:"BS",artist:"LEIGHT NINE",start:"14:00",end:"14:40"},
   {id:"2-BS-2",day:2,stage:"BS",artist:"破地獄",start:"15:20",end:"16:00"},
-  {id:"2-BS-3",day:2,stage:"BS",artist:"沈默紳士",start:"16:10",end:"16:40"},
-  {id:"2-BS-4",day:2,stage:"BS",artist:"喜劇開港 單口喜劇",start:"16:50",end:"17:20"},
-  {id:"2-BS-5",day:2,stage:"BS",artist:"debloop",start:"17:30",end:"17:50"},
-  {id:"2-BS-6",day:2,stage:"BS",artist:"Plutato",start:"18:10",end:"18:40"},
-  {id:"2-BS-7",day:2,stage:"BS",artist:"貓膽汁",start:"18:50",end:"19:10"},
-
+  {id:"2-BS-3",day:2,stage:"BS",artist:"喜劇開港 單口喜劇",start:"16:40",end:"17:20"},
+  {id:"2-BS-4",day:2,stage:"BS",artist:"Plutato",start:"18:00",end:"18:40"},
+  
   // 青春夢
   {id:"2-QC-1",day:2,stage:"QC",artist:"打倒三明治",start:"13:20",end:"14:00"},
-  {id:"2-QC-2",day:2,stage:"QC",artist:"壓滿俱樂部",start:"14:50",end:"15:10"},
-  {id:"2-QC-3",day:2,stage:"QC",artist:"Flowstrong + Dac",start:"17:10",end:"17:50"},
-  {id:"2-QC-4",day:2,stage:"QC",artist:"BRADD + 阿法",start:"17:50",end:"18:10"},
-  {id:"2-QC-5",day:2,stage:"QC",artist:"That's My Shhh",start:"18:40",end:"19:40"},
-
+  {id:"2-QC-2",day:2,stage:"QC",artist:"壓滿俱樂部",start:"14:40",end:"15:20"},
+  {id:"2-QC-3",day:2,stage:"QC",artist:"沈默紳士",start:"16:00",end:"16:40"},
+  {id:"2-QC-4",day:2,stage:"QC",artist:"debloop",start:"17:20",end:"18:00"},
+  {id:"2-QC-5",day:2,stage:"QC",artist:"貓膽汁",start:"18:40",end:"19:20"},
+  
   // 小港祭
-  {id:"2-XG-1",day:2,stage:"XG",artist:"DJ QuestionMark 英語金曲復興運動",start:"15:10",end:"16:00"},
-  {id:"2-XG-2",day:2,stage:"XG",artist:"DCIV + Lazy Habits",start:"16:30",end:"17:10"},
-  {id:"2-XG-3",day:2,stage:"XG",artist:"DJ 賴皮 MR.SKIN 國語作業簿",start:"20:10",end:"20:50"},
+  {id:"2-XG-1",day:2,stage:"XG",artist:"DJ QuestionMark 英語金曲復興運動",start:"15:00",end:"16:20"},
+  {id:"2-XG-2",day:2,stage:"XG",artist:"DCIV + Lazy Habits",start:"16:20",end:"17:00"},
+  {id:"2-XG-3",day:2,stage:"XG",artist:"Flowstrong + Dac",start:"17:00",end:"17:40"},
+  {id:"2-XG-4",day:2,stage:"XG",artist:"BRADD + 阿法",start:"17:40",end:"18:20"},
+  {id:"2-XG-5",day:2,stage:"XG",artist:"That's My Shhh",start:"18:20",end:"19:40"},
+  {id:"2-XG-6",day:2,stage:"XG",artist:"DJ 賴皮 MR.SKIN 國語作業簿",start:"19:40",end:"21:00"},
 
   // 大樹下
   {id:"2-DS-1",day:2,stage:"DS",artist:"蘇俊穎 掌中木偶劇團",start:"15:00",end:"16:00"},
