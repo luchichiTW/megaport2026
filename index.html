@@ -915,6 +915,9 @@
       color: var(--text);
       overflow: hidden;
       cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
       border: .5px solid var(--glass-border);
       background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
       backdrop-filter: blur(20px) saturate(180%);
@@ -1243,7 +1246,7 @@
             onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
             onContextMenu={e => e.preventDefault()}
             style={{
-              WebkitUserSelect: "none", userSelect: "none",
+              WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none",
               display: "flex", alignItems: "center", gap: 11,
               width: "100%", padding: "15px 16px",
               borderRadius: 18, cursor: "pointer", textAlign: "left",
@@ -1410,7 +1413,7 @@
               boxShadow: selected ? `0 2px 12px ${sc}20` : "none",
               minWidth: 120, maxWidth: 180,
               transition: "all .2s",
-              WebkitUserSelect: "none", userSelect: "none",
+              WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none",
               position: "relative",
             }}>
             {selected && (
@@ -1471,7 +1474,7 @@
             onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
             onContextMenu={e=>e.preventDefault()}
             style={{
-              WebkitUserSelect:"none",userSelect:"none",
+              WebkitUserSelect:"none",userSelect:"none",WebkitTouchCallout:"none",
               position: "relative", marginBottom: 8,
               borderRadius: 18, overflow: "hidden",
               cursor: isClickable ? "pointer" : "default",
