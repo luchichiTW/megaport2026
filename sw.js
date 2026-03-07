@@ -1,4 +1,4 @@
-const CACHE = "mp2026-v3";
+const CACHE = "mp2026-v4";
 const ASSETS = [
   "./index.html",
   "./schedule.js",
@@ -8,6 +8,10 @@ const ASSETS = [
   "./icon-180.png",
   "./icon-192.png",
   "./icon-512.png",
+  "./img/megaport_festival_2026_day_1.webp",
+  "./img/megaport_festival_2026_day_2.webp",
+  "./img/megaport_festival_2026_free_stage.jpg",
+  "./img/megaport_festival_2026_map.jpg",
 ];
 
 self.addEventListener("install", (e) => {

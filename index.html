@@ -1663,6 +1663,7 @@
       const firstConflictRef = useRef(null);
       const theme = useTheme();
       const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
+      const [showRes, setShowRes] = useState(false);
 
       // Tick real clock every 30s
       useEffect(() => {
@@ -2120,27 +2121,98 @@
             fontSize: 13, fontWeight: 500,
             color: "var(--text-4)",
           }}>
-            <span onClick={() => scrollToDay(1)} style={{ cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8 }}>
-              DAY 1 <span style={{ fontWeight: 700, color: "var(--text-2)" }}>{sched[1]?.length || 0}</span>
+            {view === "sched" && <>
+              <span onClick={() => scrollToDay(1)} style={{ cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8 }}>
+                DAY 1 <span style={{ fontWeight: 700, color: "var(--text-2)" }}>{sched[1]?.length || 0}</span>
+              </span>
+              <span style={{ color: "var(--dim)" }}>|</span>
+              <span onClick={() => scrollToDay(2)} style={{ cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8 }}>
+                DAY 2 <span style={{ fontWeight: 700, color: "var(--text-2)" }}>{sched[2]?.length || 0}</span>
+              </span>
+              {nC > 0 && (
+                <>
+                  <span style={{ color: "var(--dim)" }}>|</span>
+                  <span onClick={scrollToConflict} style={{
+                    color: "#FF6B6B", fontWeight: 700, cursor: "pointer",
+                    padding: "4px 8px", margin: "-4px -8px", borderRadius: 8,
+                    transition: "background .15s",
+                  }} onTouchStart={e => e.currentTarget.style.background = "rgba(255,80,80,.12)"}
+                    onTouchEnd={e => e.currentTarget.style.background = "transparent"}>
+                    {nC} 衝突
+                  </span>
+                </>
+              )}
+              <span style={{ color: "var(--dim)" }}>|</span>
+            </>}
+            <span onClick={() => setShowRes(true)} style={{
+              cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8,
+            }}>
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: -2, marginRight: 3 }}>
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" /><line x1="8" y1="2" x2="8" y2="18" /><line x1="16" y1="6" x2="16" y2="22" />
+              </svg>
+              地圖
             </span>
-            <span style={{ color: "var(--dim)" }}>|</span>
-            <span onClick={() => scrollToDay(2)} style={{ cursor: "pointer", padding: "4px 8px", margin: "-4px -8px", borderRadius: 8 }}>
-              DAY 2 <span style={{ fontWeight: 700, color: "var(--text-2)" }}>{sched[2]?.length || 0}</span>
-            </span>
-            {nC > 0 && (
-              <>
-                <span style={{ color: "var(--dim)" }}>|</span>
-                <span onClick={scrollToConflict} style={{
-                  color: "#FF6B6B", fontWeight: 700, cursor: "pointer",
-                  padding: "4px 8px", margin: "-4px -8px", borderRadius: 8,
-                  transition: "background .15s",
-                }} onTouchStart={e => e.currentTarget.style.background = "rgba(255,80,80,.12)"}
-                  onTouchEnd={e => e.currentTarget.style.background = "transparent"}>
-                  {nC} 衝突
-                </span>
-              </>
-            )}
           </div>
+
+          {/* ══ Resource Overlay ══ */}
+          {showRes && (
+            <div style={{
+              position: "fixed", inset: 0, zIndex: 300,
+              background: "var(--bg-page)",
+              overflowY: "auto", WebkitOverflowScrolling: "touch",
+            }}>
+              <div style={{
+                position: "sticky", top: 0, zIndex: 1,
+                padding: `calc(12px + var(--safe-top)) 16px 12px`,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                background: "var(--bg-page)",
+                borderBottom: ".5px solid var(--divider)",
+              }}>
+                <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>地圖 & 節目表</h2>
+                <button className="press" onClick={() => setShowRes(false)} style={{
+                  padding: "6px 16px", borderRadius: 100,
+                  border: ".5px solid var(--glass-border)",
+                  background: "var(--surface-hi)", color: "var(--text-2)",
+                  fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                }}>關閉</button>
+              </div>
+              <div style={{ padding: "16px 16px calc(16px + var(--safe-bottom))", display: "flex", flexDirection: "column", gap: 16 }}>
+                {[
+                  { src: "./img/megaport_festival_2026_map.jpg", label: "場地地圖" },
+                  { src: "./img/megaport_festival_2026_day_1.webp", label: "DAY 1 節目表 (3/21)" },
+                  { src: "./img/megaport_festival_2026_day_2.webp", label: "DAY 2 節目表 (3/22)" },
+                  { src: "./img/megaport_festival_2026_free_stage.jpg", label: "大樹下節目表" },
+                ].map(r => (
+                  <div key={r.src} style={{
+                    borderRadius: 16, overflow: "hidden",
+                    border: ".5px solid var(--surface-border)",
+                    background: "var(--surface)",
+                  }}>
+                    <img
+                      src={r.src} alt={r.label}
+                      style={{ width: "100%", display: "block", cursor: "pointer" }}
+                      onClick={() => window.open(r.src, "_blank")}
+                    />
+                    <div style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: "10px 14px",
+                    }}>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{r.label}</span>
+                      <a href={r.src} download style={{
+                        padding: "6px 14px", borderRadius: 100,
+                        background: "var(--surface-hi)", color: "var(--text-2)",
+                        fontSize: 13, fontWeight: 600, textDecoration: "none",
+                        border: ".5px solid var(--glass-border)",
+                      }}>存到相簿</a>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ fontSize: 12, color: "var(--text-5)", textAlign: "center", padding: "4px 0" }}>
+                  已快取，沒網路也能看
+                </div>
+              </div>
+            </div>
+          )}
           {showOnboard && <Onboarding onDone={() => { localStorage.setItem("onboard-done", "1"); setShowOnboard(false) }} />}
         </div>
       );
