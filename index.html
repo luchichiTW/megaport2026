@@ -1773,6 +1773,7 @@
 
     function ImageViewer({ src, hotspots, onClose }) {
       const [closing, setClosing] = useState(false);
+      const [stagePopup, setStagePopup] = useState(null);
       const imgRef = useRef(null);
       const overlayRef = useRef(null);
       const backdropRef = useRef(null);
@@ -1952,8 +1953,8 @@
                     if (px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h) {
                       const s = STAGES[k];
                       const url = navUrl(k);
-                      if (s && url && confirm(`要開啟導航前往「${s.name}」嗎？`)) {
-                        window.open(url, "_blank", "noopener,noreferrer");
+                      if (s && url) {
+                        setStagePopup({ name: s.name, bg: s.bg, url, loc: STAGE_LOCS[k] });
                       }
                       return;
                     }
@@ -2022,6 +2023,42 @@
             <path d="M18 6 6 18M6 6l12 12" />
           </svg>
         </button>
+        {stagePopup && (
+          <div style={{
+            position: "fixed", inset: 0, zIndex: 20010,
+            display: "flex", alignItems: "flex-end", justifyContent: "center",
+            paddingBottom: `calc(32px + var(--safe-bottom))`,
+          }} onClick={() => setStagePopup(null)}>
+            <div onClick={e => e.stopPropagation()} className="liquid-glass" style={{
+              width: "min(320px, 85vw)",
+              borderRadius: 20,
+              padding: "18px 20px 14px",
+              animation: "imgViewerIn .3s var(--ease-out) both",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                <div style={{ width: 10, height: 10, borderRadius: 5, background: stagePopup.bg, flexShrink: 0 }} />
+                <span style={{ fontSize: 17, fontWeight: 700, color: "var(--text)", letterSpacing: -.2 }}>{stagePopup.name}</span>
+              </div>
+              <div style={{ fontSize: 12, color: "var(--text-4)", marginBottom: 16, paddingLeft: 20 }}>
+                {stagePopup.loc.lat.toFixed(4)}, {stagePopup.loc.lng.toFixed(4)}
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button onClick={() => setStagePopup(null)} style={{
+                  flex: 1, height: 44, borderRadius: 12,
+                  border: ".5px solid var(--glass-border)",
+                  background: "var(--surface)", color: "var(--text-3)",
+                  fontSize: 15, fontWeight: 600, cursor: "pointer",
+                }}>取消</button>
+                <button onClick={() => { window.open(stagePopup.url, "_blank", "noopener,noreferrer"); setStagePopup(null); }} style={{
+                  flex: 1, height: 44, borderRadius: 12, border: "none",
+                  background: stagePopup.bg, color: "#fff",
+                  fontSize: 15, fontWeight: 600, cursor: "pointer",
+                  boxShadow: `0 2px 12px ${stagePopup.bg}40`,
+                }}>導航前往</button>
+              </div>
+            </div>
+          </div>
+        )}
       </>;
     }
 
