@@ -283,6 +283,38 @@
     @keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
     @keyframes sheetDown { from{transform:translateY(0)} to{transform:translateY(100%)} }
 
+    /* ═══ Long-press tooltip ═══ */
+    .lp-tooltip-backdrop {
+      position:fixed; inset:0; z-index:9998;
+      background:rgba(0,0,0,.25);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      animation: lpBackdropIn .28s ease-out both;
+    }
+    @keyframes lpBackdropIn { from{opacity:0} to{opacity:1} }
+    @keyframes lpBackdropOut { from{opacity:1} to{opacity:0} }
+    .lp-tooltip {
+      position:fixed; z-index:9999;
+      -webkit-user-select:none; user-select:none;
+      width:min(85vw, 320px);
+      padding:16px 20px;
+      border-radius:14px;
+      background: linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end));
+      backdrop-filter: blur(60px) saturate(200%) brightness(1.15);
+      -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(1.15);
+      border: .5px solid var(--glass-border);
+      box-shadow: 0 12px 48px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.12), inset 0 .5px 0 var(--glass-hi);
+      transform-origin: var(--origin-x, 50%) var(--origin-y, 0%);
+      animation: tooltipIn .35s cubic-bezier(.175,.885,.32,1.275) both;
+    }
+    @keyframes tooltipIn {
+      from { transform:scale(.4); opacity:0 }
+      to   { transform:scale(1);  opacity:1 }
+    }
+    @keyframes tooltipOut {
+      from { transform:scale(1);  opacity:1 }
+      to   { transform:scale(.6); opacity:0 }
+    }
+
     /* ═══ Stage slide transition ═══ */
     .stage-slide {
       will-change: transform, opacity;
@@ -601,8 +633,16 @@
     // Artist card — glass card with tinted selection
     function Card({item, selected, dimmed, conflict, onToggle}) {
       const c = STAGES[item.stage]?.bg||"#888";
+      const [tooltip,setTooltip]=useState(null);
+      const lp=useLongPress((pos)=>setTooltip(pos||{x:0,y:200}));
       return (
-        <button className="press" onClick={()=>onToggle(item.id)} style={{
+        <>
+        {tooltip&&<ArtistTooltip item={item} pos={tooltip} onClose={()=>setTooltip(null)}/>}
+        <button className="press"
+          onClick={e=>{if(!lp.prevented.current)onToggle(item.id)}}
+          onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
+          onContextMenu={e=>e.preventDefault()}
+          style={{WebkitUserSelect:"none",userSelect:"none",
           display:"flex", alignItems:"center", gap:11,
           width:"100%", padding:"15px 16px",
           borderRadius:18, cursor:"pointer", textAlign:"left",
@@ -664,11 +704,75 @@
             }}>衝突</span>
           )}
         </button>
+        </>
       );
     }
 
     // Schedule timeline card (single, no conflict wrapper)
     // status: "ended" | "playing" | "upcoming" | null
+    function useLongPress(cb, ms=500) {
+      const timer=useRef(null);
+      const prevented=useRef(false);
+      const onStart=useCallback(e=>{
+        prevented.current=false;
+        const t=e.touches?.[0];
+        const pos=t?{x:t.clientX,y:t.clientY}:null;
+        timer.current=setTimeout(()=>{prevented.current=true;cb(pos)},ms);
+      },[cb,ms]);
+      const onEnd=useCallback(()=>{clearTimeout(timer.current)},[]);
+      const onMove=useCallback(e=>{
+        if(timer.current){
+          const t=e.touches?.[0];
+          if(t){clearTimeout(timer.current)}
+        }
+      },[]);
+      return {onTouchStart:onStart,onTouchEnd:onEnd,onTouchMove:onMove,prevented};
+    }
+
+    function ArtistTooltip({item, pos, onClose}) {
+      const [closing,setClosing]=useState(false);
+      const c=STAGES[item.stage]?.bg||"#888";
+      const dur=t2m(item.end)-t2m(item.start);
+      const dismiss=useCallback(()=>{setClosing(true);setTimeout(onClose,260)},[onClose]);
+
+      const vw=window.innerWidth, vh=window.innerHeight;
+      const w=Math.min(vw*.85, 320);
+      // Center horizontally near touch, clamp to screen
+      let left=Math.max(12, Math.min(pos.x-w/2, vw-w-12));
+      // Place above touch if room, else below
+      const above=pos.y>vh/2;
+      let top=above ? pos.y-80 : pos.y+24;
+      top=Math.max(12, Math.min(top, vh-100));
+      // Transform origin toward the touch point
+      const ox=((pos.x-left)/w*100).toFixed(0)+"%";
+      const oy=above?"100%":"0%";
+
+      return ReactDOM.createPortal(
+        <div className="lp-tooltip-backdrop" onClick={dismiss}
+          style={closing?{animation:"lpBackdropOut .22s ease-in forwards"}:{}}>
+          <div className="lp-tooltip"
+            style={{
+              left, top,
+              "--origin-x":ox, "--origin-y":oy,
+              ...(closing?{animation:"tooltipOut .2s var(--ease-out) forwards"}:{}),
+            }}
+            onClick={e=>e.stopPropagation()}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+              <Badge stage={item.stage} large/>
+              <span style={{fontSize:13,color:"var(--text-3)",fontWeight:600,fontVariantNumeric:"tabular-nums"}}>
+                {item.start} – {item.end}
+              </span>
+              <span style={{fontSize:11,color:"var(--text-5)",fontWeight:500}}>{dur} 分鐘</span>
+            </div>
+            <div style={{fontSize:17,fontWeight:700,lineHeight:1.45,color:"var(--text)",letterSpacing:"-.01em"}}>
+              {item.artist}
+            </div>
+          </div>
+        </div>,
+        document.body
+      );
+    }
+
     function TimelineCard({item, gap, preferred, dimmed, onClick, status, progress}) {
       const c = STAGES[item.stage]?.bg||"#888";
       const dur = t2m(item.end)-t2m(item.start);

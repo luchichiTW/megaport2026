@@ -24,7 +24,7 @@ const T=[
   {id:"1-DG-3",day:1,stage:"DG",artist:"漂流出口",start:"14:00",end:"14:30"},
   {id:"1-DG-4",day:1,stage:"DG",artist:"南瓜妮歌迷俱樂部",start:"15:10",end:"15:50"},
   {id:"1-DG-5",day:1,stage:"DG",artist:"the band apart [JP]",start:"16:40",end:"17:20"},
-  {id:"1-DG-6",day:1,stage:"DG",artist:"same Sam but different. 鄭敬儒｜山姆 楊世暄",start:"18:00",end:"18:40"},
+  {id:"1-DG-6",day:1,stage:"DG",artist:"same Sam but different. 鄭敬儒｜山姆｜楊世暄",start:"18:00",end:"18:40"},
   {id:"1-DG-7",day:1,stage:"DG",artist:"李竺芯 ft. 妮妮雅·瘋",start:"19:30",end:"20:00"},
   {id:"1-DG-8",day:1,stage:"DG",artist:"謝金燕",start:"21:00",end:"21:30"},
 
@@ -57,9 +57,9 @@ const T=[
   {id:"1-CT-2",day:1,stage:"CT",artist:"憂憂 ft. 奕碩",start:"16:20",end:"16:50"},
 
   // 大雄丸
-  {id:"1-DX-1",day:1,stage:"DX",artist:"寫下你對這場派對的心得 何勁旻 陳冠哼",start:"13:10",end:"13:50"},
-  {id:"1-DX-2",day:1,stage:"DX",artist:"憑光頭入場 光頭火鳥 光頭美麗 光頭珞亦",start:"15:10",end:"15:50"},
-  {id:"1-DX-3",day:1,stage:"DX",artist:"你也貢獻難聽 曾國宏 許正泰",start:"17:10",end:"17:50"},
+  {id:"1-DX-1",day:1,stage:"DX",artist:"寫下你對這場派對的心得 何勁旻｜陳冠哼",start:"13:10",end:"13:50"},
+  {id:"1-DX-2",day:1,stage:"DX",artist:"憑光頭入場 光頭火鳥｜光頭美麗｜光頭珞亦",start:"15:10",end:"15:50"},
+  {id:"1-DX-3",day:1,stage:"DX",artist:"你也貢獻難聽 曾國宏｜許正泰",start:"17:10",end:"17:50"},
   {id:"1-DX-4",day:1,stage:"DX",artist:"大象體操 比夢境真實 紀錄長片",start:"19:30",end:"20:00"},
 
   // 藍寶石
@@ -115,7 +115,7 @@ const T=[
   {id:"2-HB-3",day:2,stage:"HB",artist:"多米多羅 ft. 可凡",start:"16:00",end:"16:30"},
   {id:"2-HB-4",day:2,stage:"HB",artist:"FunkyMo ft. 小尾巴",start:"17:10",end:"17:50"},
   {id:"2-HB-5",day:2,stage:"HB",artist:"粉紅噪音",start:"18:40",end:"19:10"},
-  {id:"2-HB-6",day:2,stage:"HB",artist:"派對超人 羅百吉 ft. 寶貝 謝明諺 C.Holly 潤少 LiiHAO",start:"20:10",end:"21:10"},
+  {id:"2-HB-6",day:2,stage:"HB",artist:"派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO",start:"20:10",end:"21:10"},
 
   // 卡魔麥
   {id:"2-KM-1",day:2,stage:"KM",artist:"TSS [FR]",start:"13:10",end:"13:50"},
@@ -131,8 +131,8 @@ const T=[
   {id:"2-CT-5",day:2,stage:"CT",artist:"忘憂水",start:"20:00",end:"20:30"},
 
   // 大雄丸
-  {id:"2-DX-1",day:2,stage:"DX",artist:"陪嗨吉放歌 vol.1 唱吉｜迪拉 李毅誠",start:"13:10",end:"13:50"},
-  {id:"2-DX-2",day:2,stage:"DX",artist:"丸長世代 柯家洋 阿舌",start:"15:10",end:"15:50"},
+  {id:"2-DX-1",day:2,stage:"DX",artist:"陪嗨吉放歌 vol.1 唱吉｜迪拉｜李毅誠",start:"13:10",end:"13:50"},
+  {id:"2-DX-2",day:2,stage:"DX",artist:"丸長世代 柯家洋｜阿舌",start:"15:10",end:"15:50"},
   {id:"2-DX-3",day:2,stage:"DX",artist:"還有夜間限定 小兔｜阿賢",start:"17:20",end:"17:50"},
 
   // 藍寶石
@@ -160,7 +160,7 @@ const T=[
 
   // Day 1
   {id:"1-DS-1",day:1,stage:"DS",artist:"Brain Youth",start:"15:00",end:"15:30"},
-  {id:"1-DS-2",day:1,stage:"DS",artist:"Slow Roast 慢熟 Debby Wang 王思雅 林映辰｜郝東東",start:"15:30",end:"16:40"},
+  {id:"1-DS-2",day:1,stage:"DS",artist:"Slow Roast 慢熟｜Debby Wang 王思雅｜林映辰｜郝東東",start:"15:30",end:"16:40"},
   {id:"1-DS-3",day:1,stage:"DS",artist:"Brain Youth",start:"16:40",end:"17:00"},
   {id:"1-DS-4",day:1,stage:"DS",artist:"Mr. Kloud",start:"17:00",end:"18:00"},
   {id:"1-DS-5",day:1,stage:"DS",artist:"DJ ChiLL",start:"18:00",end:"19:00"},
