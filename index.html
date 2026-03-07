@@ -2285,10 +2285,9 @@
       }, []);
 
       // Native touchmove with {passive: false} to properly block vertical scroll
-      useEffect(() => {
-        const el = swipeElRef.current;
-        if (!el) return;
-        const handler = e => {
+      const swipeHandlerRef = useRef(null);
+      if (!swipeHandlerRef.current) {
+        swipeHandlerRef.current = e => {
           const s = swipeRef.current;
           if (s.locked) return;
           const dx = e.touches[0].clientX - s.x;
@@ -2303,8 +2302,11 @@
             setSwipeX(atEdge ? dx * 0.25 : dx);
           }
         };
-        el.addEventListener("touchmove", handler, { passive: false });
-        return () => el.removeEventListener("touchmove", handler);
+      }
+      const swipeCallbackRef = useCallback(el => {
+        if (swipeElRef.current) swipeElRef.current.removeEventListener("touchmove", swipeHandlerRef.current);
+        swipeElRef.current = el;
+        if (el) el.addEventListener("touchmove", swipeHandlerRef.current, { passive: false });
       }, []);
 
       const onTouchEnd = useCallback(e => {
@@ -2599,7 +2601,7 @@
                   })}
                 </div>
               ) : (
-              <div ref={swipeElRef} style={{ overflow: "hidden", margin: "0 -16px", padding: "0 16px", touchAction: swiping ? "none" : "pan-y" }}
+              <div ref={swipeCallbackRef} style={{ overflow: "hidden", margin: "0 -16px", padding: "0 16px", touchAction: swiping ? "none" : "pan-y" }}
                 onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
                 <div style={{
                   display: "flex", width: "300%", marginLeft: "-100%",
@@ -2663,7 +2665,7 @@
                       fontSize: 12, fontWeight: 500, color: "var(--text-4)",
                     }}>
                       <span style={{ fontSize: 14 }}>⏳</span>
-                      <span>活動尚未開始，時間軸將於 <b style={{ color: "var(--text-2)" }}>{DAY_DATES[1].slice(5)} {eTime}</b> 自動開始追蹤</span>
+                      <span>還沒開演啦！<b style={{ color: "var(--text-2)" }}>{DAY_DATES[1].slice(5)} {eTime}</b> 開始後時間軸會自己跑</span>
                     </div>
                   );
                 })()}
