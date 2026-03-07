@@ -7,19 +7,19 @@ const STAGES = {
   DS:{name:"大樹下",bg:"#2A9E52"},
 };
 
-// Stage GPS coordinates (placeholder — update with actual locations)
+// Stage GPS coordinates
 const STAGE_LOCS = {
-  SO: { lat: 22.6199, lng: 120.2817 },
-  DK: { lat: 22.6195, lng: 120.2822 },
-  DG: { lat: 22.6191, lng: 120.2827 },
-  HB: { lat: 22.6203, lng: 120.2812 },
-  KM: { lat: 22.6187, lng: 120.2832 },
-  CT: { lat: 22.6207, lng: 120.2807 },
-  DX: { lat: 22.6183, lng: 120.2837 },
-  BS: { lat: 22.6211, lng: 120.2802 },
-  QC: { lat: 22.6179, lng: 120.2842 },
-  XG: { lat: 22.6215, lng: 120.2797 },
-  DS: { lat: 22.6175, lng: 120.2847 },
+  SO: { lat: 22.61653, lng: 120.28367 },
+  DK: { lat: 22.61833, lng: 120.28913 },
+  DG: { lat: 22.61725, lng: 120.28829 },
+  HB: { lat: 22.61853, lng: 120.28580 },
+  KM: { lat: 22.61730, lng: 120.28167 },
+  CT: { lat: 22.61856, lng: 120.28490 },
+  DX: { lat: 22.61749, lng: 120.28560 },
+  BS: { lat: 22.61816, lng: 120.28553 },
+  QC: { lat: 22.61839, lng: 120.28764 },
+  XG: { lat: 22.61789, lng: 120.28184 },
+  DS: { lat: 22.61844, lng: 120.28357 },
 };
 
 // Stage hotspot regions on map image (x%, y%, w%, h%)
