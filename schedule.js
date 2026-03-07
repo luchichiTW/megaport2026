@@ -7,6 +7,36 @@ const STAGES = {
   DS:{name:"大樹下",bg:"#2A9E52"},
 };
 
+// Stage GPS coordinates (placeholder — update with actual locations)
+const STAGE_LOCS = {
+  SO: { lat: 22.6199, lng: 120.2817 },
+  DK: { lat: 22.6195, lng: 120.2822 },
+  DG: { lat: 22.6191, lng: 120.2827 },
+  HB: { lat: 22.6203, lng: 120.2812 },
+  KM: { lat: 22.6187, lng: 120.2832 },
+  CT: { lat: 22.6207, lng: 120.2807 },
+  DX: { lat: 22.6183, lng: 120.2837 },
+  BS: { lat: 22.6211, lng: 120.2802 },
+  QC: { lat: 22.6179, lng: 120.2842 },
+  XG: { lat: 22.6215, lng: 120.2797 },
+  DS: { lat: 22.6175, lng: 120.2847 },
+};
+
+// Stage hotspot regions on map image (x%, y%, w%, h%)
+const STAGE_REGIONS = {
+  SO: { x: 6.4, y: 33.2, w: 9.8, h: 41.4 },
+  DK: { x: 72.4, y: 85.2, w: 7.9, h: 7.1 },
+  DG: { x: 46.8, y: 80.8, w: 11.6, h: 12 },
+  HB: { x: 58.2, y: 55.7, w: 9.3, h: 2.3 },
+  KM: { x: 12.4, y: 19.1, w: 3.5, h: 6.8 },
+  CT: { x: 54.3, y: 41.8, w: 7.8, h: 2.5 },
+  DX: { x: 42.1, y: 60.7, w: 4.9, h: 3.6 },
+  BS: { x: 51.4, y: 55.6, w: 6.1, h: 2.4 },
+  QC: { x: 66.3, y: 73.3, w: 5.7, h: 4.6 },
+  XG: { x: 24.3, y: 14.6, w: 4.9, h: 3.5 },
+  DS: { x: 41.3, y: 33.0, w: 4.2, h: 4.1 },
+};
+
 const T=[
   // ── Day 1 (03/21) ──
 
