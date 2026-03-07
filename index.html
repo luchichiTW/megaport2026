@@ -894,6 +894,8 @@
       position: relative;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-x pan-y;
       margin: 0 -16px;
       display: flex;
     }
@@ -2144,7 +2146,7 @@
       }, [minTime, maxTime]);
 
       return (
-        <div className="tt-wrap" style={{ maxHeight: "calc(100dvh - 200px)" }}>
+        <div className="tt-wrap" style={{ maxHeight: "calc(100dvh - var(--safe-top) - var(--safe-bottom) - 210px)" }}>
           <div className="tt-time-col" style={{ height: totalH + HEADER_H }}>
             {lines.map(l => (
               <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
@@ -2280,8 +2282,8 @@
           if (s.locked) return;
           const dx = e.touches[0].clientX - s.x;
           const dy = e.touches[0].clientY - s.y;
-          if (!s.swiping && Math.abs(dy) > Math.abs(dx) * 0.8) { s.locked = true; return; }
-          if (!s.swiping && Math.abs(dx) > 8) { s.swiping = true; setSwiping(true); }
+          if (!s.swiping && Math.abs(dy) > Math.abs(dx) * 1.2) { s.locked = true; return; }
+          if (!s.swiping && Math.abs(dx) > 6) { s.swiping = true; setSwiping(true); }
           if (s.swiping) {
             e.preventDefault();
             const stages = stgsDayRef.current;
