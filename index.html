@@ -2270,7 +2270,7 @@
 
       const sched = useMemo(() => { const d = { 1: [], 2: [] }; selItems.forEach(i => d[i.day]?.push(i)); Object.values(d).forEach(a => a.sort((x, y) => t2m(x.start) - t2m(y.start))); return d }, [selItems]);
       const stgsDay = useMemo(() => { const s = new Set(); T.forEach(t => { if (t.day === day) s.add(t.stage) }); return ["ALL", ...Object.keys(STAGES).filter(k => s.has(k))] }, [day]);
-      const filterStage = useCallback((s) => T.filter(t => { if (t.day !== day) return false; if (s !== "ALL" && t.stage !== s) return false; if (q && !t.artist.toLowerCase().includes(q.toLowerCase())) return false; return true }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, q]);
+      const filterStage = useCallback((s) => T.filter(t => { if (t.day !== day) return false; if (q) return t.artist.toLowerCase().includes(q.toLowerCase()); if (s !== "ALL" && t.stage !== s) return false; return true }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, q]);
       const list = useMemo(() => filterStage(stg), [filterStage, stg]);
       const stgIdx = useMemo(() => stgsDay.indexOf(stg), [stgsDay, stg]);
       const prevList = useMemo(() => stgIdx > 0 ? filterStage(stgsDay[stgIdx - 1]) : null, [filterStage, stgsDay, stgIdx]);
@@ -2482,7 +2482,7 @@
                           dimmed={dimIds.has(item.id)}
                           conflict={confIds.has(item.id)}
                           onToggle={toggle}
-                          showBadge={stg === "ALL"}
+                          showBadge={stg === "ALL" || !!q}
                         />
                       ))}
                     </div>
