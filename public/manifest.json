@@ -2,7 +2,7 @@
   "name": "大港開唱 2026",
   "short_name": "大港開唱",
   "description": "Megaport Festival 2026 Schedule Planner",
-  "start_url": "./index.html",
+  "start_url": "/megaport2026/",
   "display": "standalone",
   "background_color": "#0B0B0D",
   "theme_color": "#E63946",
