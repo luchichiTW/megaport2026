@@ -3144,17 +3144,8 @@
                         onClick={() => setZoomImg(r.src)}
                         onContextMenu={e => e.preventDefault()}
                       />
-                      <div style={{
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        padding: "10px 14px",
-                      }}>
+                      <div style={{ padding: "10px 14px" }}>
                         <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{r.label}</span>
-                        <a href={r.src} download style={{
-                          padding: "6px 14px", borderRadius: 100,
-                          background: "var(--surface-hi)", color: "var(--text-2)",
-                          fontSize: 13, fontWeight: 600, textDecoration: "none",
-                          border: ".5px solid var(--glass-border)",
-                        }}>存到相簿</a>
                       </div>
                     </div>
                   ))}
