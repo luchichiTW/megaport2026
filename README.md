@@ -32,3 +32,7 @@
 - 單一 `index.html` + `schedule.js` 資料檔
 - Service Worker 離線快取
 - Liquid Glass 設計語言
+
+## 授權
+
+本專案採用 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) 授權，禁止商業使用。
