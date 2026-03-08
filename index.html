@@ -930,7 +930,7 @@
     }
     .tt-stage-col {
       position: relative;
-      width: 85px;
+      width: min(85px, 22vw);
       flex-shrink: 0;
       border-left: .5px solid var(--divider);
     }
@@ -1001,6 +1001,19 @@
       background: var(--divider);
       opacity: .4;
       z-index: 0;
+    }
+    /* ═══ Small screen adjustments (iPhone SE 3, etc.) ═══ */
+    @media (max-width: 380px) {
+      .tt-stage-header {
+        font-size: 10px;
+      }
+      .tt-block {
+        font-size: 10px;
+        padding: 1px 2px;
+      }
+      .tt-time-label {
+        font-size: 9px;
+      }
     }
   </style>
 
