@@ -2326,7 +2326,7 @@
       }, [minTime, maxTime]);
 
       return (
-        <div className="tt-wrap" style={{ maxHeight: "calc(100dvh - var(--safe-top) - var(--safe-bottom) - 210px)" }}>
+        <div className="tt-wrap" style={{ flex: 1, minHeight: 0, paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
           <div className="tt-time-col" style={{ height: totalH + HEADER_H }}>
             {lines.map(l => (
               <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
@@ -2575,8 +2575,10 @@
       return (
         <div style={{
           position: "relative", zIndex: 1,
-          minHeight: "100dvh", maxWidth: 520, margin: "0 auto",
-          paddingBottom: `calc(90px + var(--safe-bottom))`,
+          maxWidth: 520, margin: "0 auto",
+          ...(view === "pick" && pickMode === "table"
+            ? { height: "100dvh", display: "flex", flexDirection: "column", overflow: "hidden" }
+            : { minHeight: "100dvh", paddingBottom: `calc(90px + var(--safe-bottom))` }),
         }}>
 
           {/* ══ Floating Header ══ */}
@@ -2748,7 +2750,12 @@
           </div>
 
           {/* ══ Content ══ */}
-          <div style={{ padding: "12px 16px 0" }}>
+          <div style={{
+            padding: "12px 16px 0",
+            ...(view === "pick" && pickMode === "table"
+              ? { flex: 1, minHeight: 0, display: "flex", flexDirection: "column", overflow: "hidden" }
+              : {}),
+          }}>
             {view === "pick" ? (
               pickMode === "table" ? (
                 <Timetable day={day} sel={sel} toggle={toggle} dimIds={dimIds} confIds={confIds} activeDay={activeDay} activeMinutes={activeMinutes} />
