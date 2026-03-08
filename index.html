@@ -50,10 +50,10 @@
       --overlay: rgba(0, 0, 0, .5);
       --now-bg: #0a0a0a;
       --seg-bg: rgba(255, 255, 255, .06);
-      --seg-border: rgba(255, 255, 255, .08);
-      --seg-ind: linear-gradient(180deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .10));
-      --seg-ind-shadow: 0 2px 8px rgba(0, 0, 0, .2);
-      --seg-ind-hi: rgba(255, 255, 255, .3);
+      --seg-border: rgba(255, 255, 255, .06);
+      --seg-ind: rgba(255, 255, 255, .14);
+      --seg-ind-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+      --seg-ind-hi: rgba(255, 255, 255, .2);
       --confirm-shadow: 0 24px 80px rgba(0, 0, 0, .5);
       --orb-blend: screen;
       --orb-opacity: 1;
@@ -84,9 +84,9 @@
       --overlay: rgba(0, 0, 0, .25);
       --now-bg: #f2f2f7;
       --seg-bg: rgba(0, 0, 0, .04);
-      --seg-border: rgba(0, 0, 0, .06);
-      --seg-ind: linear-gradient(180deg, rgba(255, 255, 255, .90), rgba(255, 255, 255, .75));
-      --seg-ind-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+      --seg-border: rgba(0, 0, 0, .04);
+      --seg-ind: rgba(255, 255, 255, .85);
+      --seg-ind-shadow: 0 1px 4px rgba(0, 0, 0, .08);
       --seg-ind-hi: rgba(255, 255, 255, .95);
       --confirm-shadow: 0 24px 80px rgba(0, 0, 0, .15);
       --orb-blend: multiply;
@@ -945,10 +945,10 @@
     /* ═══ Theme toggle ═══ */
     .theme-btn {
       background: var(--seg-bg);
-      border: .5px solid var(--seg-border);
-      border-radius: 10px;
-      width: 34px;
-      height: 34px;
+      border: 1px solid var(--seg-border);
+      border-radius: 9px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1264,15 +1264,16 @@
     function Segment({ items, value, onChange, size = "md" }) {
       const idx = items.findIndex(i => i.value === value);
       const count = items.length;
-      const pad = size === "sm" ? 2 : 3;
-      const py = size === "sm" ? "6px" : "9px";
-      const fs = size === "sm" ? 12 : 14;
+      const pad = size === "sm" ? 2 : 2;
+      const py = size === "sm" ? "7px" : "8px";
+      const fs = size === "sm" ? 13 : 13;
+      const radius = 9;
       return (
         <div style={{
           position: "relative", display: "flex", padding: pad,
-          borderRadius: size === "sm" ? 10 : 12,
+          borderRadius: radius + pad,
           background: "var(--seg-bg)",
-          border: ".5px solid var(--seg-border)",
+          border: "1px solid var(--seg-border)",
         }}>
           {/* sliding indicator */}
           <div style={{
@@ -1280,20 +1281,22 @@
             top: pad, bottom: pad,
             left: `calc(${pad}px + ${idx / count * 100}%)`,
             width: `calc(${100 / count}% - ${pad}px)`,
-            borderRadius: size === "sm" ? 8 : 10,
+            borderRadius: radius,
             background: "var(--seg-ind)",
-            boxShadow: "var(--seg-ind-shadow), inset 0 .5px 0 var(--seg-ind-hi)",
-            transition: "left .35s cubic-bezier(.16,1,.3,1)",
+            boxShadow: `var(--seg-ind-shadow), inset 0 1px 0 var(--seg-ind-hi)`,
+            transition: "left .3s cubic-bezier(.25,1,.5,1)",
           }} />
-          {items.map(item => (
+          {items.map((item, i) => (
             <button key={item.value} onClick={() => onChange(item.value)} style={{
               flex: 1, position: "relative", zIndex: 1,
-              padding: `${py} 0`, border: "none", borderRadius: 10,
+              padding: `${py} 0`, border: "none", borderRadius: radius,
               background: "transparent", cursor: "pointer",
               fontSize: fs, fontWeight: 600, fontFamily: "inherit",
               color: value === item.value ? "var(--text)" : "var(--text-3)",
-              transition: "color .25s",
-              letterSpacing: size === "sm" ? 0 : .2,
+              transition: "color .2s",
+              letterSpacing: -.1,
+              borderRight: i < count - 1 && idx !== i && idx !== i + 1
+                ? "0.5px solid var(--seg-border)" : "0.5px solid transparent",
             }}>
               {item.label}
             </button>
@@ -2917,13 +2920,13 @@
           {/* ══ Floating Header ══ */}
           <div className="liquid-glass" style={{
             position: "sticky", top: 0, zIndex: 100,
-            padding: `calc(14px + var(--safe-top)) 18px 14px`,
+            padding: `calc(10px + var(--safe-top)) 16px 10px`,
             borderRadius: "0 0 24px 24px",
             borderTop: "none",
             boxShadow: "var(--glass-shadow), inset 0 -1px 0 var(--glass-lo)",
           }}>
             {/* Title row */}
-            <div style={{ marginBottom: 14, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div style={{ marginBottom: 8, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h1 style={{
                   fontSize: 24, fontWeight: 800, letterSpacing: -.5, lineHeight: 1.2,
@@ -2943,7 +2946,7 @@
                     transition: "color .2s",
                   }}>2026{simNow && " ⏱"}</span>
                 </h1>
-                <p style={{ fontSize: 13, color: "var(--text-3)", marginTop: 4, fontWeight: 500 }}>
+                <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2, fontWeight: 500 }}>
                   3/21–22 高雄駁二
                   <span style={{ margin: "0 6px", opacity: .3 }}>·</span>
                   已選 {sel.length} 組
@@ -2971,7 +2974,7 @@
             {view === "pick" && (
               <>
                 {/* Day toggle + pick mode */}
-                <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
                   <div style={{ flex: 1 }}>
                     <Segment
                       items={[{ value: 1, label: "DAY 1 · 3/21 六" }, { value: 2, label: "DAY 2 · 3/22 日" }]}
@@ -2986,11 +2989,11 @@
                   </div>
                   <button className="press" onClick={() => setPickMode(m => m === "list" ? "table" : "list")} style={{
                     width: 36, height: 36, borderRadius: 10,
-                    border: ".5px solid var(--glass-border)",
-                    background: "linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end))",
-                    backdropFilter: "blur(50px) saturate(200%) brightness(1.1)",
-                    WebkitBackdropFilter: "blur(50px) saturate(200%) brightness(1.1)",
-                    boxShadow: "var(--glass-shadow), inset 0 .5px 0 var(--glass-hi)",
+                    border: "1px solid var(--glass-border)",
+                    background: "var(--glass-bg)",
+                    backdropFilter: "blur(20px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                    boxShadow: "var(--glass-shadow), var(--glass-inner)",
                     color: "var(--text)", cursor: "pointer",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     flexShrink: 0,
