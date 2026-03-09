@@ -19,6 +19,7 @@ const STAGES = {
   BS: { name: "藍寶石", bg: "#5C6BC0" },
   QC: { name: "青春夢", bg: "#EC407A" },
   XG: { name: "小港祭", bg: "#26A69A" },
+  KD: { name: "KIDS𨑨迌親子區（大義公園草皮）", bg: "#F5A623" },
 };
 
 // 時刻表資料（從官方節目表圖片逐格抄錄）
@@ -151,11 +152,14 @@ const T = [
   // 小港祭
   { id:"2-XG-1", day:2, stage:"XG", artist:"打倒三明治", start:"13:20", end:"13:50" },
   { id:"2-XG-2", day:2, stage:"XG", artist:"LEIGHT NINE", start:"14:20", end:"14:50" },
+  // KIDS𨑨迌親子區（大義公園草皮）
+  { id:"1-KD-1", day:1, stage:"KD", artist:"好朋友集合！巧虎的港邊大冒險", start:"16:40" },
+  { id:"2-KD-1", day:2, stage:"KD", artist:"好朋友集合！巧虎的港邊大冒險", start:"16:40" },
 ];
 
 // ── Utils ──
 const t2m = t => { const [h,m]=t.split(":").map(Number); return h*60+m };
-const clash = (a,b) => a.day===b.day && t2m(a.start)<t2m(b.end) && t2m(b.start)<t2m(a.end);
+const clash = (a,b) => a.day===b.day && a.end && b.end && t2m(a.start)<t2m(b.end) && t2m(b.start)<t2m(a.end);
 
 const openDB = () => new Promise((resolve, reject) => {
   const req = indexedDB.open("mp2026", 1);
@@ -265,7 +269,7 @@ export default function App() {
               return(
                 <button key={item.id} onClick={()=>toggle(item.id)} style={S.cd(iS,item.stage,iD)}>
                   {iS&&<span style={S.ck(STAGES[item.stage]?.bg)}>✓</span>}
-                  <span style={{fontVariantNumeric:"tabular-nums",fontSize:11,color:"#9CA3AF",minWidth:78,fontWeight:500}}>{item.start}–{item.end}</span>
+                  <span style={{fontVariantNumeric:"tabular-nums",fontSize:11,color:"#9CA3AF",minWidth:78,fontWeight:500}}>{item.start}{item.end ? `–${item.end}` : "–"}</span>
                   <span style={S.bg(STAGES[item.stage]?.bg,true)}>{STAGES[item.stage]?.name}</span>
                   <span style={{fontSize:13,fontWeight:600,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.artist}</span>
                   {iC&&iS&&<span style={{color:"#EF4444",fontSize:11,flexShrink:0}}>⚠</span>}
@@ -288,19 +292,19 @@ export default function App() {
                       const bg=STAGES[item.stage]?.bg||"#666";
                       const iC=confIds.has(item.id);
                       let gap=null;
-                      if(idx>0)gap=t2m(item.start)-t2m(items[idx-1].end);
+                      if(idx>0&&items[idx-1].end)gap=t2m(item.start)-t2m(items[idx-1].end);
                       return(
                         <div key={item.id}>
                           {gap!==null&&gap>0&&<div style={{textAlign:"center",padding:"3px 0",fontSize:10,color:"#555"}}>☕ 空檔 {gap} 分鐘</div>}
                           {gap!==null&&gap<0&&<div style={{textAlign:"center",padding:"3px 0",fontSize:10,color:"#EF4444"}}>⚠ 時間重疊！</div>}
                           <div style={S.si2(bg)}>
                             <div style={{display:"flex",alignItems:"center",gap:8}}>
-                              <span style={{fontVariantNumeric:"tabular-nums",fontSize:12,color:"#aaa",fontWeight:600,minWidth:90}}>{item.start} – {item.end}</span>
+                              <span style={{fontVariantNumeric:"tabular-nums",fontSize:12,color:"#aaa",fontWeight:600,minWidth:90}}>{item.start}{item.end ? ` – ${item.end}` : " –"}</span>
                               <span style={S.bg(bg)}>{STAGES[item.stage]?.name}</span>
                               {iC&&<span style={{color:"#EF4444",fontSize:10}}>⚠ 衝突</span>}
                             </div>
                             <div style={{fontSize:15,fontWeight:700,marginTop:4}}>{item.artist}</div>
-                            <div style={{fontSize:10,color:"#666",marginTop:2}}>{t2m(item.end)-t2m(item.start)} 分鐘</div>
+                            {item.end && <div style={{fontSize:10,color:"#666",marginTop:2}}>{t2m(item.end)-t2m(item.start)} 分鐘</div>}
                           </div>
                         </div>
                       )
