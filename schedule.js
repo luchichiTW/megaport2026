@@ -5,6 +5,7 @@ const STAGES = {
   DX:{name:"大雄丸",bg:"#E03030"},BS:{name:"藍寶石",bg:"#4A62A8"},
   QC:{name:"青春夢",bg:"#E8896A"},XG:{name:"小港祭",bg:"#B8855A"},
   DS:{name:"大樹下",bg:"#2A9E52"},
+  KD:{name:"KIDS𨑨迌親子區",fullName:"KIDS𨑨迌親子區（大義公園草皮）",bg:"#F5A623"},
 };
 
 // Stage GPS coordinates
@@ -198,4 +199,8 @@ const T=[
   {id:"2-DS-2",day:2,stage:"DS",artist:"DJ Hunter",start:"16:00",end:"17:00"},
   {id:"2-DS-3",day:2,stage:"DS",artist:"DJ ChiLL",start:"17:00",end:"18:00"},
   {id:"2-DS-4",day:2,stage:"DS",artist:"DJ Litro ft. 大樹下練歌坊",start:"18:00",end:"19:00"},
+
+  // KIDS𨑨迌親子區（大義公園草皮）
+  {id:"1-KD-1",day:1,stage:"KD",artist:"好朋友集合！巧虎的港邊大冒險",start:"16:40",end:"17:10",tentativeEnd:true},
+  {id:"2-KD-1",day:2,stage:"KD",artist:"好朋友集合！巧虎的港邊大冒險",start:"16:40",end:"17:10",tentativeEnd:true},
 ];

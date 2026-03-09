@@ -941,6 +941,16 @@
       0% { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes scolded {
+      0% { opacity: 0; transform: rotate(-18deg) scale(0); }
+      60% { opacity: 1; transform: rotate(-18deg) scale(1.1); }
+      100% { opacity: 1; transform: rotate(-18deg) scale(1); }
+    }
+    @keyframes tigerBurst {
+      0% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(0) rotate(0deg); }
+      40% { opacity: 1; transform: translate(calc(var(--tx) * 3), calc(var(--ty) * 3)) scale(1.2) rotate(calc(var(--rot) * .6)); }
+      100% { opacity: 0; transform: translate(calc(var(--tx) * 5), calc(var(--ty) * 5)) scale(.6) rotate(var(--rot)); }
+    }
 
     /* ═══ Theme toggle ═══ */
     .theme-btn {
@@ -1171,6 +1181,7 @@
 
     const t2m = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m };
     const clash = (a, b) => a.day === b.day && t2m(a.start) < t2m(b.end) && t2m(b.start) < t2m(a.end);
+    const fmtEnd = item => item.tentativeEnd ? `${item.end}(待確定)` : item.end;
 
     const openDB = () => new Promise((resolve, reject) => {
       const req = indexedDB.open("mp2026", 1);
@@ -1327,7 +1338,7 @@
     }
 
     // Stage badge — frosted colored chip
-    function Badge({ stage, large }) {
+    function Badge({ stage, large, full }) {
       const s = STAGES[stage]; if (!s) return null;
       return (
         <span style={{
@@ -1339,7 +1350,7 @@
           flexShrink: 0,
           boxShadow: `0 1px 4px ${s.bg}50, inset 0 .5px 0 rgba(255,255,255,.25)`,
         }}>
-          {s.name}
+          {full && s.fullName ? s.fullName : s.name}
         </span>
       );
     }
@@ -1396,7 +1407,7 @@
               fontVariantNumeric: "tabular-nums", fontSize: 13,
               color: "var(--text-3)", minWidth: 85, fontWeight: 500,
             }}>
-              {item.start}–{item.end}
+              {item.start}–{fmtEnd(item)}
             </span>
 
             {showBadge && <Badge stage={item.stage} />}
@@ -1503,7 +1514,7 @@
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexShrink: 0 }}>
               <Badge stage={item.stage} large />
               <span style={{ fontSize: 13, color: "var(--text-3)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
-                {item.start} – {item.end}
+                {item.start} – {fmtEnd(item)}
               </span>
               <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{dur} 分鐘</span>
             </div>
@@ -1561,7 +1572,7 @@
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
               <Badge stage={item.stage} />
               <span style={{ fontSize: 11, color: "var(--text-4)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
-                {item.start}–{item.end}
+                {item.start}–{fmtEnd(item)}
               </span>
             </div>
             <div style={{
@@ -1639,9 +1650,9 @@
                   fontVariantNumeric: "tabular-nums", fontSize: 13,
                   color: "var(--text-3)", fontWeight: 600,
                 }}>
-                  {item.start} – {item.end}
+                  {item.start} – {fmtEnd(item)}
                 </span>
-                <Badge stage={item.stage} large />
+                <Badge stage={item.stage} large full />
                 {isPlaying && (
                   <span style={{
                     fontSize: 10, fontWeight: 700,
@@ -1819,7 +1830,7 @@
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                     }}>{item.artist}</div>
                     <div style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>
-                      {item.start}–{item.end}
+                      {item.start}–{fmtEnd(item)}
                     </div>
                   </div>
                 </div>
@@ -1836,6 +1847,7 @@
       const [spinning, setSpinning] = useState(false);
       const [winner, setWinner] = useState(null);
       const [revealed, setRevealed] = useState(false);
+      const [scolded, setScolded] = useState(false);
 
       useEffect(() => {
         document.body.style.overflow = "hidden";
@@ -1878,8 +1890,10 @@
         }
       };
 
+      const QIAOHU = "好朋友集合！巧虎的港邊大冒險";
       const spin = () => {
-        const pick = items[Math.floor(Math.random() * items.length)];
+        const qiaohu = items.find(i => i.artist === QIAOHU);
+        const pick = qiaohu || items[Math.floor(Math.random() * items.length)];
         setWinner(pick);
         setSpinning(true);
         setRevealed(false);
@@ -1893,6 +1907,7 @@
       const retry = () => {
         setWinner(null);
         setRevealed(false);
+        setScolded(false);
       };
 
       const accept = () => {
@@ -1938,7 +1953,7 @@
                       transition: "all .4s var(--ease-out)",
                       transform: isWinner ? "scale(1.02)" : "scale(1)",
                     }}>
-                      {isWinner && <span style={{ fontSize: 20 }}>🎉</span>}
+                      {isWinner && <span style={{ fontSize: 20 }}>{winner?.artist === QIAOHU ? "🐯" : "🎉"}</span>}
                       <span style={{
                         background: stg?.bg || "#888", color: "var(--badge-text)",
                         fontSize: 10, fontWeight: 700, padding: "2px 7px",
@@ -1950,7 +1965,7 @@
                           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                         }}>{item.artist}</div>
                         <div style={{ fontSize: 12, color: "var(--text-3)", marginTop: 1 }}>
-                          {item.start}–{item.end}
+                          {item.start}–{fmtEnd(item)}
                         </div>
                       </div>
                       {isLoser && <span style={{ fontSize: 11, color: "var(--text-4)" }}>下次吧</span>}
@@ -1966,17 +1981,39 @@
                 </div>
               )}
 
+              {/* Tiger burst */}
+              {revealed && winner?.artist === QIAOHU && (
+                <div style={{ position: "relative", height: 0, display: "flex", justifyContent: "center" }}>
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const angle = (i / 12) * 360;
+                    const rad = angle * Math.PI / 180;
+                    const tx = Math.cos(rad) * 20;
+                    const ty = Math.sin(rad) * 20;
+                    const rot = (Math.random() - .5) * 360;
+                    return (
+                      <span key={i} style={{
+                        position: "absolute", fontSize: 24 + Math.random() * 12,
+                        "--tx": `${tx}px`, "--ty": `${ty}px`, "--rot": `${rot}deg`,
+                        animation: `tigerBurst ${.8 + Math.random() * .4}s var(--ease-out) forwards`,
+                        animationDelay: `${i * 30}ms`,
+                        pointerEvents: "none",
+                      }}>🐯</span>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Result text */}
               {revealed && winner && (
                 <div className="lottery-result" style={{ textAlign: "center", padding: "12px 0 16px" }}>
-                  <div style={{ fontSize: 13, color: "var(--text-3)", marginBottom: 4 }}>就決定是你了！</div>
+                  <div style={{ fontSize: 13, color: "var(--text-3)", marginBottom: 4 }}>{winner.artist === QIAOHU ? "小朋友就是要看" : "就決定是你了！"}</div>
                   <div style={{
                     fontSize: 20, fontWeight: 900,
                     background: `linear-gradient(135deg, ${STAGES[winner.stage]?.bg || "#888"}, var(--text))`,
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                   }}>{winner.artist}</div>
                   <div style={{ fontSize: 12, color: "var(--text-4)", marginTop: 4 }}>
-                    {STAGES[winner.stage]?.name} · {winner.start}–{winner.end}
+                    {STAGES[winner.stage]?.name} · {winner.start}–{fmtEnd(winner)}
                   </div>
                 </div>
               )}
@@ -1986,13 +2023,44 @@
                 {!spinning && !revealed && (
                   <button onClick={spin} className="lottery-btn-primary">🎲 抽！</button>
                 )}
-                {revealed && (
+                {revealed && winner?.artist === QIAOHU && !scolded && (
+                  <>
+                    <button onClick={() => setScolded(true)} className="lottery-btn-secondary">再抽一次</button>
+                    <button onClick={accept} className="lottery-btn-primary">接受結果 ✓</button>
+                  </>
+                )}
+                {revealed && winner?.artist === QIAOHU && scolded && (
+                  <button onClick={accept} className="lottery-btn-primary">接受結果 ✓</button>
+                )}
+                {revealed && winner?.artist !== QIAOHU && (
                   <>
                     <button onClick={retry} className="lottery-btn-secondary">再抽一次</button>
                     <button onClick={accept} className="lottery-btn-primary">接受結果 ✓</button>
                   </>
                 )}
               </div>
+
+              {/* Scold overlay */}
+              {scolded && (
+                <div style={{
+                  position: "absolute", inset: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  pointerEvents: "none", overflow: "hidden",
+                  zIndex: 10, borderRadius: "inherit",
+                }}>
+                  <div style={{
+                    fontSize: 42, fontWeight: 900,
+                    color: "#F5A623",
+                    textShadow: "0 2px 20px rgba(245,166,35,.5), 0 0 60px rgba(245,166,35,.3)",
+                    transform: "rotate(-18deg)",
+                    whiteSpace: "nowrap",
+                    animation: "scolded .5s var(--spring) both",
+                    letterSpacing: 4,
+                  }}>
+                    小朋友就是要看巧虎！
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </>
