@@ -2858,7 +2858,7 @@
       const [simNow, setSimNow] = useState(null);
       const [now, setNow] = useState(new Date());
       const [showTimePicker, setShowTimePicker] = useState(false);
-      const [lastTap, setLastTap] = useState(0);
+      const lastTapRef = useRef({ time: 0, target: null });
       const firstConflictRef = useRef(null);
       const theme = useTheme();
       const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
@@ -3084,15 +3084,20 @@
                     background: "linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                   }}>大港開唱</span>
-                  <span onClick={view === "sched" ? () => {
+                  <span onClick={e => {
+                    e.stopPropagation();
                     const n = Date.now();
-                    if (n - lastTap < 400) setShowTimePicker(true);
-                    setLastTap(n);
-                  } : undefined} style={{
+                    const last = lastTapRef.current;
+                    if (n - last.time < 400 && last.target === e.currentTarget) setShowTimePicker(true);
+                    lastTapRef.current = { time: n, target: e.currentTarget };
+                  }} style={{
                     color: simNow ? "#F4A261" : "var(--text-4)",
                     fontWeight: 600, fontSize: 20, marginLeft: 6,
-                    cursor: view === "sched" ? "default" : "auto",
+                    cursor: "default",
                     transition: "color .2s",
+                    padding: "4px 8px", margin: "-4px -8px",
+                    borderRadius: 6,
+                    WebkitUserSelect: "none", userSelect: "none",
                   }}>2026{simNow && " ⏱"}</span>
                 </h1>
                 <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2, fontWeight: 500 }}>
@@ -3523,14 +3528,6 @@
                     </button>
                   </div>
                 )}
-                {showTimePicker && (
-                  <TimePicker
-                    simNow={simNow}
-                    onSet={d => { setSimNow(d); setNow(d) }}
-                    onReset={() => { setSimNow(null); setNow(new Date()) }}
-                    onClose={() => setShowTimePicker(false)}
-                  />
-                )}
                 {showSheet && (
                   <ConfirmDialog
                     title="清除所有選取？"
@@ -3652,6 +3649,14 @@
           <FloatingMapBtn onMapOpen={() => setZoomImg({ src: MAP_SRC, hotspots: true })} />
           {/* ══ Image Viewer ══ */}
           {zoomImg && <ImageViewer src={typeof zoomImg === 'string' ? zoomImg : zoomImg.src} hotspots={typeof zoomImg === 'object' && zoomImg.hotspots} onClose={() => setZoomImg(null)} />}
+          {showTimePicker && (
+            <TimePicker
+              simNow={simNow}
+              onSet={d => { setSimNow(d); setNow(d) }}
+              onReset={() => { setSimNow(null); setNow(new Date()) }}
+              onClose={() => setShowTimePicker(false)}
+            />
+          )}
           {showOnboard && <Onboarding onDone={() => { localStorage.setItem("onboard-done", "1"); setShowOnboard(false) }} />}
           {lotteryItems && <LotterySheet items={lotteryItems} onAccept={id => { togglePref(id, lotteryItems.map(i => i.id)); setLotteryItems(null); }} onClose={() => setLotteryItems(null)} />}
         </div>
