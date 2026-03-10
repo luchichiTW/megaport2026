@@ -2961,7 +2961,7 @@
       const stgIdx = useMemo(() => stgsDay.indexOf(stg), [stgsDay, stg]);
       const prevList = useMemo(() => stgIdx > 0 ? filterStage(stgsDay[stgIdx - 1]) : null, [filterStage, stgsDay, stgIdx]);
       const nextList = useMemo(() => stgIdx < stgsDay.length - 1 ? filterStage(stgsDay[stgIdx + 1]) : null, [filterStage, stgsDay, stgIdx]);
-      const nC = Math.floor(confIds.size / 2);
+      const nC = useMemo(() => { let count = 0; for (const d of [1, 2]) { const items = selItems.filter(t => t.day === d).sort((a, b) => t2m(a.start) - t2m(b.start)); let i = 0; while (i < items.length) { if (!confIds.has(items[i].id)) { i++; continue; } const group = [items[i]]; let j = i + 1; while (j < items.length) { if (group.some(g => clash(items[j], g))) { group.push(items[j]); j++; } else break; } if (group.length > 1) count++; i = j; } } return count }, [selItems, confIds]);
 
       // Compute show status relative to activeNow
       const getStatus = useCallback((item) => {
