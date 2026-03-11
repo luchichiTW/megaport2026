@@ -1,8 +1,9 @@
-const CACHE = "mp2026-v5";
+const CACHE = "mp2026-v6";
 const ASSETS = [
   "./index.html",
   "./schedule.js",
   "./artists.js",
+  "./share.js",
   "./app.js",
   "./manifest.json",
   "./icon.svg",

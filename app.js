@@ -2342,6 +2342,632 @@ function Timetable({
   }))));
 }
 
+/* ══════════ Share Components ══════════ */
+
+function ShareSheet({
+  sel,
+  onClose
+}) {
+  const [step, setStep] = useState("init"); // init, loading, ready, error
+  const [name, setName] = useState("");
+  const [passphrase, setPassphrase] = useState("");
+  const [usePassphrase, setUsePassphrase] = useState(false);
+  const [shareURL, setShareURL] = useState("");
+  const [qrSVG, setQrSVG] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [identity, setIdentity] = useState(null);
+  const [error, setError] = useState("");
+  const [closing, setClosing] = useState(false);
+  const inputRef = useRef(null);
+  useEffect(() => {
+    ShareIdentity.get().then(id => {
+      if (id) {
+        setName(id.name);
+        setIdentity(id);
+        setStep("hasId");
+      }
+    });
+  }, []);
+  const dismiss = useCallback(() => {
+    setClosing(true);
+    setTimeout(onClose, 320);
+  }, [onClose]);
+  const generate = useCallback(async () => {
+    if (!name.trim()) return;
+    setStep("loading");
+    try {
+      const id = await ShareIdentity.getOrCreate(name.trim());
+      setIdentity(id);
+      const privKey = await ShareIdentity.getPrivateKey(id);
+      const pubKey = await ShareIdentity.getPublicKey(id);
+      const url = await ShareCodec.encodeShareURL(sel, name.trim(), privKey, pubKey, usePassphrase && passphrase ? passphrase : null);
+      setShareURL(url);
+      try {
+        setQrSVG(QR.toSVG(url, {
+          scale: 3,
+          margin: 2
+        }));
+      } catch {
+        setQrSVG("");
+      }
+      setStep("ready");
+    } catch (e) {
+      console.error("Share generation failed:", e);
+      setError("產生分享連結失敗：" + e.message);
+      setStep("error");
+    }
+  }, [sel, name, passphrase, usePassphrase]);
+  const copyLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(shareURL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
+      const ta = document.createElement("textarea");
+      ta.value = shareURL;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }, [shareURL]);
+  const webShare = useCallback(async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "大港開唱 2026 行程",
+          text: `${name} 的大港行程（${sel.length} 組演出）`,
+          url: shareURL
+        });
+      } catch {}
+    }
+  }, [shareURL, name, sel.length]);
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+  return ReactDOM.createPortal(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: `lottery-backdrop${closing ? " closing" : ""}`,
+    onClick: dismiss
+  }), /*#__PURE__*/React.createElement("div", {
+    className: `lottery-sheet${closing ? " closing" : ""}`,
+    style: {
+      padding: `20px 20px calc(20px + var(--safe-bottom))`
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "res-handle"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "16px 0 8px",
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 20,
+      fontWeight: 800,
+      color: "var(--text)"
+    }
+  }, "\u5206\u4EAB\u884C\u7A0B"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "var(--text-4)",
+      marginTop: 4
+    }
+  }, "\u5DF2\u9078 ", sel.length, " \u7D44\u6F14\u51FA")), (step === "init" || step === "hasId") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 14,
+      padding: "8px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: {
+      fontSize: 12,
+      fontWeight: 600,
+      color: "var(--text-3)",
+      display: "block",
+      marginBottom: 6
+    }
+  }, "\u4F60\u7684\u66B1\u7A31"), /*#__PURE__*/React.createElement("input", {
+    ref: inputRef,
+    value: name,
+    onChange: e => setName(e.target.value),
+    placeholder: "\u8F38\u5165\u66B1\u7A31...",
+    maxLength: 20,
+    style: {
+      width: "100%",
+      padding: "12px 14px",
+      borderRadius: 12,
+      border: ".5px solid var(--glass-border)",
+      background: "var(--surface)",
+      color: "var(--text)",
+      fontSize: 15,
+      outline: "none",
+      fontFamily: "inherit",
+      boxSizing: "border-box"
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setUsePassphrase(p => !p),
+    style: {
+      width: 44,
+      height: 26,
+      borderRadius: 13,
+      border: "none",
+      cursor: "pointer",
+      background: usePassphrase ? "linear-gradient(135deg, #34C759, #30B350)" : "var(--surface-hi)",
+      position: "relative",
+      transition: "background .2s",
+      boxShadow: "inset 0 1px 3px rgba(0,0,0,.1)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      background: "#fff",
+      boxShadow: "0 1px 3px rgba(0,0,0,.2)",
+      position: "absolute",
+      top: 2,
+      left: usePassphrase ? 20 : 2,
+      transition: "left .2s cubic-bezier(.16,1,.3,1)"
+    }
+  })), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color: "var(--text-2)"
+    }
+  }, "\u8A2D\u5B9A\u901A\u95DC\u5BC6\u8A9E\uFF08\u9650\u5236\u89C0\u770B\uFF09")), usePassphrase && /*#__PURE__*/React.createElement("input", {
+    value: passphrase,
+    onChange: e => setPassphrase(e.target.value),
+    placeholder: "\u8F38\u5165\u901A\u95DC\u5BC6\u8A9E...",
+    style: {
+      width: "100%",
+      padding: "12px 14px",
+      borderRadius: 12,
+      border: ".5px solid var(--glass-border)",
+      background: "var(--surface)",
+      color: "var(--text)",
+      fontSize: 15,
+      outline: "none",
+      fontFamily: "inherit",
+      boxSizing: "border-box"
+    }
+  }), identity && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "var(--text-5)",
+      textAlign: "center",
+      padding: "4px 0"
+    }
+  }, "\u5BC6\u9470\u6307\u7D0B\uFF1A", identity.fingerprint), /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-primary",
+    onClick: generate,
+    disabled: !name.trim(),
+    style: {
+      width: "100%",
+      padding: "14px",
+      opacity: name.trim() ? 1 : .4
+    }
+  }, "\u7522\u751F\u5206\u4EAB\u9023\u7D50")), step === "loading" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "40px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 32,
+      height: 32,
+      border: "3px solid var(--text-5)",
+      borderTop: "3px solid var(--text)",
+      borderRadius: "50%",
+      margin: "0 auto 12px",
+      animation: "spin 1s linear infinite"
+    }
+  }), /*#__PURE__*/React.createElement("style", null, `@keyframes spin { to { transform: rotate(360deg) } }`), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      color: "var(--text-3)"
+    }
+  }, "\u6B63\u5728\u7522\u751F\u5BC6\u9470\u8207\u9023\u7D50...")), step === "ready" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 14,
+      padding: "8px 0"
+    }
+  }, qrSVG && /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "8px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "inline-block",
+      padding: 12,
+      borderRadius: 16,
+      background: "#fff",
+      boxShadow: "0 4px 24px rgba(0,0,0,.1)"
+    },
+    dangerouslySetInnerHTML: {
+      __html: qrSVG
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "4px 0",
+      display: "flex",
+      flexDirection: "column",
+      gap: 2
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      fontWeight: 700,
+      color: "var(--text)"
+    }
+  }, name, " \u7684\u884C\u7A0B"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "var(--text-5)"
+    }
+  }, "\u5DF2\u7C3D\u7F72 \xB7 \u5BC6\u9470 ", identity?.fingerprint), usePassphrase && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#F4A261",
+      fontWeight: 600,
+      marginTop: 2
+    }
+  }, "\u5DF2\u52A0\u5BC6 \xB7 \u9700\u8981\u901A\u95DC\u5BC6\u8A9E\u624D\u80FD\u67E5\u770B")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "10px 14px",
+      borderRadius: 12,
+      background: "var(--surface)",
+      border: ".5px solid var(--surface-border)",
+      fontSize: 11,
+      color: "var(--text-4)",
+      wordBreak: "break-all",
+      lineHeight: 1.5,
+      maxHeight: 60,
+      overflow: "hidden"
+    }
+  }, shareURL), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-primary",
+    onClick: copyLink,
+    style: {
+      flex: 1,
+      padding: "14px"
+    }
+  }, copied ? "已複製！" : "複製連結"), typeof navigator.share === "function" && /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-secondary",
+    onClick: webShare,
+    style: {
+      padding: "14px 20px"
+    }
+  }, "\u5206\u4EAB"))), step === "error" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "30px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      color: "#FF6B6B",
+      fontWeight: 600
+    }
+  }, error), /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-secondary",
+    onClick: () => setStep("init"),
+    style: {
+      marginTop: 16
+    }
+  }, "\u91CD\u8A66")))), document.body);
+}
+function ShareReceiver({
+  shareData,
+  onImport,
+  onClose
+}) {
+  const [closing, setClosing] = useState(false);
+  const [passphrase, setPassphrase] = useState("");
+  const [decrypted, setDecrypted] = useState(null);
+  const [decryptError, setDecryptError] = useState(false);
+  const [decrypting, setDecrypting] = useState(false);
+  const data = decrypted || shareData;
+  const isEncrypted = shareData.encrypted;
+  const dismiss = useCallback(() => {
+    setClosing(true);
+    // Clear hash
+    history.replaceState(null, "", location.pathname);
+    setTimeout(onClose, 320);
+  }, [onClose]);
+  const doDecrypt = useCallback(async () => {
+    if (!passphrase) return;
+    setDecrypting(true);
+    setDecryptError(false);
+    try {
+      const result = await ShareCodec.decryptAndDecode(shareData.data, passphrase);
+      setDecrypted(result);
+    } catch {
+      setDecryptError(true);
+    }
+    setDecrypting(false);
+  }, [shareData, passphrase]);
+  const handleImport = useCallback(() => {
+    if (data && data.sel) {
+      onImport(data.sel);
+      dismiss();
+    }
+  }, [data, onImport, dismiss]);
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+  const selItems = data?.sel ? T.filter(t => data.sel.includes(t.id)) : [];
+  const sched = {
+    1: [],
+    2: []
+  };
+  selItems.forEach(i => sched[i.day]?.push(i));
+  Object.values(sched).forEach(a => a.sort((x, y) => t2m(x.start) - t2m(y.start)));
+  const shareDate = data?.ts ? new Date(data.ts * 1000) : null;
+  return ReactDOM.createPortal(/*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: `lottery-backdrop${closing ? " closing" : ""}`,
+    onClick: dismiss
+  }), /*#__PURE__*/React.createElement("div", {
+    className: `lottery-sheet${closing ? " closing" : ""}`,
+    style: {
+      padding: `20px 20px calc(20px + var(--safe-bottom))`,
+      maxHeight: "90vh"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "res-handle"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "16px 0 8px",
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 20,
+      fontWeight: 800,
+      color: "var(--text)"
+    }
+  }, "\u6536\u5230\u5206\u4EAB\u884C\u7A0B")), isEncrypted && !decrypted && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 14,
+      padding: "16px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 32,
+      marginBottom: 8
+    }
+  }, "\uD83D\uDD12"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      color: "var(--text-2)",
+      fontWeight: 600
+    }
+  }, "\u6B64\u884C\u7A0B\u5DF2\u52A0\u5BC6"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "var(--text-4)",
+      marginTop: 4
+    }
+  }, "\u8ACB\u8F38\u5165\u5206\u4EAB\u8005\u63D0\u4F9B\u7684\u901A\u95DC\u5BC6\u8A9E")), /*#__PURE__*/React.createElement("input", {
+    value: passphrase,
+    onChange: e => {
+      setPassphrase(e.target.value);
+      setDecryptError(false);
+    },
+    placeholder: "\u8F38\u5165\u901A\u95DC\u5BC6\u8A9E...",
+    onKeyDown: e => {
+      if (e.key === "Enter") doDecrypt();
+    },
+    style: {
+      width: "100%",
+      padding: "12px 14px",
+      borderRadius: 12,
+      border: decryptError ? "1px solid #FF6B6B" : ".5px solid var(--glass-border)",
+      background: "var(--surface)",
+      color: "var(--text)",
+      fontSize: 15,
+      outline: "none",
+      fontFamily: "inherit",
+      boxSizing: "border-box"
+    }
+  }), decryptError && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#FF6B6B",
+      textAlign: "center"
+    }
+  }, "\u5BC6\u8A9E\u932F\u8AA4\uFF0C\u8ACB\u91CD\u65B0\u8F38\u5165"), /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-primary",
+    onClick: doDecrypt,
+    disabled: !passphrase || decrypting,
+    style: {
+      width: "100%",
+      padding: "14px",
+      opacity: passphrase && !decrypting ? 1 : .4
+    }
+  }, decrypting ? "解密中..." : "解鎖")), data && !data.encrypted && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 12,
+      padding: "8px 0"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "14px 16px",
+      borderRadius: 14,
+      background: data.verified ? "linear-gradient(135deg, rgba(52,199,89,.08), rgba(48,179,80,.04))" : "linear-gradient(135deg, rgba(255,107,107,.08), rgba(255,80,80,.04))",
+      border: data.verified ? ".5px solid rgba(52,199,89,.2)" : ".5px solid rgba(255,107,107,.2)",
+      display: "flex",
+      alignItems: "center",
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      background: data.verified ? "linear-gradient(135deg, #34C759, #30B350)" : "linear-gradient(135deg, #FF6B6B, #E63946)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: 18,
+      color: "#fff",
+      fontWeight: 800,
+      flexShrink: 0
+    }
+  }, data.verified ? /*#__PURE__*/React.createElement("svg", {
+    width: "20",
+    height: "20",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "#fff",
+    strokeWidth: "3",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("polyline", {
+    points: "20 6 9 17 4 12"
+  })) : "?"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 16,
+      fontWeight: 700,
+      color: "var(--text)"
+    }
+  }, data.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "var(--text-4)",
+      marginTop: 2
+    }
+  }, data.verified ? "簽章已驗證" : "簽章驗證失敗", data.fingerprint && ` · ${data.fingerprint}`), shareDate && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "var(--text-5)",
+      marginTop: 1
+    }
+  }, shareDate.toLocaleDateString("zh-TW"), " ", shareDate.toLocaleTimeString("zh-TW", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      fontWeight: 600,
+      color: "var(--text-3)"
+    }
+  }, "\u5171 ", selItems.length, " \u7D44\u6F14\u51FA"), /*#__PURE__*/React.createElement("div", {
+    className: "no-scrollbar",
+    style: {
+      maxHeight: 300,
+      overflowY: "auto",
+      display: "flex",
+      flexDirection: "column",
+      gap: 6
+    }
+  }, [1, 2].map(d => {
+    const items = sched[d];
+    if (!items?.length) return null;
+    return /*#__PURE__*/React.createElement("div", {
+      key: d
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 13,
+        fontWeight: 800,
+        marginBottom: 6,
+        background: d === 1 ? "linear-gradient(135deg,#FF6B6B,#E63946)" : "linear-gradient(135deg,#F4A261,#EF6C00)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent"
+      }
+    }, d === 1 ? "DAY 1 · 3/21" : "DAY 2 · 3/22"), items.map(item => /*#__PURE__*/React.createElement("div", {
+      key: item.id,
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "8px 12px",
+        marginBottom: 4,
+        borderRadius: 12,
+        background: `linear-gradient(135deg, ${STAGES[item.stage]?.bg || "#888"}14, ${STAGES[item.stage]?.bg || "#888"}08)`,
+        border: `.5px solid ${STAGES[item.stage]?.bg || "#888"}25`
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "var(--text-4)",
+        fontWeight: 500,
+        fontVariantNumeric: "tabular-nums",
+        minWidth: 75
+      }
+    }, item.start, "\u2013", item.end), /*#__PURE__*/React.createElement(Badge, {
+      stage: item.stage
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 13,
+        fontWeight: 600,
+        flex: 1,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
+      }
+    }, item.artist))));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      paddingTop: 4
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-secondary",
+    onClick: dismiss,
+    style: {
+      flex: 1,
+      padding: "14px"
+    }
+  }, "\u95DC\u9589"), /*#__PURE__*/React.createElement("button", {
+    className: "lottery-btn-primary",
+    onClick: handleImport,
+    style: {
+      flex: 1,
+      padding: "14px"
+    }
+  }, "\u532F\u5165\u5230\u6211\u7684\u884C\u7A0B"))))), document.body);
+}
+
 /* ══════════ App ══════════ */
 
 function App() {
@@ -2375,6 +3001,8 @@ function App() {
   const [showRes, setShowRes] = useState(false);
   const [zoomImg, setZoomImg] = useState(null);
   const [lotteryItems, setLotteryItems] = useState(null);
+  const [showShare, setShowShare] = useState(false);
+  const [shareData, setShareData] = useState(null);
 
   // Tick real clock every 30s
   useEffect(() => {
@@ -2393,6 +3021,12 @@ function App() {
       setPref(new Set(p));
       setRdy(true);
     });
+    // Check for share URL
+    if (location.hash.startsWith("#s=")) {
+      ShareCodec.decodeShareURL(location.hash).then(data => {
+        if (data) setShareData(data);
+      }).catch(e => console.warn("Share decode failed:", e));
+    }
   }, []);
   useEffect(() => {
     if (rdy) dbSet(sel);
@@ -3487,6 +4121,40 @@ function App() {
     style: {
       color: "var(--dim)"
     }
+  }, "|")), sel.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    onClick: () => setShowShare(true),
+    style: {
+      cursor: "pointer",
+      padding: "4px 8px",
+      margin: "-4px -8px",
+      borderRadius: 8
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    style: {
+      verticalAlign: -2,
+      marginRight: 2
+    }
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"
+  }), /*#__PURE__*/React.createElement("polyline", {
+    points: "16 6 12 2 8 6"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "2",
+    x2: "12",
+    y2: "15"
+  })), "\u5206\u4EAB"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "var(--dim)"
+    }
   }, "|")), /*#__PURE__*/React.createElement("span", {
     onClick: () => setShowRes(true),
     style: {
@@ -3643,6 +4311,13 @@ function App() {
       setLotteryItems(null);
     },
     onClose: () => setLotteryItems(null)
+  }), showShare && /*#__PURE__*/React.createElement(ShareSheet, {
+    sel: sel,
+    onClose: () => setShowShare(false)
+  }), shareData && /*#__PURE__*/React.createElement(ShareReceiver, {
+    shareData: shareData,
+    onImport: ids => setSel(ids),
+    onClose: () => setShareData(null)
   }));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
