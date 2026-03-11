@@ -2262,8 +2262,7 @@ function Timetable({
     className: "tt-wrap",
     style: {
       flex: 1,
-      minHeight: 0,
-      paddingBottom: "env(safe-area-inset-bottom, 0px)"
+      minHeight: 0
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "tt-time-col",
@@ -2642,7 +2641,7 @@ function App() {
       maxWidth: 520,
       margin: "0 auto",
       ...(view === "pick" && pickMode === "table" ? {
-        height: "100dvh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden"

@@ -1550,7 +1550,7 @@
       }, [minTime, maxTime]);
 
       return (
-        <div className="tt-wrap" style={{ flex: 1, minHeight: 0, paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+        <div className="tt-wrap" style={{ flex: 1, minHeight: 0 }}>
           <div className="tt-time-col" style={{ height: totalH + HEADER_H }}>
             {lines.map(l => (
               <div key={l.m} className="tt-time-label" style={{ top: (l.m - minTime) * PX_PER_MIN + HEADER_H }}>
@@ -1803,7 +1803,7 @@
           position: "relative", zIndex: 1,
           maxWidth: 520, margin: "0 auto",
           ...(view === "pick" && pickMode === "table"
-            ? { height: "100dvh", display: "flex", flexDirection: "column", overflow: "hidden" }
+            ? { height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }
             : { minHeight: "100dvh", paddingBottom: `calc(90px + var(--safe-bottom))` }),
         }}>
 
