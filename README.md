@@ -33,6 +33,13 @@
 - Service Worker 離線快取
 - Liquid Glass 設計語言
 
+## TODO 2027
+
+- [ ] 修正 PWA 啟動時 timetable 下方偶爾出現黑邊
+- [ ] 新增 splash screen
+- [ ] 採用 `feat/improve-ux-experience` branch 的畫面，以 solid radio button 切換表格/清單模式，改善目前需點擊才知道可切換的體驗
+- [ ] 依 `claude/new-session-K1163` branch 拆分元件與行程設定檔 (refactor)
+
 ## 授權
 
 本專案採用 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) 授權，禁止商業使用。
