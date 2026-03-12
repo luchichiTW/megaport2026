@@ -329,10 +329,20 @@
         embed ? EMBED_PLATFORMS.filter(p => embed[p.key]) : [],
       [embed]);
       const [active, setActive] = useState(null);
+      const [loaded, setLoaded] = useState({});
 
       useEffect(() => {
-        if (available.length) setActive(available[0].key);
+        if (available.length) {
+          const first = available[0].key;
+          setActive(first);
+          setLoaded({ [first]: true });
+        }
       }, [available.length]);
+
+      const switchTab = useCallback((key) => {
+        setActive(key);
+        setLoaded(prev => ({ ...prev, [key]: true }));
+      }, []);
 
       if (!online || !available.length || !active) return null;
 
@@ -347,7 +357,7 @@
               {available.map(opt => {
                 const isActive = active === opt.key;
                 return (
-                  <button key={opt.key} onClick={() => setActive(opt.key)} style={{
+                  <button key={opt.key} onClick={() => switchTab(opt.key)} style={{
                     flex: 1, padding: "7px 6px", border: "none", borderRadius: 8,
                     fontSize: 12, fontWeight: 600, cursor: "pointer",
                     transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -364,16 +374,17 @@
           )}
           {available.map(opt => {
             const svOnly = opt.key === "streetvoice" && available.length === 1;
+            const isActive = active === opt.key;
             return (
               <div key={opt.key} style={{
                 borderRadius: 12, overflow: "hidden", marginTop: available.length > 1 ? 8 : 0,
                 background: "rgba(0,0,0,0.15)",
                 border: "0.5px solid var(--dim)",
-                display: active === opt.key ? "block" : "none",
+                display: isActive ? "block" : "none",
                 ...(svOnly ? { maxWidth: 330, margin: "0 auto" } : {}),
               }}>
-                <iframe
-                  src={embedUrl(opt.key, embed[opt.key], isDark)}
+                {loaded[opt.key] && <iframe
+                  src={isActive ? embedUrl(opt.key, embed[opt.key], isDark) : "about:blank"}
                   width={svOnly ? 330 : "100%"}
                   height={svOnly ? 100 : EMBED_HEIGHT}
                   frameBorder="no"
@@ -381,7 +392,7 @@
                   allow={opt.key !== "streetvoice" ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" : undefined}
                   style={{ borderRadius: 12, display: "block" }}
                   title={`${opt.key} embed`}
-                />
+                />}
               </div>
             );
           })}

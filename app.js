@@ -432,9 +432,23 @@ function ArtistEmbed({
   const embed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
   const available = useMemo(() => embed ? EMBED_PLATFORMS.filter(p => embed[p.key]) : [], [embed]);
   const [active, setActive] = useState(null);
+  const [loaded, setLoaded] = useState({});
   useEffect(() => {
-    if (available.length) setActive(available[0].key);
+    if (available.length) {
+      const first = available[0].key;
+      setActive(first);
+      setLoaded({
+        [first]: true
+      });
+    }
   }, [available.length]);
+  const switchTab = useCallback(key => {
+    setActive(key);
+    setLoaded(prev => ({
+      ...prev,
+      [key]: true
+    }));
+  }, []);
   if (!online || !available.length || !active) return null;
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -453,7 +467,7 @@ function ArtistEmbed({
     const isActive = active === opt.key;
     return /*#__PURE__*/React.createElement("button", {
       key: opt.key,
-      onClick: () => setActive(opt.key),
+      onClick: () => switchTab(opt.key),
       style: {
         flex: 1,
         padding: "7px 6px",
@@ -471,6 +485,7 @@ function ArtistEmbed({
     }, opt.label);
   })), available.map(opt => {
     const svOnly = opt.key === "streetvoice" && available.length === 1;
+    const isActive = active === opt.key;
     return /*#__PURE__*/React.createElement("div", {
       key: opt.key,
       style: {
@@ -479,14 +494,14 @@ function ArtistEmbed({
         marginTop: available.length > 1 ? 8 : 0,
         background: "rgba(0,0,0,0.15)",
         border: "0.5px solid var(--dim)",
-        display: active === opt.key ? "block" : "none",
+        display: isActive ? "block" : "none",
         ...(svOnly ? {
           maxWidth: 330,
           margin: "0 auto"
         } : {})
       }
-    }, /*#__PURE__*/React.createElement("iframe", {
-      src: embedUrl(opt.key, embed[opt.key], isDark),
+    }, loaded[opt.key] && /*#__PURE__*/React.createElement("iframe", {
+      src: isActive ? embedUrl(opt.key, embed[opt.key], isDark) : "about:blank",
       width: svOnly ? 330 : "100%",
       height: svOnly ? 100 : EMBED_HEIGHT,
       frameBorder: "no",
