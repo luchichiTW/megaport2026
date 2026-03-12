@@ -92,7 +92,11 @@ const ARTIST_EMBED = {
   "COLD DEW": { spotify: "1wK8TaYMCje9VRs0y1R8b7", appleMusic: "1828394074", streetvoice: "662295" },
   "Yappy": { spotify: "28G5rtbvCmWsjyp5G6LwMe", appleMusic: "1644674058" },
   "P!SCO": { spotify: "5ucZzHHKydsmjyZJT9vOWe", appleMusic: "1752441135", streetvoice: "575123" },
-  "LAWA ft. Angie安吉": { spotify: "6YRem17JxNaJkYGXm13ElV", appleMusic: "1778465573", streetvoice: "763655" },
+  "LAWA ft. Angie安吉": { artists: [
+    { name: "LAWA", spotify: "6YRem17JxNaJkYGXm13ElV", appleMusic: "1778465573", streetvoice: "763655" },
+    // this is mock data, since LAWA ft. Angie安吉 doesn't exist, we use P!SCO's data for Angie安吉
+    { name: "Angie安吉",spotify: "5ucZzHHKydsmjyZJT9vOWe", appleMusic: "1752441135", streetvoice: "575123" },
+  ] },
   "陳以恆": { spotify: "26ptiw0RrtrYZcRPPGHj5G", appleMusic: "1780849666", streetvoice: "792753" },
   "黃雨晴": { spotify: "2Peqh4pXySabABIVbVbKZf", appleMusic: "1735792497", streetvoice: "783501" },
   "美麗本人 ft. 異鄉人": { spotify: "4WKKVDQD4OHYdxY3IuuGt7", appleMusic: "1756068084", streetvoice: "654637" },

@@ -429,19 +429,33 @@ function ArtistEmbed({
       window.removeEventListener("offline", off);
     };
   }, []);
-  const embed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
-  const available = useMemo(() => embed ? EMBED_PLATFORMS.filter(p => embed[p.key]) : [], [embed]);
+  const rawEmbed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
+  // 支援新格式 { artists: [...] } 與舊格式 { spotify, appleMusic, ... }
+  const artists = useMemo(() => {
+    if (!rawEmbed) return [];
+    if (rawEmbed.artists) return rawEmbed.artists;
+    return [{
+      name: artist,
+      ...rawEmbed
+    }];
+  }, [rawEmbed, artist]);
+  // 過濾掉完全沒有平台資料的 artist
+  const availableArtists = useMemo(() => artists.filter(a => EMBED_PLATFORMS.some(p => a[p.key])), [artists]);
+  const [activeArtistIdx, setActiveArtistIdx] = useState(0);
+  const currentArtist = availableArtists[activeArtistIdx] || availableArtists[0];
+  const available = useMemo(() => currentArtist ? EMBED_PLATFORMS.filter(p => currentArtist[p.key]) : [], [currentArtist]);
   const [active, setActive] = useState(null);
   const [loaded, setLoaded] = useState({});
   useEffect(() => {
     if (available.length) {
       const first = available[0].key;
       setActive(first);
-      setLoaded({
+      setLoaded(prev => ({
+        ...prev,
         [first]: true
-      });
+      }));
     }
-  }, [available.length]);
+  }, [available.length, activeArtistIdx]);
   const switchTab = useCallback(key => {
     setActive(key);
     setLoaded(prev => ({
@@ -449,45 +463,100 @@ function ArtistEmbed({
       [key]: true
     }));
   }, []);
-  if (!online || !available.length || !active) return null;
+  const switchArtist = useCallback(idx => {
+    const a = availableArtists[idx];
+    if (!a) return;
+    setActiveArtistIdx(idx);
+    const firstPlatform = EMBED_PLATFORMS.find(p => a[p.key]);
+    if (firstPlatform) {
+      setActive(firstPlatform.key);
+      setLoaded({
+        [firstPlatform.key]: true
+      });
+    }
+  }, [availableArtists]);
+  if (!online || !availableArtists.length || !active) return null;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 10,
       marginBottom: 4
     }
-  }, available.length > 1 && /*#__PURE__*/React.createElement("div", {
+  }, availableArtists.length > 1 && /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
-      gap: 0,
-      background: "rgba(125,125,125,0.12)",
-      borderRadius: 10,
-      padding: 2
+      gap: 20,
+      position: "relative",
+      marginBottom: 8,
+      borderBottom: "1px solid rgba(125,125,125,0.1)"
     }
-  }, available.map(opt => {
+  }, availableArtists.map((a, i) => /*#__PURE__*/React.createElement("button", {
+    key: a.name,
+    onClick: () => switchArtist(i),
+    style: {
+      padding: "0 0 8px",
+      border: "none",
+      borderRadius: 0,
+      fontSize: 15,
+      fontWeight: activeArtistIdx === i ? 700 : 400,
+      cursor: "pointer",
+      transition: "color 0.2s",
+      background: "transparent",
+      color: activeArtistIdx === i ? "var(--text-1)" : "var(--text-5)",
+      borderBottom: `2.5px solid ${activeArtistIdx === i ? "var(--text)" : "transparent"}`,
+      marginBottom: -1,
+      whiteSpace: "nowrap",
+      fontFamily: "inherit"
+    }
+  }, a.name))), available.length > 1 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "rgba(125,125,125,0.08)",
+      borderRadius: 14,
+      padding: 4,
+      display: "flex",
+      position: "relative",
+      border: "1px solid rgba(125,125,125,0.1)"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      top: 4,
+      left: `calc(${available.findIndex(p => p.key === active) * (100 / available.length)}% + 4px)`,
+      width: `calc(${100 / available.length}% - 6px)`,
+      height: "calc(100% - 8px)",
+      background: "linear-gradient(135deg, rgba(125,125,125,0.22), rgba(125,125,125,0.10))",
+      borderRadius: 11,
+      transition: "left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+      border: "1px solid rgba(125,125,125,0.15)",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.12)"
+    }
+  }), available.map(opt => {
     const isActive = active === opt.key;
     return /*#__PURE__*/React.createElement("button", {
       key: opt.key,
       onClick: () => switchTab(opt.key),
       style: {
         flex: 1,
-        padding: "7px 6px",
+        padding: "9px 4px",
         border: "none",
-        borderRadius: 8,
+        borderRadius: 11,
         fontSize: 12,
-        fontWeight: 600,
+        fontWeight: isActive ? 600 : 400,
         cursor: "pointer",
-        transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-        background: isActive ? "rgba(125,125,125,0.18)" : "transparent",
+        position: "relative",
+        zIndex: 1,
+        transition: "color 0.2s, font-weight 0.2s",
+        background: "transparent",
         color: isActive ? opt.color : "var(--text-5)",
-        boxShadow: isActive ? "0 1px 4px rgba(0,0,0,0.15), inset 0 0 0 0.5px rgba(125,125,125,0.1)" : "none",
-        letterSpacing: "-0.01em"
+        letterSpacing: "-0.01em",
+        fontFamily: "inherit",
+        textAlign: "center"
       }
     }, opt.label);
   })), available.map(opt => {
     const svOnly = opt.key === "streetvoice" && available.length === 1;
     const isActive = active === opt.key;
     return /*#__PURE__*/React.createElement("div", {
-      key: opt.key,
+      key: `${activeArtistIdx}-${opt.key}`,
       style: {
         borderRadius: 12,
         overflow: "hidden",
@@ -501,7 +570,7 @@ function ArtistEmbed({
         } : {})
       }
     }, loaded[opt.key] && /*#__PURE__*/React.createElement("iframe", {
-      src: isActive ? embedUrl(opt.key, embed[opt.key], isDark) : "about:blank",
+      src: isActive ? embedUrl(opt.key, currentArtist[opt.key], isDark) : "about:blank",
       width: svOnly ? 330 : "100%",
       height: svOnly ? 100 : EMBED_HEIGHT,
       frameBorder: "no",
