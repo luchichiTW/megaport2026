@@ -299,6 +299,96 @@
       return { onTouchStart: onStart, onTouchEnd: onEnd, onTouchMove: onMove, prevented };
     }
 
+    const EMBED_PLATFORMS = [
+      { key: "spotify", label: "Spotify", color: "#1DB954" },
+      { key: "appleMusic", label: "Apple Music", color: "#FA2D48" },
+      { key: "streetvoice", label: "StreetVoice", color: "#00C3FF" },
+      { key: "youtube", label: "YouTube", color: "#FF0000" },
+    ];
+    const EMBED_HEIGHT = 152;
+    const embedUrl = (platform, id, isDark) => ({
+      spotify: `https://open.spotify.com/embed/artist/${id}?utm_source=generator&theme=${isDark ? 0 : 1}`,
+      appleMusic: `https://embed.music.apple.com/tw/album/${id}?app=music&theme=${isDark ? "dark" : "light"}`,
+      streetvoice: `https://streetvoice.com/music/embed/?id=${id}`,
+      youtube: `https://www.youtube.com/embed/${id}`,
+    })[platform];
+
+    function ArtistEmbed({ artist }) {
+      const { resolved } = useTheme();
+      const isDark = resolved === "dark";
+      const [online, setOnline] = useState(navigator.onLine);
+      useEffect(() => {
+        const on = () => setOnline(true);
+        const off = () => setOnline(false);
+        window.addEventListener("online", on);
+        window.addEventListener("offline", off);
+        return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+      }, []);
+      const embed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
+      const available = useMemo(() =>
+        embed ? EMBED_PLATFORMS.filter(p => embed[p.key]) : [],
+      [embed]);
+      const [active, setActive] = useState(null);
+
+      useEffect(() => {
+        if (available.length) setActive(available[0].key);
+      }, [available.length]);
+
+      if (!online || !available.length || !active) return null;
+
+      return (
+        <div style={{ marginTop: 10, marginBottom: 4 }}>
+          {available.length > 1 && (
+            <div style={{
+              display: "flex", gap: 0,
+              background: "rgba(125,125,125,0.12)",
+              borderRadius: 10, padding: 2,
+            }}>
+              {available.map(opt => {
+                const isActive = active === opt.key;
+                return (
+                  <button key={opt.key} onClick={() => setActive(opt.key)} style={{
+                    flex: 1, padding: "7px 6px", border: "none", borderRadius: 8,
+                    fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                    background: isActive ? "rgba(125,125,125,0.18)" : "transparent",
+                    color: isActive ? opt.color : "var(--text-5)",
+                    boxShadow: isActive ? "0 1px 4px rgba(0,0,0,0.15), inset 0 0 0 0.5px rgba(125,125,125,0.1)" : "none",
+                    letterSpacing: "-0.01em",
+                  }}>
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {available.map(opt => {
+            const svOnly = opt.key === "streetvoice" && available.length === 1;
+            return (
+              <div key={opt.key} style={{
+                borderRadius: 12, overflow: "hidden", marginTop: available.length > 1 ? 8 : 0,
+                background: "rgba(0,0,0,0.15)",
+                border: "0.5px solid var(--dim)",
+                display: active === opt.key ? "block" : "none",
+                ...(svOnly ? { maxWidth: 330, margin: "0 auto" } : {}),
+              }}>
+                <iframe
+                  src={embedUrl(opt.key, embed[opt.key], isDark)}
+                  width={svOnly ? 330 : "100%"}
+                  height={svOnly ? 100 : EMBED_HEIGHT}
+                  frameBorder="no"
+                  scrolling="no"
+                  allow={opt.key !== "streetvoice" ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" : undefined}
+                  style={{ borderRadius: 12, display: "block" }}
+                  title={`${opt.key} embed`}
+                />
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
     function ArtistTooltip({ item, onClose }) {
       const [closing, setClosing] = useState(false);
       const dur = t2m(item.end) - t2m(item.start);
@@ -342,6 +432,7 @@
             <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.45, color: "var(--text)", letterSpacing: "-.01em", flexShrink: 0 }}>
               {item.artist}
             </div>
+            <ArtistEmbed artist={item.artist} />
             {desc && (
               <div ref={descRef} className="no-scrollbar" style={{
                 fontSize: 13, color: "var(--text-3)", lineHeight: 1.65,
