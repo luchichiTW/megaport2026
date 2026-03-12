@@ -201,6 +201,12 @@ const T=[
   {id:"2-DS-4",day:2,stage:"DS",artist:"DJ Litro ft. 大樹下練歌坊",start:"18:00",end:"19:00"},
 
   // KIDS𨑨迌親子區（大義公園草皮）
-  {id:"1-KD-1",day:1,stage:"KD",artist:"好朋友集合！巧虎的港邊大冒險",start:"16:40",end:"17:10",tentativeEnd:true},
-  {id:"2-KD-1",day:2,stage:"KD",artist:"好朋友集合！巧虎的港邊大冒險",start:"16:40",end:"17:10",tentativeEnd:true},
+  {id:"1-KD-1",day:1,stage:"KD",artist:"好朋友集合！巧虎的港邊大冒險",start:"16:40",end:"17:10"},
+  {id:"1-KD-2",day:1,stage:"KD",artist:"生活大擊合",start:"14:00",end:"14:30"},
+  {id:"1-KD-3",day:1,stage:"KD",artist:"蓓蓓姐姐＆芋泥姐姐唱跳秀",start:"14:50",end:"15:20"},
+  {id:"1-KD-4",day:1,stage:"KD",artist:"生活大擊合",start:"15:50",end:"16:20"},
+  {id:"2-KD-1",day:2,stage:"KD",artist:"好朋友集合！巧虎的港邊大冒險",start:"16:40",end:"17:10"},
+  {id:"2-KD-2",day:2,stage:"KD",artist:"生活大擊合",start:"14:00",end:"14:30"},
+  {id:"2-KD-3",day:2,stage:"KD",artist:"蓓蓓姐姐＆芋泥姐姐唱跳秀",start:"14:50",end:"15:20"},
+  {id:"2-KD-4",day:2,stage:"KD",artist:"生活大擊合",start:"15:50",end:"16:20"},
 ];
