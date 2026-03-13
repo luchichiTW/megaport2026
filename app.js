@@ -387,6 +387,209 @@ function useLongPress(cb, ms = 500) {
     prevented
   };
 }
+const EMBED_PLATFORMS = [{
+  key: "spotify",
+  label: "Spotify"
+}, {
+  key: "spotifyPodcast",
+  label: "Podcast"
+}, {
+  key: "appleMusic",
+  label: "Apple"
+}, {
+  key: "streetvoice",
+  label: "街聲"
+}, {
+  key: "youtube",
+  label: "YouTube"
+}];
+const EMBED_HEIGHT = 152;
+const embedUrl = (platform, id, isDark) => ({
+  spotify: `https://open.spotify.com/embed/artist/${id}?utm_source=generator&theme=${isDark ? 0 : 1}`,
+  spotifyPodcast: `https://open.spotify.com/embed/show/${id}?utm_source=generator&theme=${isDark ? 0 : 1}`,
+  appleMusic: `https://embed.music.apple.com/tw/album/${id}?app=music&theme=${isDark ? "dark" : "light"}`,
+  streetvoice: `https://streetvoice.com/music/embed/?id=${id}`,
+  youtube: `https://www.youtube.com/embed/${id}`
+})[platform];
+function ArtistEmbed({
+  artist
+}) {
+  const {
+    resolved
+  } = useTheme();
+  const isDark = resolved === "dark";
+  const [online, setOnline] = useState(navigator.onLine);
+  useEffect(() => {
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => {
+      window.removeEventListener("online", on);
+      window.removeEventListener("offline", off);
+    };
+  }, []);
+  const rawEmbed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
+  // 支援新格式 { artists: [...] } 與舊格式 { spotify, appleMusic, ... }
+  const artists = useMemo(() => {
+    if (!rawEmbed) return [];
+    if (rawEmbed.artists) return rawEmbed.artists;
+    return [{
+      name: artist,
+      ...rawEmbed
+    }];
+  }, [rawEmbed, artist]);
+  // 過濾掉完全沒有平台資料的 artist
+  const availableArtists = useMemo(() => artists.filter(a => EMBED_PLATFORMS.some(p => a[p.key])), [artists]);
+  const [activeArtistIdx, setActiveArtistIdx] = useState(0);
+  const currentArtist = availableArtists[activeArtistIdx] || availableArtists[0];
+  const available = useMemo(() => currentArtist ? EMBED_PLATFORMS.filter(p => currentArtist[p.key]) : [], [currentArtist]);
+  const [active, setActive] = useState(null);
+  const [loaded, setLoaded] = useState({});
+  useEffect(() => {
+    if (available.length) {
+      const first = available[0].key;
+      setActive(first);
+      setLoaded(prev => ({
+        ...prev,
+        [first]: true
+      }));
+    }
+  }, [available.length, activeArtistIdx]);
+  const switchTab = useCallback(key => {
+    setActive(key);
+    setLoaded(prev => ({
+      ...prev,
+      [key]: true
+    }));
+  }, []);
+  const switchArtist = useCallback(idx => {
+    const a = availableArtists[idx];
+    if (!a) return;
+    setActiveArtistIdx(idx);
+    const firstPlatform = EMBED_PLATFORMS.find(p => a[p.key]);
+    if (firstPlatform) {
+      setActive(firstPlatform.key);
+      setLoaded({
+        [firstPlatform.key]: true
+      });
+    }
+  }, [availableArtists]);
+  if (!online || !availableArtists.length || !active) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 10,
+      marginBottom: 4
+    }
+  }, availableArtists.length > 1 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 20,
+      position: "relative",
+      marginBottom: 8,
+      borderBottom: "1px solid rgba(125,125,125,0.1)"
+    }
+  }, availableArtists.map((a, i) => /*#__PURE__*/React.createElement("button", {
+    key: a.name,
+    onClick: () => switchArtist(i),
+    style: {
+      padding: "0 0 8px",
+      border: "none",
+      borderRadius: 0,
+      fontSize: 15,
+      fontWeight: activeArtistIdx === i ? 700 : 400,
+      cursor: "pointer",
+      transition: "color 0.2s",
+      background: "transparent",
+      color: activeArtistIdx === i ? "var(--text-1)" : "var(--text-5)",
+      borderBottom: `2.5px solid ${activeArtistIdx === i ? "var(--text)" : "transparent"}`,
+      marginBottom: -1,
+      whiteSpace: "nowrap",
+      fontFamily: "inherit"
+    }
+  }, a.name))), available.length > 1 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "var(--seg-bg)",
+      borderRadius: 11,
+      padding: 2,
+      display: "flex",
+      position: "relative",
+      border: "1px solid var(--seg-border)"
+    }
+  }, (() => {
+    const ai = available.findIndex(p => p.key === active);
+    const n = available.length;
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        position: "absolute",
+        top: 2,
+        bottom: 2,
+        left: `calc(${ai} * (100% - 4px) / ${n} + 2px)`,
+        width: `calc((100% - 4px) / ${n})`,
+        borderRadius: 9,
+        background: "var(--seg-ind)",
+        boxShadow: "var(--seg-ind-shadow), inset 0 1px 0 var(--seg-ind-hi)",
+        transition: "left .3s cubic-bezier(.25,1,.5,1)"
+      }
+    });
+  })(), available.map((opt, i) => {
+    const isActive = active === opt.key;
+    const activeIdx = available.findIndex(p => p.key === active);
+    return /*#__PURE__*/React.createElement("button", {
+      key: opt.key,
+      onClick: () => switchTab(opt.key),
+      style: {
+        flex: 1,
+        padding: "8px 4px",
+        border: "none",
+        borderRadius: 9,
+        fontSize: 12,
+        fontWeight: 600,
+        cursor: "pointer",
+        position: "relative",
+        zIndex: 1,
+        transition: "color 0.2s",
+        background: "transparent",
+        color: isActive ? "var(--text)" : "var(--text-3)",
+        letterSpacing: "-0.01em",
+        fontFamily: "inherit",
+        textAlign: "center",
+        whiteSpace: "nowrap",
+        borderRight: i < available.length - 1 && activeIdx !== i && activeIdx !== i + 1 ? "0.5px solid var(--seg-border)" : "0.5px solid transparent"
+      }
+    }, opt.label);
+  })), available.map(opt => {
+    const svOnly = opt.key === "streetvoice" && available.length === 1;
+    const isActive = active === opt.key;
+    return /*#__PURE__*/React.createElement("div", {
+      key: `${activeArtistIdx}-${opt.key}`,
+      style: {
+        borderRadius: 12,
+        overflow: "hidden",
+        marginTop: available.length > 1 ? 8 : 0,
+        background: "rgba(0,0,0,0.15)",
+        border: "0.5px solid var(--dim)",
+        display: isActive ? "block" : "none",
+        ...(svOnly ? {
+          maxWidth: 330,
+          margin: "0 auto"
+        } : {})
+      }
+    }, loaded[opt.key] && /*#__PURE__*/React.createElement("iframe", {
+      src: isActive ? embedUrl(opt.key, currentArtist[opt.key], isDark) : "about:blank",
+      width: svOnly ? 330 : "100%",
+      height: svOnly ? 100 : EMBED_HEIGHT,
+      frameBorder: "no",
+      scrolling: "yes",
+      allow: opt.key !== "streetvoice" ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" : undefined,
+      style: {
+        borderRadius: 12,
+        display: "block"
+      },
+      title: `${opt.key} embed`
+    }));
+  }));
+}
 function ArtistTooltip({
   item,
   onClose
@@ -467,7 +670,9 @@ function ArtistTooltip({
       letterSpacing: "-.01em",
       flexShrink: 0
     }
-  }, item.artist), desc && /*#__PURE__*/React.createElement("div", {
+  }, item.artist), /*#__PURE__*/React.createElement(ArtistEmbed, {
+    artist: item.artist
+  }), desc && /*#__PURE__*/React.createElement("div", {
     ref: descRef,
     className: "no-scrollbar",
     style: {
@@ -2082,7 +2287,145 @@ function ConfirmDialog({
 const ONBOARD_STEPS = [{
   icon: "🚢",
   title: "歡迎來到大港開唱",
-  desc: "你的專屬音樂祭行程助手。點一下演出即可加入行程，左右滑動切換舞台，長按可查看藝人介紹。"
+  desc: "你的專屬音樂祭行程助手。點一下演出即可加入行程，左右滑動切換舞台。"
+}, {
+  icon: "👆",
+  title: "長按查看表演者資訊",
+  desc: "長按任一演出，即可查看表演者介紹、試聽串流音樂。",
+  content: (() => {
+    const mockArtists = ["鄭敬儒", "山姆", "楊世暄"];
+    const mockPlatforms = ["Spotify", "Apple", "YouTube"];
+    return React.createElement("div", {
+      style: {
+        marginTop: 14,
+        width: "100%",
+        maxWidth: 280,
+        margin: "14px auto 0",
+        borderRadius: 16,
+        padding: "14px 16px",
+        color: "var(--text)",
+        border: ".5px solid var(--glass-border)",
+        background: "linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end))",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        boxShadow: "inset 0 .5px 0 var(--glass-hi)",
+        textAlign: "left"
+      }
+    },
+    // Badge + time row
+    React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 10
+      }
+    }, React.createElement("span", {
+      style: {
+        display: "inline-flex",
+        alignItems: "center",
+        background: "linear-gradient(135deg, #E0348ADD, #E0348A99)",
+        color: "var(--badge-text)",
+        padding: "3px 11px",
+        borderRadius: 8,
+        fontSize: 11,
+        fontWeight: 700,
+        letterSpacing: .4,
+        boxShadow: "0 1px 4px #E0348A50, inset 0 .5px 0 rgba(255,255,255,.25)"
+      }
+    }, "女神龍"), React.createElement("span", {
+      style: {
+        fontSize: 13,
+        color: "var(--text-3)",
+        fontWeight: 600,
+        fontVariantNumeric: "tabular-nums"
+      }
+    }, "18:00 – 18:40"), React.createElement("span", {
+      style: {
+        fontSize: 11,
+        color: "var(--text-5)",
+        fontWeight: 500
+      }
+    }, "40 分鐘")),
+    // Artist name
+    React.createElement("div", {
+      style: {
+        fontSize: 15,
+        fontWeight: 700,
+        lineHeight: 1.45,
+        color: "var(--text)",
+        letterSpacing: "-.01em"
+      }
+    }, "same Sam but different.", React.createElement("br"), "鄭敬儒｜山姆｜楊世暄"),
+    // Mock artist switcher tabs
+    React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 20,
+        marginTop: 10,
+        borderBottom: "1px solid rgba(125,125,125,0.1)"
+      }
+    }, mockArtists.map((name, i) => React.createElement("span", {
+      key: name,
+      style: {
+        padding: "0 0 8px",
+        fontSize: 13,
+        fontWeight: i === 1 ? 700 : 400,
+        color: i === 1 ? "var(--text-1)" : "var(--text-5)",
+        borderBottom: i === 1 ? "2.5px solid var(--text)" : "2.5px solid transparent",
+        marginBottom: -1
+      }
+    }, name))),
+    // Mock platform segmented control
+    React.createElement("div", {
+      style: {
+        background: "var(--seg-bg)",
+        borderRadius: 11,
+        padding: 2,
+        display: "flex",
+        position: "relative",
+        marginTop: 8,
+        border: "1px solid var(--seg-border)"
+      }
+    }, React.createElement("div", {
+      style: {
+        position: "absolute",
+        top: 2,
+        bottom: 2,
+        left: "calc(1 * (100% - 4px) / 3 + 2px)",
+        width: "calc((100% - 4px) / 3)",
+        borderRadius: 9,
+        background: "var(--seg-ind)",
+        boxShadow: "var(--seg-ind-shadow), inset 0 1px 0 var(--seg-ind-hi)"
+      }
+    }), mockPlatforms.map((name, i) => React.createElement("span", {
+      key: name,
+      style: {
+        flex: 1,
+        textAlign: "center",
+        padding: "6px 0",
+        fontSize: 12,
+        fontWeight: 600,
+        position: "relative",
+        zIndex: 1,
+        color: i === 1 ? "var(--seg-active)" : "var(--seg-inactive)"
+      }
+    }, name))),
+    // Mock iframe placeholder
+    React.createElement("div", {
+      style: {
+        marginTop: 8,
+        height: 80,
+        borderRadius: 12,
+        background: "rgba(125,125,125,0.08)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 11,
+        color: "var(--text-5)"
+      }
+    }, "♫ 串流音樂預覽"));
+  })()
 }, {
   icon: "🗺️",
   title: "行程、時刻表與地圖",
@@ -2100,13 +2443,17 @@ const ONBOARD_STEPS = [{
   }]
 }];
 function Onboarding({
-  onDone
+  onDone,
+  startStep = 0,
+  singleStep = false
 }) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(startStep);
   const [closing, setClosing] = useState(false);
   const [stepKey, setStepKey] = useState(0);
-  const isLast = step === ONBOARD_STEPS.length - 1;
-  const s = ONBOARD_STEPS[step];
+  const steps = singleStep ? [ONBOARD_STEPS[startStep]] : ONBOARD_STEPS;
+  const idx = singleStep ? 0 : step;
+  const isLast = idx === steps.length - 1;
+  const s = steps[idx];
   const next = () => {
     if (isLast) {
       setClosing(true);
@@ -2117,7 +2464,7 @@ function Onboarding({
     setStepKey(k => k + 1);
   };
   const prev = () => {
-    if (step > 0) {
+    if (step > 0 && !singleStep) {
       setStep(p => p - 1);
       setStepKey(k => k + 1);
     }
@@ -2145,7 +2492,7 @@ function Onboarding({
     className: "onboard-title"
   }, s.title), /*#__PURE__*/React.createElement("div", {
     className: "onboard-desc"
-  }, s.desc), s.links && /*#__PURE__*/React.createElement("div", {
+  }, s.desc), s.content && s.content, s.links && /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 8,
@@ -2169,14 +2516,17 @@ function Onboarding({
       border: ".5px solid var(--surface-border)",
       boxShadow: "inset 0 .5px 0 var(--surface-hi)"
     }
-  }, l.label)))), /*#__PURE__*/React.createElement("div", {
+  }, l.label)))), steps.length > 1 && /*#__PURE__*/React.createElement("div", {
     className: "onboard-dots"
-  }, ONBOARD_STEPS.map((_, i) => /*#__PURE__*/React.createElement("div", {
+  }, steps.map((_, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
-    className: "onboard-dot" + (i === step ? " active" : "")
+    className: "onboard-dot" + (i === idx ? " active" : "")
   }))), /*#__PURE__*/React.createElement("div", {
     className: "onboard-actions"
-  }, step > 0 ? /*#__PURE__*/React.createElement("button", {
+  }, singleStep ? /*#__PURE__*/React.createElement("button", {
+    className: "onboard-btn onboard-btn-primary",
+    onClick: next
+  }, "\uD83D\uDC4C") : /*#__PURE__*/React.createElement(React.Fragment, null, step > 0 ? /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-secondary",
     onClick: prev
   }, "\u4E0A\u4E00\u6B65") : /*#__PURE__*/React.createElement("button", {
@@ -2185,7 +2535,7 @@ function Onboarding({
   }, "\u8DF3\u904E"), /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-primary",
     onClick: next
-  }, isLast ? "開始使用" : "下一步")))), document.body);
+  }, isLast ? "開始使用" : "下一步"))))), document.body);
 }
 
 /* ══════════ Timetable ══════════ */
@@ -2372,6 +2722,7 @@ function App() {
   const firstConflictRef = useRef(null);
   const theme = useTheme();
   const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
+  const [showV8Tip, setShowV8Tip] = useState(() => localStorage.getItem("onboard-done") && !localStorage.getItem("onboard-v7"));
   const [showRes, setShowRes] = useState(false);
   const [zoomImg, setZoomImg] = useState(null);
   const [lotteryItems, setLotteryItems] = useState(null);
@@ -2889,7 +3240,7 @@ function App() {
     ref: searchRef,
     value: q,
     onChange: e => setQ(e.target.value),
-    placeholder: "\u641C\u5C0B\u85DD\u4EBA...",
+    placeholder: "\u641C\u5C0B\u8868\u6F14\u8005...",
     style: {
       width: "100%",
       padding: "8px 32px 8px 30px",
@@ -3020,7 +3371,7 @@ function App() {
       fontSize: 16,
       fontWeight: 500
     }
-  }, "\u627E\u4E0D\u5230\u7B26\u5408\u7684\u85DD\u4EBA") : list.map(item => {
+  }, "\u627E\u4E0D\u5230\u7B26\u5408\u7684\u8868\u6F14\u8005") : list.map(item => {
     const st = getStatus(item);
     return /*#__PURE__*/React.createElement(Card, {
       key: item.id,
@@ -3634,7 +3985,15 @@ function App() {
   }), showOnboard && /*#__PURE__*/React.createElement(Onboarding, {
     onDone: () => {
       localStorage.setItem("onboard-done", "1");
+      localStorage.setItem("onboard-v7", "1");
       setShowOnboard(false);
+    }
+  }), showV8Tip && /*#__PURE__*/React.createElement(Onboarding, {
+    startStep: 1,
+    singleStep: true,
+    onDone: () => {
+      localStorage.setItem("onboard-v7", "1");
+      setShowV8Tip(false);
     }
   }), lotteryItems && /*#__PURE__*/React.createElement(LotterySheet, {
     items: lotteryItems,
