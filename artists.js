@@ -78,8 +78,8 @@ const ARTIST_EMBED = {
   "南瓜妮歌迷俱樂部": { spotify: "0bOeyvNd7Y87TJ15SH2HnS", appleMusic: "1599216896", streetvoice: "557568" },
   "the band apart [JP]": { spotify: "6g7JH6zxP3JTfg7i8bZwbf", appleMusic: "1629387712" },
   "same Sam but different. 鄭敬儒｜山姆｜楊世暄": { artists: [
-    { name: "鄭敬儒", spotify: "5S5NCbcD9xAVFcgv5Xh9dr", appleMusic: "1816191852", streetvoice: "479902" },
-    { name: "楊世暄", spotify: "3UNkNsSnAqS0q26PLrIv2n", appleMusic: "1851930671", streetvoice: "yangshihhsuan" },
+    { name: "鄭敬儒", spotify: "5S5NCbcD9xAVFcgv5Xh9dr", appleMusic: "1816191852" },
+    { name: "楊世暄", spotify: "3UNkNsSnAqS0q26PLrIv2n", appleMusic: "1851930671" },
     { name: "山姆", spotify: "1Se0FtmWSFmL81n85repGg", appleMusic: "1770466048", youtube: "wmxCotXmn7M" },
   ] },
   "謝金燕": { spotify: "7J59BD03maCvbOJKBlryQK", appleMusic: "1322326780" },
@@ -107,7 +107,7 @@ const ARTIST_EMBED = {
   "庵心自在所": { spotify: "2seNyxWz5SOuYTmhxetJjJ", appleMusic: "1712227967", streetvoice: "758451" },
   "結束バンド [JP]": { spotify: "2nvl0N9GwyX69RRBMEZ4OD", appleMusic: "1657318546" },
   "芒果醬": { spotify: "1t1GIb4bb1lARAXwWEekUN", appleMusic: "1721470237", streetvoice: "681653", youtube: "OyeATtbuOFw" },
-  "康士坦的變化球": { spotify: "4fmdz90I7bCk35iK6GZ9fK", appleMusic: "1817166552", streetvoice: "628471", youtube: "FGeYMR8hDF8" },
+  "康士坦的變化球": { spotify: "4fmdz90I7bCk35iK6GZ9fK", appleMusic: "1817166552", youtube: "FGeYMR8hDF8" },
   "怕胖團 ft. 陽帆": { artists: [
     { name: "怕胖團", spotify: "0jz8mea3EKbqvOxZY6skBz", appleMusic: "1779624411", streetvoice: "647748", youtube: "Dnz-BTz9eDU" },
     { name: "陽帆", spotify: "5YMglFoVUuYUUhIYOlXxCZ", appleMusic: "1615766459" },
@@ -240,7 +240,7 @@ const ARTIST_EMBED = {
     { name: "謝明諺", spotify: "6AcI6agoeBhaaVo0GbjSFp", appleMusic: "1870218044" },
     { name: "C.Holly", spotify: "3RRWcWaoWx1OiXnrWo7k7t", appleMusic: "1542128895" },
     { name: "潤少", spotify: "5EnyIS2vQ0ldlj7uXVWbBm", appleMusic: "1858161766", youtube: "X6fx1e_KhZM" },
-    { name: "LiiHAO", spotify: "0y3FF9xvdl3NRBarIURTZ5", appleMusic: "1714512894", streetvoice: "Yourboililhao___" },
+    { name: "LiiHAO", spotify: "0y3FF9xvdl3NRBarIURTZ5", appleMusic: "1714512894" },
   ] },
   "DJ Litro ft. 大樹下練歌坊": { artists: [
     { name: "DJ Litro" },
