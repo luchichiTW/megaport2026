@@ -1607,7 +1607,82 @@
     /* ══════════ Onboarding ══════════ */
 
     const ONBOARD_STEPS = [
-      { icon: "🚢", title: "歡迎來到大港開唱", desc: "你的專屬音樂祭行程助手。點一下演出即可加入行程，左右滑動切換舞台，長按可查看藝人介紹。" },
+      { icon: "🚢", title: "歡迎來到大港開唱", desc: "你的專屬音樂祭行程助手。點一下演出即可加入行程，左右滑動切換舞台。" },
+      { icon: "👆", title: "長按查看表演者資訊", desc: "長按任一演出，即可查看表演者介紹、試聽串流音樂。",
+        content: (() => {
+          const mockArtists = ["鄭敬儒", "山姆", "楊世暄"];
+          const mockPlatforms = ["Spotify", "Apple", "YouTube"];
+          return React.createElement("div", { style: {
+            marginTop: 14, width: "100%", maxWidth: 280, margin: "14px auto 0",
+            borderRadius: 16, padding: "14px 16px",
+            color: "var(--text)",
+            border: ".5px solid var(--glass-border)",
+            background: "linear-gradient(135deg, var(--glass-start), var(--glass-mid), var(--glass-end))",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+            boxShadow: "inset 0 .5px 0 var(--glass-hi)",
+            textAlign: "left",
+          }},
+            // Badge + time row
+            React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }},
+              React.createElement("span", { style: {
+                display: "inline-flex", alignItems: "center",
+                background: "linear-gradient(135deg, #E0348ADD, #E0348A99)",
+                color: "var(--badge-text)", padding: "3px 11px",
+                borderRadius: 8, fontSize: 11, fontWeight: 700, letterSpacing: .4,
+                boxShadow: "0 1px 4px #E0348A50, inset 0 .5px 0 rgba(255,255,255,.25)",
+              }}, "女神龍"),
+              React.createElement("span", { style: { fontSize: 13, color: "var(--text-3)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}, "18:00 – 18:40"),
+              React.createElement("span", { style: { fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}, "40 分鐘"),
+            ),
+            // Artist name
+            React.createElement("div", { style: { fontSize: 15, fontWeight: 700, lineHeight: 1.45, color: "var(--text)", letterSpacing: "-.01em" }},
+              "same Sam but different.",
+              React.createElement("br"),
+              "鄭敬儒｜山姆｜楊世暄"
+            ),
+            // Mock artist switcher tabs
+            React.createElement("div", { style: { display: "flex", gap: 20, marginTop: 10, borderBottom: "1px solid rgba(125,125,125,0.1)" }},
+              mockArtists.map((name, i) =>
+                React.createElement("span", { key: name, style: {
+                  padding: "0 0 8px", fontSize: 13,
+                  fontWeight: i === 1 ? 700 : 400,
+                  color: i === 1 ? "var(--text-1)" : "var(--text-5)",
+                  borderBottom: i === 1 ? "2.5px solid var(--text)" : "2.5px solid transparent",
+                  marginBottom: -1,
+                }}, name)
+              )
+            ),
+            // Mock platform segmented control
+            React.createElement("div", { style: {
+              background: "var(--seg-bg)", borderRadius: 11, padding: 2,
+              display: "flex", position: "relative", marginTop: 8,
+              border: "1px solid var(--seg-border)",
+            }},
+              React.createElement("div", { style: {
+                position: "absolute", top: 2, bottom: 2, left: "calc(1 * (100% - 4px) / 3 + 2px)",
+                width: "calc((100% - 4px) / 3)", borderRadius: 9,
+                background: "var(--seg-ind)",
+                boxShadow: "var(--seg-ind-shadow), inset 0 1px 0 var(--seg-ind-hi)",
+              }}),
+              mockPlatforms.map((name, i) =>
+                React.createElement("span", { key: name, style: {
+                  flex: 1, textAlign: "center", padding: "6px 0",
+                  fontSize: 12, fontWeight: 600, position: "relative", zIndex: 1,
+                  color: i === 1 ? "var(--seg-active)" : "var(--seg-inactive)",
+                }}, name)
+              )
+            ),
+            // Mock iframe placeholder
+            React.createElement("div", { style: {
+              marginTop: 8, height: 80, borderRadius: 12,
+              background: "rgba(125,125,125,0.08)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, color: "var(--text-5)",
+            }}, "♫ 串流音樂預覽")
+          );
+        })()
+      },
       { icon: "🗺️", title: "行程、時刻表與地圖", desc: "切換「我的行程」查看已選演出與撞場標示，DAY 旁方格圖示可切換時刻表。右下角地圖按鈕可開啟場地地圖，點擊舞台位置即可導航前往。" },
       { icon: "📲", title: "先加主畫面再排團！", desc: "記得先點「分享 → 加入主畫面」再開始排行程，不然在瀏覽器排好的團序進到主畫面還要再排一次喔！完全離線運作、不蒐集任何資料。", links: [{ url: "https://www.instagram.com/megaportfest/", label: "官方 Instagram" }, { url: "https://github.com/luchichiTW/megaport2026", label: "GitHub 原始碼" }] },
     ];
@@ -1633,6 +1708,7 @@
               <div className="onboard-icon">{s.icon}</div>
               <div className="onboard-title">{s.title}</div>
               <div className="onboard-desc">{s.desc}</div>
+              {s.content && s.content}
               {s.links && <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 12 }}>
                 {s.links.map(l => <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" style={{
                   fontSize: 13, fontWeight: 600, color: "var(--text-2)", textDecoration: "none",
@@ -2083,7 +2159,7 @@
                         <input
                           ref={searchRef}
                           value={q} onChange={e => setQ(e.target.value)}
-                          placeholder="搜尋藝人..."
+                          placeholder="搜尋表演者..."
                           style={{
                             width: "100%", padding: "8px 32px 8px 30px",
                             borderRadius: 12, boxSizing: "border-box",
@@ -2158,7 +2234,7 @@
                     <div style={{
                       textAlign: "center", padding: "100px 20px",
                       color: "var(--text-5)", fontSize: 16, fontWeight: 500,
-                    }}>找不到符合的藝人</div>
+                    }}>找不到符合的表演者</div>
                   ) : list.map(item => {
                     const st = getStatus(item);
                     return <Card
