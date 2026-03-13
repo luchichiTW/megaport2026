@@ -49,46 +49,46 @@
 - [x] Aooo [JP]
 - [x] milet [JP]
 - [x] NEE [JP]
-- [ ] jo0ji [JP]（缺 YouTube）
+- [x] jo0ji [JP]（缺 YouTube）
 - [ ] 黑狼人肉戰車那卡西（手動找）
 - [x] AVRALIZE [DE]
 - [ ] 宅邦戰隊 OTAKUNI 學園祭（手動找）
 - [ ] 馬克（手動找）
-- [ ] Manic Sheep（缺 YouTube）
-- [ ] MoonD'shake（缺 YouTube）
-- [ ] BBFFMF（缺 YouTube）
+- [x] Manic Sheep（缺 YouTube）
+- [x] MoonD'shake（缺 YouTube）
+- [x] BBFFMF（缺 YouTube）
 - [ ] 大象體操 比夢境真實紀錄長片（手動找）
-- [ ] 巨大的轟鳴（缺 YouTube）
-- [ ] Hiromi's Sonicwonder [JP・US・FR]（缺 YouTube）
-- [ ] 五月五日 [KR]（缺 YouTube）
+- [x] 巨大的轟鳴（缺 YouTube）
+- [x] Hiromi's Sonicwonder [JP・US・FR]（缺 YouTube）
+- [x] 五月五日 [KR]（缺 YouTube）
 - [ ] LEIGHT NINE（手動找）
-- [ ] 破地獄（缺 YouTube）
+- [x] 破地獄（缺 YouTube）
 - [x] 喜劇開港 單口喜劇（Podcast）
-- [ ] Plutato（缺 YouTube）
+- [x] Plutato（缺 YouTube）
 - [ ] 壓滿俱樂部（手動找）
-- [ ] debloop（缺 YouTube）
+- [x] debloop（缺 YouTube）
 
 ### 多歌手場次（需分別補齊）
 
 - [ ] **李竺芯 ft. 妮妮雅·瘋**
-  - [ ] 李竺芯（缺 YouTube）
+  - [x] 李竺芯（缺 YouTube）
   - [ ] 妮妮雅·瘋（手動找，變裝皇后妮妃雅）
 - [ ] **Mong Tong × XTRUX**
-  - [ ] Mong Tong（缺 YouTube）
+  - [x] Mong Tong（缺 YouTube）
   - [ ] XTRUX（手動找，新媒體藝術團隊）
 - [ ] **憂憂 ft. 奕碩**
-  - [ ] 憂憂（僅 Apple Music，手動找 Spotify/YouTube）
+  - [x] 憂憂（僅 Apple Music，手動找 Spotify/YouTube）
   - [ ] 奕碩（手動找）
 - [ ] **寫下你對這場派對的心得 何勁旻｜陳冠哼**
   - [ ] 何勁旻（手動找）
   - [ ] 陳冠哼（手動找）
 - [ ] **你也貢獻難聽 曾國宏｜許正泰**
-  - [ ] 曾國宏（缺 YouTube/StreetVoice）
+  - [x] 曾國宏（缺 YouTube/StreetVoice）
   - [ ] 許正泰（手動找）
 - [ ] **昭霖 & 甜吻吻**
-  - [ ] 昭霖（僅 Spotify，手動找其餘）
+  - [x] 昭霖（僅 Spotify，手動找其餘）
   - [ ] 甜吻吻（手動找）
-- [ ] **Gummy B × 陳嫺靜**
+- [x] **Gummy B × 陳嫺靜**
   - [x] Gummy B（缺 YouTube）
   - [x] 陳嫺靜（缺 YouTube）
 - [ ] **陪嗨吉放歌 vol.1 呱吉｜迪拉｜李毅誠**
@@ -121,28 +121,28 @@
 - [x] **拍謝少年 ft. AYUNi D from PEDRO**
   - [x] 拍謝少年
   - [x] AYUNi D（缺 YouTube）
-- [ ] **美麗本人 ft. 異鄉人**
+- [x] **美麗本人 ft. 異鄉人**
   - [x] 美麗本人
-  - [ ] 異鄉人
+  - [x] 異鄉人（缺 YouTube）
 - [ ] **ゲシュタルト乙女 urban session ft. yurinasia**
   - [x] ゲシュタルト乙女
-  - [ ] yurinasia
+  - [ ] yurinasia（舞者，無串流資料）
 - [ ] **隨性 ft. 婷文**
   - [x] 隨性
-  - [ ] 婷文
+  - [x] 婷文（缺 YouTube）
 - [ ] **FunkyMo ft. 小尾巴**
   - [x] FunkyMo
-  - [ ] 小尾巴
+  - [x] 小尾巴
 - [ ] **薄荷葉 ft. JB**
   - [x] 薄荷葉
-  - [ ] JB
+  - [ ] JB（幕後電音製作人，無個人串流頁面）
 - [ ] **派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO**
-  - [ ] 羅百吉
-  - [ ] 寶貝
-  - [ ] 謝明諺
-  - [ ] C.Holly
-  - [ ] 潤少
-  - [ ] LiiHAO
+  - [x] 羅百吉（缺 YouTube）
+  - [x] 寶貝（僅 Spotify，缺 Apple Music/YouTube）
+  - [x] 謝明諺（缺 YouTube）
+  - [x] C.Holly
+  - [x] 潤少
+  - [x] LiiHAO（缺 YouTube）
 
 ### 部分藝人缺少串流
 

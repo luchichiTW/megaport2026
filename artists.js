@@ -95,7 +95,7 @@ const ARTIST_EMBED = {
   "黃雨晴": { spotify: "2Peqh4pXySabABIVbVbKZf", appleMusic: "1735792497", streetvoice: "783501" },
   "美麗本人 ft. 異鄉人": { artists: [
     { name: "美麗本人", spotify: "4WKKVDQD4OHYdxY3IuuGt7", appleMusic: "1756068084", streetvoice: "654637" },
-    { name: "異鄉人" },
+    { name: "異鄉人", spotify: "4r22k308CVAgR9G7Vj47lz", appleMusic: "1364243636", streetvoice: "outlander" },
   ] },
   "共振效應": { spotify: "6NqHU787X96L2d3ItfceoM", appleMusic: "1858191127", streetvoice: "836454" },
   "帕崎拉": { spotify: "5nXlEFPq9PX2TJjNA6ZgbW", appleMusic: "1868340284", streetvoice: "635713", youtube: "WftoK72o9tw" },
@@ -121,7 +121,7 @@ const ARTIST_EMBED = {
   ] },
   "隨性 ft. 婷文": { artists: [
     { name: "隨性", spotify: "49HrBvSTA170eDdlemSH62", appleMusic: "1842339024", streetvoice: "377527" },
-    { name: "婷文" },
+    { name: "婷文", spotify: "3W7hlg14oaYsK8hnZpbhoA", appleMusic: "1842339034", streetvoice: "zx26893" },
   ] },
   "NOVELISTS [FR]": { spotify: "6o8sDniHcZPM1SixvjKiYS", appleMusic: "1790660259", youtube: "Y3U6VmQal00" },
   "HUSH": { spotify: "5WYhNXr1PrcnrwtN2MCkgV", appleMusic: "1814760937", streetvoice: "759440", youtube: "T4yniH6jPs8" },
@@ -143,7 +143,7 @@ const ARTIST_EMBED = {
   ] },
   "FunkyMo ft. 小尾巴": { artists: [
     { name: "FunkyMo", spotify: "4qYwZQPZRdnMnjnlXWM19A", appleMusic: "1764901219", streetvoice: "771665" },
-    { name: "小尾巴" },
+    { name: "小尾巴", spotify: "7pWNnwhZKZ42Uj19sryr14", appleMusic: "1563012207", streetvoice: "tiest0913", youtube: "y2R-Uk9x_hE" },
   ] },
   "粉紅噪音": { appleMusic: "1438846737", streetvoice: "567058" },
   "TSS [FR]": { spotify: "0hTsRy6iJPc0fgkxhEHzmT", appleMusic: "1798567639", youtube: "C4fXHlOAb8c" },
@@ -233,12 +233,12 @@ const ARTIST_EMBED = {
   ] },
   "喜劇開港 單口喜劇": { spotifyPodcast: "10k86A9VPutFsNBIUCyAvc" },
   "派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO": { artists: [
-    { name: "羅百吉" },
-    { name: "寶貝" },
-    { name: "謝明諺" },
-    { name: "C.Holly" },
-    { name: "潤少" },
-    { name: "LiiHAO" },
+    { name: "羅百吉", spotify: "7vg1tIYvZqsgn3kSdQgL0y", appleMusic: "364953728" },
+    { name: "寶貝", spotify: "39VnxojAWR9Xaj4xXape6u" },
+    { name: "謝明諺", spotify: "6AcI6agoeBhaaVo0GbjSFp", appleMusic: "880907356", streetvoice: "minyenhsieh" },
+    { name: "C.Holly", spotify: "3RRWcWaoWx1OiXnrWo7k7t", appleMusic: "1542125918", streetvoice: "candy19981014", youtube: "TErGiheo20k" },
+    { name: "潤少", spotify: "5EnyIS2vQ0ldlj7uXVWbBm", appleMusic: "1574515998", youtube: "X6fx1e_KhZM" },
+    { name: "LiiHAO", spotify: "0y3FF9xvdl3NRBarIURTZ5", appleMusic: "1644357147", streetvoice: "Yourboililhao___" },
   ] },
   "DJ Litro ft. 大樹下練歌坊": { artists: [
     { name: "DJ Litro" },
