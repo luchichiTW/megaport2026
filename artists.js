@@ -238,7 +238,7 @@ const ARTIST_EMBED = {
     { name: "羅百吉", spotify: "7vg1tIYvZqsgn3kSdQgL0y", appleMusic: "156141286" },
     { name: "寶貝" },
     { name: "謝明諺", spotify: "6AcI6agoeBhaaVo0GbjSFp", appleMusic: "1870218044" },
-    { name: "C.Holly", spotify: "3RRWcWaoWx1OiXnrWo7k7t", appleMusic: "1542128895" },
+    { name: "C.Holly", spotify: "3RRWcWaoWx1OiXnrWo7k7t", youtube: "TErGiheo20k" },
     { name: "潤少", spotify: "5EnyIS2vQ0ldlj7uXVWbBm", appleMusic: "1858161766", youtube: "X6fx1e_KhZM" },
     { name: "LiiHAO", spotify: "0y3FF9xvdl3NRBarIURTZ5", appleMusic: "1714512894" },
   ] },

@@ -2443,13 +2443,17 @@ const ONBOARD_STEPS = [{
   }]
 }];
 function Onboarding({
-  onDone
+  onDone,
+  startStep = 0,
+  singleStep = false
 }) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(startStep);
   const [closing, setClosing] = useState(false);
   const [stepKey, setStepKey] = useState(0);
-  const isLast = step === ONBOARD_STEPS.length - 1;
-  const s = ONBOARD_STEPS[step];
+  const steps = singleStep ? [ONBOARD_STEPS[startStep]] : ONBOARD_STEPS;
+  const idx = singleStep ? 0 : step;
+  const isLast = idx === steps.length - 1;
+  const s = steps[idx];
   const next = () => {
     if (isLast) {
       setClosing(true);
@@ -2460,7 +2464,7 @@ function Onboarding({
     setStepKey(k => k + 1);
   };
   const prev = () => {
-    if (step > 0) {
+    if (step > 0 && !singleStep) {
       setStep(p => p - 1);
       setStepKey(k => k + 1);
     }
@@ -2512,14 +2516,17 @@ function Onboarding({
       border: ".5px solid var(--surface-border)",
       boxShadow: "inset 0 .5px 0 var(--surface-hi)"
     }
-  }, l.label)))), /*#__PURE__*/React.createElement("div", {
+  }, l.label)))), steps.length > 1 && /*#__PURE__*/React.createElement("div", {
     className: "onboard-dots"
-  }, ONBOARD_STEPS.map((_, i) => /*#__PURE__*/React.createElement("div", {
+  }, steps.map((_, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
-    className: "onboard-dot" + (i === step ? " active" : "")
+    className: "onboard-dot" + (i === idx ? " active" : "")
   }))), /*#__PURE__*/React.createElement("div", {
     className: "onboard-actions"
-  }, step > 0 ? /*#__PURE__*/React.createElement("button", {
+  }, singleStep ? /*#__PURE__*/React.createElement("button", {
+    className: "onboard-btn onboard-btn-primary",
+    onClick: next
+  }, "\uD83D\uDC4C") : /*#__PURE__*/React.createElement(React.Fragment, null, step > 0 ? /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-secondary",
     onClick: prev
   }, "\u4E0A\u4E00\u6B65") : /*#__PURE__*/React.createElement("button", {
@@ -2528,7 +2535,7 @@ function Onboarding({
   }, "\u8DF3\u904E"), /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-primary",
     onClick: next
-  }, isLast ? "開始使用" : "下一步")))), document.body);
+  }, isLast ? "開始使用" : "下一步"))))), document.body);
 }
 
 /* ══════════ Timetable ══════════ */
@@ -2715,6 +2722,7 @@ function App() {
   const firstConflictRef = useRef(null);
   const theme = useTheme();
   const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
+  const [showV8Tip, setShowV8Tip] = useState(() => localStorage.getItem("onboard-done") && !localStorage.getItem("onboard-v7"));
   const [showRes, setShowRes] = useState(false);
   const [zoomImg, setZoomImg] = useState(null);
   const [lotteryItems, setLotteryItems] = useState(null);
@@ -3977,7 +3985,15 @@ function App() {
   }), showOnboard && /*#__PURE__*/React.createElement(Onboarding, {
     onDone: () => {
       localStorage.setItem("onboard-done", "1");
+      localStorage.setItem("onboard-v7", "1");
       setShowOnboard(false);
+    }
+  }), showV8Tip && /*#__PURE__*/React.createElement(Onboarding, {
+    startStep: 1,
+    singleStep: true,
+    onDone: () => {
+      localStorage.setItem("onboard-v7", "1");
+      setShowV8Tip(false);
     }
   }), lotteryItems && /*#__PURE__*/React.createElement(LotterySheet, {
     items: lotteryItems,

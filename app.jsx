@@ -1687,17 +1687,19 @@
       { icon: "📲", title: "先加主畫面再排團！", desc: "記得先點「分享 → 加入主畫面」再開始排行程，不然在瀏覽器排好的團序進到主畫面還要再排一次喔！完全離線運作、不蒐集任何資料。", links: [{ url: "https://www.instagram.com/megaportfest/", label: "官方 Instagram" }, { url: "https://github.com/luchichiTW/megaport2026", label: "GitHub 原始碼" }] },
     ];
 
-    function Onboarding({ onDone }) {
-      const [step, setStep] = useState(0);
+    function Onboarding({ onDone, startStep = 0, singleStep = false }) {
+      const [step, setStep] = useState(startStep);
       const [closing, setClosing] = useState(false);
       const [stepKey, setStepKey] = useState(0);
-      const isLast = step === ONBOARD_STEPS.length - 1;
-      const s = ONBOARD_STEPS[step];
+      const steps = singleStep ? [ONBOARD_STEPS[startStep]] : ONBOARD_STEPS;
+      const idx = singleStep ? 0 : step;
+      const isLast = idx === steps.length - 1;
+      const s = steps[idx];
       const next = () => {
         if (isLast) { setClosing(true); setTimeout(onDone, 280); return }
         setStep(p => p + 1); setStepKey(k => k + 1);
       };
-      const prev = () => { if (step > 0) { setStep(p => p - 1); setStepKey(k => k + 1) } };
+      const prev = () => { if (step > 0 && !singleStep) { setStep(p => p - 1); setStepKey(k => k + 1) } };
       const skip = () => { setClosing(true); setTimeout(onDone, 280) };
       return ReactDOM.createPortal(
         <div className="onboard-backdrop"
@@ -1718,20 +1720,24 @@
                 }}>{l.label}</a>)}
               </div>}
             </div>
-            <div className="onboard-dots">
-              {ONBOARD_STEPS.map((_, i) => (
-                <div key={i} className={"onboard-dot" + (i === step ? " active" : "")} />
+            {steps.length > 1 && <div className="onboard-dots">
+              {steps.map((_, i) => (
+                <div key={i} className={"onboard-dot" + (i === idx ? " active" : "")} />
               ))}
-            </div>
+            </div>}
             <div className="onboard-actions">
-              {step > 0 ? (
-                <button className="onboard-btn onboard-btn-secondary" onClick={prev}>上一步</button>
-              ) : (
-                <button className="onboard-btn onboard-btn-secondary" onClick={skip}>跳過</button>
-              )}
-              <button className="onboard-btn onboard-btn-primary" onClick={next}>
-                {isLast ? "開始使用" : "下一步"}
-              </button>
+              {singleStep ? (
+                <button className="onboard-btn onboard-btn-primary" onClick={next}>👌</button>
+              ) : (<>
+                {step > 0 ? (
+                  <button className="onboard-btn onboard-btn-secondary" onClick={prev}>上一步</button>
+                ) : (
+                  <button className="onboard-btn onboard-btn-secondary" onClick={skip}>跳過</button>
+                )}
+                <button className="onboard-btn onboard-btn-primary" onClick={next}>
+                  {isLast ? "開始使用" : "下一步"}
+                </button>
+              </>)}
             </div>
           </div>
         </div>,
@@ -1879,6 +1885,7 @@
       const firstConflictRef = useRef(null);
       const theme = useTheme();
       const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
+      const [showV8Tip, setShowV8Tip] = useState(() => localStorage.getItem("onboard-done") && !localStorage.getItem("onboard-v7"));
       const [showRes, setShowRes] = useState(false);
       const [zoomImg, setZoomImg] = useState(null);
       const [lotteryItems, setLotteryItems] = useState(null);
@@ -2636,7 +2643,8 @@
           <FloatingMapBtn onMapOpen={() => setZoomImg({ src: MAP_SRC, hotspots: true })} />
           {/* ══ Image Viewer ══ */}
           {zoomImg && <ImageViewer src={typeof zoomImg === 'string' ? zoomImg : zoomImg.src} hotspots={typeof zoomImg === 'object' && zoomImg.hotspots} onClose={() => setZoomImg(null)} />}
-          {showOnboard && <Onboarding onDone={() => { localStorage.setItem("onboard-done", "1"); setShowOnboard(false) }} />}
+          {showOnboard && <Onboarding onDone={() => { localStorage.setItem("onboard-done", "1"); localStorage.setItem("onboard-v7", "1"); setShowOnboard(false) }} />}
+          {showV8Tip && <Onboarding startStep={1} singleStep onDone={() => { localStorage.setItem("onboard-v7", "1"); setShowV8Tip(false) }} />}
           {lotteryItems && <LotterySheet items={lotteryItems} onAccept={id => { togglePref(id, lotteryItems.map(i => i.id)); setLotteryItems(null); }} onClose={() => setLotteryItems(null)} />}
         </div>
       );
