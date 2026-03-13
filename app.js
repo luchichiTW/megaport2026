@@ -389,24 +389,19 @@ function useLongPress(cb, ms = 500) {
 }
 const EMBED_PLATFORMS = [{
   key: "spotify",
-  label: "Spotify",
-  color: "#1DB954"
+  label: "Spotify"
 }, {
   key: "spotifyPodcast",
-  label: "Podcast",
-  color: "#1DB954"
+  label: "Podcast"
 }, {
   key: "appleMusic",
-  label: "Apple",
-  color: "#FA2D48"
+  label: "Apple"
 }, {
   key: "streetvoice",
-  label: "街聲",
-  color: "#00C3FF"
+  label: "街聲"
 }, {
   key: "youtube",
-  label: "YouTube",
-  color: "#FF0000"
+  label: "YouTube"
 }];
 const EMBED_HEIGHT = 152;
 const embedUrl = (platform, id, isDark) => ({

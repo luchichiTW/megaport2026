@@ -63,20 +63,14 @@ const ARTIST_DESC = {
   "好朋友集合！巧虎的港邊大冒險":"準備好把草地變成親子舞池了嗎？巧虎首度參加大港開唱，在Kids𨑨迌帶全家一起動起來！\n唱唱跳跳、互動遊戲、現場笑聲，這是一場沒有距離的草地派對。\n不用購票，帶著孩子走進親子區，讓音樂祭多一段屬於全家的節奏。\nViva la vida，港邊一起跳！\n表演者：巧虎",
 };
 
-// 串流平台 Embed 資料
-// key: spotify | appleMusic | streetvoice | youtube (存 ID，URL 由 component 組合)
-// 第一個有值的平台會預設顯示（按 EMBED_PLATFORMS 順序）
-// spotify: artist ID (open.spotify.com/artist/{id})
-// appleMusic: album ID (embed.music.apple.com/tw/album/{id})
-// streetvoice: song ID (streetvoice.com/music/embed/?id={id})
-// youtube: video ID (youtube.com/embed/{id})
-// 無資料的藝人：多米多羅 ft. 可凡、馬尾 ft. 立長、LEIGHT NINE
-// TODO: 補齊缺少的 YouTube video ID
 const ARTIST_EMBED = {
   "椅子樂團": { spotify: "4IlxI05VmVDx8ShdgKEnLK", appleMusic: "1821659174", streetvoice: "559762", youtube: "v0F6Vd46v10" },
   "The Birthday [JP]": { spotify: "58zME34zPsQx58YXCyFryH", appleMusic: "1655976758" },
   "滅火器": { spotify: "7qBIgabdHdcr6NLujDxWAU", appleMusic: "1689536430", streetvoice: "628884" },
-  "血肉果汁機 ft. 陳亞蘭": { spotify: "78ltY2tUrZpkWJ9CWYGZfl", appleMusic: "1545337666", streetvoice: "628979", youtube: "Q-EncPy5qVo" },
+  "血肉果汁機 ft. 陳亞蘭": { artists: [
+    { name: "血肉果汁機", spotify: "78ltY2tUrZpkWJ9CWYGZfl", appleMusic: "1545337666", streetvoice: "628979", youtube: "Q-EncPy5qVo" },
+    { name: "陳亞蘭", spotify: "3XxVdSWDoDukvxYG9aSssX", appleMusic: "357109613", youtube: "NMl8gvdjzx8" },
+  ] },
   "無妄合作社": { spotify: "6py5j29igdKEvG75sZpTbW", appleMusic: "1773342648", streetvoice: "539106", youtube: "-58c2qlsIog" },
   "Käärijä [FI]": { spotify: "6LkMGN0t3HDNL8hIvma70r", appleMusic: "1773381604", youtube: "rNrgQm5z07U" },
   "海豚刑警": { spotify: "5F14oggNO5Nvl08UsULzaT", appleMusic: "1643670059", streetvoice: "558351", youtube: "ZrpZB8-VBD0" },
@@ -99,7 +93,10 @@ const ARTIST_EMBED = {
   ] },
   "陳以恆": { spotify: "26ptiw0RrtrYZcRPPGHj5G", appleMusic: "1780849666", streetvoice: "792753" },
   "黃雨晴": { spotify: "2Peqh4pXySabABIVbVbKZf", appleMusic: "1735792497", streetvoice: "783501" },
-  "美麗本人 ft. 異鄉人": { spotify: "4WKKVDQD4OHYdxY3IuuGt7", appleMusic: "1756068084", streetvoice: "654637" },
+  "美麗本人 ft. 異鄉人": { artists: [
+    { name: "美麗本人", spotify: "4WKKVDQD4OHYdxY3IuuGt7", appleMusic: "1756068084", streetvoice: "654637" },
+    { name: "異鄉人" },
+  ] },
   "共振效應": { spotify: "6NqHU787X96L2d3ItfceoM", appleMusic: "1858191127", streetvoice: "836454" },
   "帕崎拉": { spotify: "5nXlEFPq9PX2TJjNA6ZgbW", appleMusic: "1868340284", streetvoice: "635713", youtube: "WftoK72o9tw" },
   "MOTIF HIVE": { spotify: "0TzZGtByDjlFroO4ZX5WnK", appleMusic: "1734953356", streetvoice: "763881" },
@@ -108,12 +105,24 @@ const ARTIST_EMBED = {
   "結束バンド [JP]": { spotify: "2nvl0N9GwyX69RRBMEZ4OD", appleMusic: "1657318546", youtube: "c_SBnZZMXWs" },
   "芒果醬": { spotify: "1t1GIb4bb1lARAXwWEekUN", appleMusic: "1721470237", streetvoice: "681653", youtube: "OyeATtbuOFw" },
   "康士坦的變化球": { spotify: "4fmdz90I7bCk35iK6GZ9fK", appleMusic: "1703672490", streetvoice: "628471", youtube: "FGeYMR8hDF8" },
-  "怕胖團 ft. 陽帆": { spotify: "0jz8mea3EKbqvOxZY6skBz", appleMusic: "1484395211", streetvoice: "647748", youtube: "Dnz-BTz9eDU" },
-  "拍謝少年 ft. AYUNi D from PEDRO": { spotify: "6c4IBMTcnFDhsKHXNSBBvp", appleMusic: "1753656286", streetvoice: "643489" },
+  "怕胖團 ft. 陽帆": { artists: [
+    { name: "怕胖團", spotify: "0jz8mea3EKbqvOxZY6skBz", appleMusic: "1484395211", streetvoice: "647748", youtube: "Dnz-BTz9eDU" },
+    { name: "陽帆", spotify: "5YMglFoVUuYUUhIYOlXxCZ", appleMusic: "42053669" },
+  ] },
+  "拍謝少年 ft. AYUNi D from PEDRO": { artists: [
+    { name: "拍謝少年", spotify: "6c4IBMTcnFDhsKHXNSBBvp", appleMusic: "1753656286", streetvoice: "643489" },
+    { name: "AYUNi D", spotify: "73IyP7qAS0gk2yz1D25nzh", appleMusic: "1470002129" },
+  ] },
   "落日飛車": { spotify: "7BqRcZsHYYQeqMAOp7e532", appleMusic: "1752999086", streetvoice: "658506", youtube: "5xwFCtDc0fI" },
   "EmptyORio": { spotify: "5XuYYh7VssmjmETxEBUF2M", appleMusic: "1868290359", streetvoice: "667212", youtube: "pMq0r3vuTSE" },
-  "ゲシュタルト乙女 urban session ft. yurinasia": { spotify: "4Yb67Jz68TBVu8L5wl3kVd", appleMusic: "1658007103", streetvoice: "731775", youtube: "YHg4_ckg1yo" },
-  "隨性 ft. 婷文": { spotify: "49HrBvSTA170eDdlemSH62", appleMusic: "1842339024", streetvoice: "377527" },
+  "ゲシュタルト乙女 urban session ft. yurinasia": { artists: [
+    { name: "ゲシュタルト乙女", spotify: "4Yb67Jz68TBVu8L5wl3kVd", appleMusic: "1658007103", streetvoice: "731775", youtube: "YHg4_ckg1yo" },
+    { name: "yurinasia" },
+  ] },
+  "隨性 ft. 婷文": { artists: [
+    { name: "隨性", spotify: "49HrBvSTA170eDdlemSH62", appleMusic: "1842339024", streetvoice: "377527" },
+    { name: "婷文" },
+  ] },
   "NOVELISTS [FR]": { spotify: "6o8sDniHcZPM1SixvjKiYS", appleMusic: "1790660259", youtube: "Y3U6VmQal00" },
   "HUSH": { spotify: "5WYhNXr1PrcnrwtN2MCkgV", appleMusic: "1814760937", streetvoice: "759440", youtube: "T4yniH6jPs8" },
   "TOOBOE [JP]": { spotify: "0HZLpOSMHpalBlUnONhynN", appleMusic: "1862715000", youtube: "pjkOB8rXs6E" },
@@ -128,42 +137,54 @@ const ARTIST_EMBED = {
     { name: "光頭美麗", spotifyPodcast: "69xCpQVtKUFzgb1SYYw8u1" },
     { name: "光頭珞亦", spotifyPodcast: "6WB1GBxavGojmuMWEwxQzk" },
   ] },
-  "多米多羅 ft. 可凡": {},
-  "FunkyMo ft. 小尾巴": { spotify: "4qYwZQPZRdnMnjnlXWM19A", appleMusic: "1764901219", streetvoice: "771665" },
+  "多米多羅 ft. 可凡": { artists: [
+    { name: "多米多羅" },
+    { name: "可凡" },
+  ] },
+  "FunkyMo ft. 小尾巴": { artists: [
+    { name: "FunkyMo", spotify: "4qYwZQPZRdnMnjnlXWM19A", appleMusic: "1764901219", streetvoice: "771665" },
+    { name: "小尾巴" },
+  ] },
   "粉紅噪音": { appleMusic: "1438846737", streetvoice: "567058" },
   "TSS [FR]": { spotify: "0hTsRy6iJPc0fgkxhEHzmT", appleMusic: "1798567639", youtube: "C4fXHlOAb8c" },
   "恆月三途": { spotify: "0BeS0OZOWqc3LmKedIh9vP", appleMusic: "1852631055", streetvoice: "364346", youtube: "3hK8GFvhkmI" },
   "Infernal Chaos": { spotify: "7vmFTSdU7nsz7m7dItytcd", appleMusic: "1787147140", youtube: "3UcCRluZJOA" },
   "忘憂水": { spotify: "6hwGNRMHwuw0jJxLV6UBzA", appleMusic: "1811258433" },
   "畫室": { spotify: "1B7Kl4sj7umXtT5FYsvtNU", appleMusic: "1811260915", streetvoice: "759839" },
-  "薄荷葉 ft. JB": { spotify: "60rRASfjRQDHGKsnmef9oN", appleMusic: "1829866243" },
-  "馬尾 ft. 立長": {},
+  "薄荷葉 ft. JB": { artists: [
+    { name: "薄荷葉", spotify: "60rRASfjRQDHGKsnmef9oN", appleMusic: "1829866243" },
+    { name: "JB" },
+  ] },
+  "馬尾 ft. 立長": { artists: [
+    { name: "馬尾" },
+    { name: "立長" },
+  ] },
   "洪安妮": { spotify: "3ZlBKjbfPWDT0RUWTpWzwv", appleMusic: "1601944086", streetvoice: "650761", youtube: "aDSf3QoK3uQ" },
-  "LEIGHT NINE": {},
+  "LEIGHT NINE": { },
   "打倒三明治": { spotify: "50FEJC364l9cY3wTRZQ8I8", appleMusic: "1577305876", streetvoice: "610475", youtube: "MRlq513Thcs" },
   "沈默紳士": { spotify: "0GV5nHc17AGtGu5Z0dG2hi", appleMusic: "1695851812", streetvoice: "757507" },
   "貓膽汁": { spotify: "3jB1rrv3m8Uass8V0WBjX4", appleMusic: "1775838202", streetvoice: "790720" },
   // --- 待補串流資料 ---
-  "Aooo [JP]": {},
-  "milet [JP]": {},
-  "NEE [JP]": {},
-  "jo0ji [JP]": {},
+  "Aooo [JP]": { spotify: "2Tz9q3iKdePddG0s46E9X2", appleMusic: "1765443078" },
+  "milet [JP]": { spotify: "45ft4DyTCEJfQwTBHXpdhM", appleMusic: "880638079", youtube: "r105CzDvoo0" },
+  "NEE [JP]": { spotify: "1gh7KnvnbRnc1gXEPuV8KH", appleMusic: "1528541867", youtube: "Dm2O_W6Rrss" },
+  "jo0ji [JP]": { spotify: "5Wfhi0FggHCfOSa3ux39fk", appleMusic: "1635676713" },
   "黑狼人肉戰車那卡西": {},
-  "AVRALIZE [DE]": {},
+  "AVRALIZE [DE]": { spotify: "6h9Yjv46RWsgt2NQ1F6Jb5", appleMusic: "1625061405", youtube: "65lk_kOIe_c" },
   "李竺芯 ft. 妮妮雅·瘋": { artists: [
-    { name: "李竺芯" },
+    { name: "李竺芯", spotify: "0qI7jcxX3CFiafnkAe7Rjp", appleMusic: "1158832075", streetvoice: "791857" },
     { name: "妮妮雅·瘋" },
   ] },
   "Mong Tong × XTRUX": { artists: [
-    { name: "Mong Tong" },
+    { name: "Mong Tong", spotify: "61QVaGjYK4UNd6uTz7Lzuo", appleMusic: "1505085855", streetvoice: "2358238" },
     { name: "XTRUX" },
   ] },
   "宅邦戰隊 OTAKUNI 學園祭": {},
   "馬克": {},
-  "Manic Sheep": {},
-  "MoonD'shake": {},
+  "Manic Sheep": { spotify: "6JXdjqMVpq61fvihemTbfI", appleMusic: "627282422", streetvoice: "723034" },
+  "MoonD'shake": { spotify: "4SJCiABYv6wZlnDJMfKLER", appleMusic: "1544600408", streetvoice: "2580764" },
   "憂憂 ft. 奕碩": { artists: [
-    { name: "憂憂" },
+    { name: "憂憂", appleMusic: "1776664146" },
     { name: "奕碩" },
   ] },
   "寫下你對這場派對的心得 何勁旻｜陳冠哼": { artists: [
@@ -171,30 +192,30 @@ const ARTIST_EMBED = {
     { name: "陳冠哼" },
   ] },
   "你也貢獻難聽 曾國宏｜許正泰": { artists: [
-    { name: "曾國宏" },
+    { name: "曾國宏", spotify: "0Ib2ZUmA8BXyCP18UZd8xP", appleMusic: "1502171935" },
     { name: "許正泰" },
   ] },
   "昭霖 & 甜吻吻": { artists: [
-    { name: "昭霖" },
+    { name: "昭霖", spotify: "6QG7iU3HlpXfClUyquYIj3" },
     { name: "甜吻吻" },
   ] },
-  "BBFFMF": {},
+  "BBFFMF": { spotify: "5O8J8WassRWJWfg6WDK1Ox", appleMusic: "1677068822" },
   "大象體操 比夢境真實紀錄長片": {},
-  "巨大的轟鳴": {},
-  "Hiromi's Sonicwonder [JP・US・FR]": {},
+  "巨大的轟鳴": { spotify: "1eIwDRL56k56ZlGNcIvMz8", appleMusic: "888637612", streetvoice: "897121" },
+  "Hiromi's Sonicwonder [JP・US・FR]": { spotify: "7DeuppKQdCVhuWrzzCBBpc", appleMusic: "268495088" },
   "Gummy B × 陳嫺靜": { artists: [
-    { name: "Gummy B" },
-    { name: "陳嫺靜" },
+    { name: "Gummy B", spotify: "041GibkKYtPdNlIAqxs1gs", appleMusic: "1465488380", streetvoice: "2438909" },
+    { name: "陳嫺靜", spotify: "4wbipbaGeTXkuF5paNuJqB", appleMusic: "1504969522", streetvoice: "2331486" },
   ] },
-  "五月五日 [KR]": {},
-  "破地獄": {},
-  "Plutato": {},
-  "壓滿俱樂部": {},
-  "debloop": {},
+  "五月五日 [KR]": { spotify: "59THIwTnvgT7SeGFzocky2", appleMusic: "1587319780" },
+  "破地獄": { spotify: "4rgGqYYp43VQDKdRHnDrgw", appleMusic: "1164117342", streetvoice: "3200682" },
+  "Plutato": { spotify: "3A3zuAop7uM5dY6Vs41dsR", appleMusic: "1692037281", streetvoice: "3130169" },
+  "壓滿俱樂部": { },
+  "debloop": { spotify: "0xOOE7MZvWploulCZXFnQR", appleMusic: "1826616551", streetvoice: "2750693" },
   "陪嗨吉放歌 vol.1 呱吉｜迪拉｜李毅誠": { artists: [
-    { name: "呱吉" },
+    { name: "呱吉", spotifyPodcast: "13bJ4DAZH1QLc1fOmlZI24" },
     { name: "迪拉" },
-    { name: "李毅誠" },
+    { name: "李毅誠", spotifyPodcast: "2Csh9YythT4tGLk0S1vehS" },
   ] },
   "丸長世代 柯家洋｜阿舌": { artists: [
     { name: "柯家洋" },
@@ -206,9 +227,21 @@ const ARTIST_EMBED = {
   ] },
   "Slow Roast 慢熟｜Debby Wang 王思雅｜林映辰｜郝東東": { artists: [
     { name: "Slow Roast 慢熟" },
-    { name: "Debby Wang 王思雅" },
-    { name: "林映辰" },
+    { name: "Debby Wang 王思雅", spotify: "0kPD0Ti5iYLQ6Lx9CZC7jN", appleMusic: "1722234633", streetvoice: "2199687" },
+    { name: "林映辰", streetvoice: "1553064" },
     { name: "郝東東" },
   ] },
-  "喜劇開港 單口喜劇": {},
+  "喜劇開港 單口喜劇": { spotifyPodcast: "10k86A9VPutFsNBIUCyAvc" },
+  "派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO": { artists: [
+    { name: "羅百吉" },
+    { name: "寶貝" },
+    { name: "謝明諺" },
+    { name: "C.Holly" },
+    { name: "潤少" },
+    { name: "LiiHAO" },
+  ] },
+  "DJ Litro ft. 大樹下練歌坊": { artists: [
+    { name: "DJ Litro" },
+    { name: "大樹下練歌坊" },
+  ] },
 };

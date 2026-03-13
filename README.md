@@ -46,68 +46,103 @@
 
 ### 單一藝人
 
-- [ ] Aooo [JP]
-- [ ] milet [JP]
-- [ ] NEE [JP]
-- [ ] jo0ji [JP]
-- [ ] 黑狼人肉戰車那卡西
-- [ ] AVRALIZE [DE]
-- [ ] 宅邦戰隊 OTAKUNI 學園祭
-- [ ] 馬克
-- [ ] Manic Sheep
-- [ ] MoonD'shake
-- [ ] BBFFMF
-- [ ] 大象體操 比夢境真實紀錄長片
-- [ ] 巨大的轟鳴
-- [ ] Hiromi's Sonicwonder [JP・US・FR]
-- [ ] 五月五日 [KR]
-- [ ] 多米多羅 ft. 可凡
-- [ ] 馬尾 ft. 立長
-- [ ] LEIGHT NINE
-- [ ] 破地獄
-- [ ] 喜劇開港 單口喜劇
-- [ ] Plutato
-- [ ] 壓滿俱樂部
-- [ ] debloop
+- [x] Aooo [JP]
+- [x] milet [JP]
+- [x] NEE [JP]
+- [ ] jo0ji [JP]（缺 YouTube）
+- [ ] 黑狼人肉戰車那卡西（手動找）
+- [x] AVRALIZE [DE]
+- [ ] 宅邦戰隊 OTAKUNI 學園祭（手動找）
+- [ ] 馬克（手動找）
+- [ ] Manic Sheep（缺 YouTube）
+- [ ] MoonD'shake（缺 YouTube）
+- [ ] BBFFMF（缺 YouTube）
+- [ ] 大象體操 比夢境真實紀錄長片（手動找）
+- [ ] 巨大的轟鳴（缺 YouTube）
+- [ ] Hiromi's Sonicwonder [JP・US・FR]（缺 YouTube）
+- [ ] 五月五日 [KR]（缺 YouTube）
+- [ ] LEIGHT NINE（手動找）
+- [ ] 破地獄（缺 YouTube）
+- [x] 喜劇開港 單口喜劇（Podcast）
+- [ ] Plutato（缺 YouTube）
+- [ ] 壓滿俱樂部（手動找）
+- [ ] debloop（缺 YouTube）
 
 ### 多歌手場次（需分別補齊）
 
 - [ ] **李竺芯 ft. 妮妮雅·瘋**
-  - [ ] 李竺芯
-  - [ ] 妮妮雅·瘋
+  - [ ] 李竺芯（缺 YouTube）
+  - [ ] 妮妮雅·瘋（手動找，變裝皇后妮妃雅）
 - [ ] **Mong Tong × XTRUX**
-  - [ ] Mong Tong
-  - [ ] XTRUX
+  - [ ] Mong Tong（缺 YouTube）
+  - [ ] XTRUX（手動找，新媒體藝術團隊）
 - [ ] **憂憂 ft. 奕碩**
-  - [ ] 憂憂
-  - [ ] 奕碩
+  - [ ] 憂憂（僅 Apple Music，手動找 Spotify/YouTube）
+  - [ ] 奕碩（手動找）
 - [ ] **寫下你對這場派對的心得 何勁旻｜陳冠哼**
-  - [ ] 何勁旻
-  - [ ] 陳冠哼
+  - [ ] 何勁旻（手動找）
+  - [ ] 陳冠哼（手動找）
 - [ ] **你也貢獻難聽 曾國宏｜許正泰**
-  - [ ] 曾國宏
-  - [ ] 許正泰
+  - [ ] 曾國宏（缺 YouTube/StreetVoice）
+  - [ ] 許正泰（手動找）
 - [ ] **昭霖 & 甜吻吻**
-  - [ ] 昭霖
-  - [ ] 甜吻吻
+  - [ ] 昭霖（僅 Spotify，手動找其餘）
+  - [ ] 甜吻吻（手動找）
 - [ ] **Gummy B × 陳嫺靜**
-  - [ ] Gummy B
-  - [ ] 陳嫺靜
+  - [x] Gummy B（缺 YouTube）
+  - [x] 陳嫺靜（缺 YouTube）
 - [ ] **陪嗨吉放歌 vol.1 呱吉｜迪拉｜李毅誠**
-  - [ ] 呱吉
-  - [ ] 迪拉
-  - [ ] 李毅誠
+  - [x] 呱吉（Podcast）
+  - [ ] 迪拉（手動找）
+  - [x] 李毅誠（Podcast）
 - [ ] **丸長世代 柯家洋｜阿舌**
-  - [ ] 柯家洋
-  - [ ] 阿舌
+  - [ ] 柯家洋（手動找）
+  - [ ] 阿舌（手動找）
 - [ ] **還有夜間限定 小堯｜阿賢**
-  - [ ] 小堯
-  - [ ] 阿賢
+  - [ ] 小堯（手動找）
+  - [ ] 阿賢（手動找）
 - [ ] **Slow Roast 慢熟｜Debby Wang 王思雅｜林映辰｜郝東東**
-  - [ ] Slow Roast 慢熟
-  - [ ] Debby Wang 王思雅
-  - [ ] 林映辰
-  - [ ] 郝東東
+  - [ ] Slow Roast 慢熟（手動找）
+  - [x] Debby Wang 王思雅（缺 YouTube）
+  - [x] 林映辰（僅 StreetVoice）
+  - [ ] 郝東東（手動找）
+- [ ] **多米多羅 ft. 可凡**
+  - [ ] 多米多羅（手動找）
+  - [ ] 可凡（手動找）
+- [ ] **馬尾 ft. 立長**
+  - [ ] 馬尾（手動找）
+  - [ ] 立長（手動找）
+- [x] **血肉果汁機 ft. 陳亞蘭**
+  - [x] 血肉果汁機
+  - [x] 陳亞蘭
+- [x] **怕胖團 ft. 陽帆**
+  - [x] 怕胖團
+  - [x] 陽帆（缺 YouTube）
+- [x] **拍謝少年 ft. AYUNi D from PEDRO**
+  - [x] 拍謝少年
+  - [x] AYUNi D（缺 YouTube）
+- [ ] **美麗本人 ft. 異鄉人**
+  - [x] 美麗本人
+  - [ ] 異鄉人
+- [ ] **ゲシュタルト乙女 urban session ft. yurinasia**
+  - [x] ゲシュタルト乙女
+  - [ ] yurinasia
+- [ ] **隨性 ft. 婷文**
+  - [x] 隨性
+  - [ ] 婷文
+- [ ] **FunkyMo ft. 小尾巴**
+  - [x] FunkyMo
+  - [ ] 小尾巴
+- [ ] **薄荷葉 ft. JB**
+  - [x] 薄荷葉
+  - [ ] JB
+- [ ] **派對超人 羅百吉 ft. 寶貝｜謝明諺｜C.Holly｜潤少｜LiiHAO**
+  - [ ] 羅百吉
+  - [ ] 寶貝
+  - [ ] 謝明諺
+  - [ ] C.Holly
+  - [ ] 潤少
+  - [ ] LiiHAO
 
 ### 部分藝人缺少串流
 
