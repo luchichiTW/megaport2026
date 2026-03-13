@@ -301,6 +301,7 @@
 
     const EMBED_PLATFORMS = [
       { key: "spotify", label: "Spotify", color: "#1DB954" },
+      { key: "spotifyPodcast", label: "Podcast", color: "#1DB954" },
       { key: "appleMusic", label: "Apple", color: "#FA2D48" },
       { key: "streetvoice", label: "街聲", color: "#00C3FF" },
       { key: "youtube", label: "YouTube", color: "#FF0000" },
@@ -308,6 +309,7 @@
     const EMBED_HEIGHT = 152;
     const embedUrl = (platform, id, isDark) => ({
       spotify: `https://open.spotify.com/embed/artist/${id}?utm_source=generator&theme=${isDark ? 0 : 1}`,
+      spotifyPodcast: `https://open.spotify.com/embed/show/${id}?utm_source=generator&theme=${isDark ? 0 : 1}`,
       appleMusic: `https://embed.music.apple.com/tw/album/${id}?app=music&theme=${isDark ? "dark" : "light"}`,
       streetvoice: `https://streetvoice.com/music/embed/?id=${id}`,
       youtube: `https://www.youtube.com/embed/${id}`,
