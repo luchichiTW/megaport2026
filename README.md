@@ -57,22 +57,22 @@
 - [x] Manic Sheep（缺 YouTube）
 - [x] MoonD'shake（缺 YouTube）
 - [x] BBFFMF（缺 YouTube）
-- [ ] 大象體操 比夢境真實紀錄長片（手動找）
+- [x] 大象體操 比夢境真實紀錄長片（僅 YouTube）
 - [x] 巨大的轟鳴（缺 YouTube）
 - [x] Hiromi's Sonicwonder [JP・US・FR]（缺 YouTube）
 - [x] 五月五日 [KR]（缺 YouTube）
-- [ ] LEIGHT NINE（手動找）
+- [x] LEIGHT NINE（僅 StreetVoice）
 - [x] 破地獄（缺 YouTube）
 - [x] 喜劇開港 單口喜劇（Podcast）
 - [x] Plutato（缺 YouTube）
-- [ ] 壓滿俱樂部（手動找）
+- [x] 壓滿俱樂部（僅 StreetVoice）
 - [x] debloop（缺 YouTube）
 
 ### 多歌手場次（需分別補齊）
 
 - [ ] **李竺芯 ft. 妮妮雅·瘋**
   - [x] 李竺芯（缺 YouTube）
-  - [ ] 妮妮雅·瘋（手動找，變裝皇后妮妃雅）
+  - [x] 妮妮雅·瘋（僅 YouTube）
 - [ ] **Mong Tong × XTRUX**
   - [x] Mong Tong（缺 YouTube）
   - [ ] XTRUX（手動找，新媒體藝術團隊）
@@ -80,7 +80,7 @@
   - [x] 憂憂（僅 Apple Music，手動找 Spotify/YouTube）
   - [ ] 奕碩（手動找）
 - [ ] **寫下你對這場派對的心得 何勁旻｜陳冠哼**
-  - [ ] 何勁旻（手動找）
+  - [x] 何勁旻（Podcast，台灣通勤第一品牌）
   - [ ] 陳冠哼（手動找）
 - [ ] **你也貢獻難聽 曾國宏｜許正泰**
   - [x] 曾國宏（缺 YouTube/StreetVoice）
@@ -93,7 +93,7 @@
   - [x] 陳嫺靜（缺 YouTube）
 - [ ] **陪嗨吉放歌 vol.1 呱吉｜迪拉｜李毅誠**
   - [x] 呱吉（Podcast）
-  - [ ] 迪拉（手動找）
+  - [x] 迪拉（Podcast）
   - [x] 李毅誠（Podcast）
 - [ ] **丸長世代 柯家洋｜阿舌**
   - [ ] 柯家洋（手動找）
@@ -126,7 +126,7 @@
   - [x] 異鄉人（缺 YouTube）
 - [ ] **ゲシュタルト乙女 urban session ft. yurinasia**
   - [x] ゲシュタルト乙女
-  - [ ] yurinasia（舞者，無串流資料）
+  - [x] yurinasia（僅 YouTube）
 - [ ] **隨性 ft. 婷文**
   - [x] 隨性
   - [x] 婷文（缺 YouTube）
