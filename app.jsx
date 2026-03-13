@@ -301,8 +301,8 @@
 
     const EMBED_PLATFORMS = [
       { key: "spotify", label: "Spotify", color: "#1DB954" },
-      { key: "appleMusic", label: "Apple Music", color: "#FA2D48" },
-      { key: "streetvoice", label: "StreetVoice", color: "#00C3FF" },
+      { key: "appleMusic", label: "Apple", color: "#FA2D48" },
+      { key: "streetvoice", label: "街聲", color: "#00C3FF" },
       { key: "youtube", label: "YouTube", color: "#FF0000" },
     ];
     const EMBED_HEIGHT = 152;
@@ -396,35 +396,38 @@
           {/* 平台 segmented control */}
           {available.length > 1 && (
             <div style={{
-              background: "rgba(125,125,125,0.08)",
-              borderRadius: 14, padding: 4,
+              background: "var(--seg-bg)",
+              borderRadius: 11, padding: 2,
               display: "flex", position: "relative",
-              border: "1px solid rgba(125,125,125,0.1)",
+              border: "1px solid var(--seg-border)",
             }}>
+              {(() => { const ai = available.findIndex(p => p.key === active); const n = available.length; return (
               <div style={{
-                position: "absolute", top: 4,
-                left: `calc(${available.findIndex(p => p.key === active) * (100 / available.length)}% + 4px)`,
-                width: `calc(${100 / available.length}% - 6px)`,
-                height: "calc(100% - 8px)",
-                background: "linear-gradient(135deg, rgba(125,125,125,0.22), rgba(125,125,125,0.10))",
-                borderRadius: 11,
-                transition: "left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                border: "1px solid rgba(125,125,125,0.15)",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
-              }} />
-              {available.map(opt => {
+                position: "absolute", top: 2, bottom: 2,
+                left: `calc(${ai} * (100% - 4px) / ${n} + 2px)`,
+                width: `calc((100% - 4px) / ${n})`,
+                borderRadius: 9,
+                background: "var(--seg-ind)",
+                boxShadow: "var(--seg-ind-shadow), inset 0 1px 0 var(--seg-ind-hi)",
+                transition: "left .3s cubic-bezier(.25,1,.5,1)",
+              }} />); })()}
+              {available.map((opt, i) => {
                 const isActive = active === opt.key;
+                const activeIdx = available.findIndex(p => p.key === active);
                 return (
                   <button key={opt.key} onClick={() => switchTab(opt.key)} style={{
-                    flex: 1, padding: "9px 4px", border: "none", borderRadius: 11,
-                    fontSize: 12, fontWeight: isActive ? 600 : 400, cursor: "pointer",
+                    flex: 1, padding: "8px 4px", border: "none", borderRadius: 9,
+                    fontSize: 12, fontWeight: 600, cursor: "pointer",
                     position: "relative", zIndex: 1,
-                    transition: "color 0.2s, font-weight 0.2s",
+                    transition: "color 0.2s",
                     background: "transparent",
-                    color: isActive ? opt.color : "var(--text-5)",
+                    color: isActive ? "var(--text)" : "var(--text-3)",
                     letterSpacing: "-0.01em",
                     fontFamily: "inherit",
                     textAlign: "center",
+                    whiteSpace: "nowrap",
+                    borderRight: i < available.length - 1 && activeIdx !== i && activeIdx !== i + 1
+                      ? "0.5px solid var(--seg-border)" : "0.5px solid transparent",
                   }}>
                     {opt.label}
                   </button>
@@ -448,7 +451,7 @@
                   width={svOnly ? 330 : "100%"}
                   height={svOnly ? 100 : EMBED_HEIGHT}
                   frameBorder="no"
-                  scrolling="no"
+                  scrolling="yes"
                   allow={opt.key !== "streetvoice" ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" : undefined}
                   style={{ borderRadius: 12, display: "block" }}
                   title={`${opt.key} embed`}
