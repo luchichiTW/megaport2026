@@ -77,6 +77,51 @@
       return { resolved, toggle };
     }
 
+    // Language helpers
+    // Build reverse map: EN name → ZH name (for looking up ARTIST_DESC / ARTIST_EMBED)
+    const EN_TO_ZH = (() => {
+      if (typeof ARTIST_NAMES_EN === 'undefined') return {};
+      const m = {};
+      for (const [zh, en] of Object.entries(ARTIST_NAMES_EN)) m[en] = zh;
+      return m;
+    })();
+
+    function useLang() {
+      const [lang, setLang] = useState(() => {
+        const saved = localStorage.getItem('lang-pref');
+        if (saved) return saved;
+        const browserLang = (navigator.language || '').toLowerCase();
+        return browserLang.startsWith('zh') ? 'zh' : 'en';
+      });
+      const toggle = useCallback(() => {
+        const next = lang === 'zh' ? 'en' : 'zh';
+        setLang(next);
+        localStorage.setItem('lang-pref', next);
+        document.documentElement.setAttribute('data-lang', next);
+      }, [lang]);
+      useEffect(() => {
+        document.documentElement.setAttribute('data-lang', lang);
+      }, [lang]);
+      const L = useCallback((zhStr) => {
+        if (lang === 'zh') return zhStr;
+        if (typeof UI_EN !== 'undefined' && zhStr in UI_EN) return UI_EN[zhStr];
+        return zhStr;
+      }, [lang]);
+      const artistName = useCallback((name) => {
+        if (lang === 'zh') return name;
+        return (typeof ARTIST_NAMES_EN !== 'undefined' && ARTIST_NAMES_EN[name]) || name;
+      }, [lang]);
+      // Always resolve to the Chinese key for data lookups (ARTIST_DESC, ARTIST_EMBED)
+      const artistKey = useCallback((name) => EN_TO_ZH[name] || name, []);
+      const stageName = useCallback((key) => {
+        if (lang === 'zh') return STAGES[key]?.name;
+        return (typeof STAGE_NAMES_EN !== 'undefined' && STAGE_NAMES_EN[key]) || STAGES[key]?.name;
+      }, [lang]);
+      return { lang, toggle, L, artistName, artistKey, stageName };
+    }
+
+    const LangContext = React.createContext({ lang: 'zh', toggle: () => {}, L: s => s, artistName: s => s, artistKey: s => s, stageName: k => STAGES[k]?.name });
+
     // Theme icon component (Apple SF Symbols style)
     function ThemeIcon({ resolved }) {
       if (resolved === 'light') return (
@@ -161,6 +206,8 @@
     // Stage badge — frosted colored chip
     function Badge({ stage, large, full }) {
       const s = STAGES[stage]; if (!s) return null;
+      const { lang, stageName } = React.useContext(LangContext);
+      const label = lang === 'en' ? stageName(stage) : (full && s.fullName ? s.fullName : s.name);
       return (
         <span style={{
           display: "inline-flex", alignItems: "center",
@@ -171,7 +218,7 @@
           flexShrink: 0,
           boxShadow: `0 1px 4px ${s.bg}50, inset 0 .5px 0 rgba(255,255,255,.25)`,
         }}>
-          {full && s.fullName ? s.fullName : s.name}
+          {label}
         </span>
       );
     }
@@ -181,6 +228,7 @@
       const c = STAGES[item.stage]?.bg || "#888";
       const [tooltip, setTooltip] = useState(null);
       const lp = useLongPress((pos) => setTooltip(pos || { x: 0, y: 200 }));
+      const { L, artistName } = React.useContext(LangContext);
       const isPlaying = status === "playing";
       const isEnded = status === "ended";
       return (
@@ -238,7 +286,7 @@
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               lineHeight: 1.3,
             }}>
-              {item.artist}
+              {artistName(item.artist)}
             </span>
 
             {isPlaying && (
@@ -246,13 +294,13 @@
                 fontSize: 10, fontWeight: 700, flexShrink: 0,
                 background: `${c}25`, color: c,
                 padding: "2px 8px", borderRadius: 6,
-              }}>演出中</span>
+              }}>{L('演出中')}</span>
             )}
             {isEnded && (
               <span style={{
                 fontSize: 10, fontWeight: 600, flexShrink: 0,
                 color: "var(--text-5)",
-              }}>已結束</span>
+              }}>{L('已結束')}</span>
             )}
 
             {conflict && selected && !isPlaying && !isEnded && (
@@ -261,7 +309,7 @@
                 background: "rgba(255,80,80,.12)", color: "#FF6B6B",
                 padding: "3px 9px", borderRadius: 8,
                 boxShadow: `inset 0 .5px 0 var(--dim)`,
-              }}>撞場</span>
+              }}>{L('撞場')}</span>
             )}
 
             {/* Progress bar */}
@@ -318,6 +366,8 @@
     function ArtistEmbed({ artist }) {
       const { resolved } = useTheme();
       const isDark = resolved === "dark";
+      const { artistKey } = React.useContext(LangContext);
+      const zhName = artistKey(artist);
       const [online, setOnline] = useState(navigator.onLine);
       useEffect(() => {
         const on = () => setOnline(true);
@@ -326,13 +376,13 @@
         window.addEventListener("offline", off);
         return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
       }, []);
-      const rawEmbed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
+      const rawEmbed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[zhName] || null;
       // 支援新格式 { artists: [...] } 與舊格式 { spotify, appleMusic, ... }
       const artists = useMemo(() => {
         if (!rawEmbed) return [];
         if (rawEmbed.artists) return rawEmbed.artists;
-        return [{ name: artist, ...rawEmbed }];
-      }, [rawEmbed, artist]);
+        return [{ name: zhName, ...rawEmbed }];
+      }, [rawEmbed, zhName]);
       // 過濾掉完全沒有平台資料的 artist
       const availableArtists = useMemo(() =>
         artists.filter(a => EMBED_PLATFORMS.some(p => a[p.key])),
@@ -468,7 +518,9 @@
     function ArtistTooltip({ item, onClose }) {
       const [closing, setClosing] = useState(false);
       const dur = t2m(item.end) - t2m(item.start);
-      const desc = typeof ARTIST_DESC!=="undefined" && ARTIST_DESC[item.artist] || null;
+      const { L, artistName, artistKey } = React.useContext(LangContext);
+      const zhName = artistKey(item.artist);
+      const desc = typeof ARTIST_DESC!=="undefined" && ARTIST_DESC[zhName] || null;
       const dismiss = useCallback(() => { setClosing(true); setTimeout(onClose, 260) }, [onClose]);
       const backdropRef = useRef(null);
       const descRef = useRef(null);
@@ -503,12 +555,12 @@
               <span style={{ fontSize: 13, color: "var(--text-3)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                 {item.start} – {fmtEnd(item)}
               </span>
-              <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{dur} 分鐘</span>
+              <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{dur} {L('分鐘')}</span>
             </div>
             <div style={{ fontSize: 17, fontWeight: 700, lineHeight: 1.45, color: "var(--text)", letterSpacing: "-.01em", flexShrink: 0 }}>
-              {item.artist}
+              {artistName(item.artist)}
             </div>
-            <ArtistEmbed artist={item.artist} />
+            <ArtistEmbed artist={zhName} />
             {desc && (
               <div ref={descRef} className="no-scrollbar" style={{
                 fontSize: 13, color: "var(--text-3)", lineHeight: 1.65,
@@ -530,6 +582,7 @@
       const sc = STAGES[item.stage]?.bg || "#888";
       const [tooltip, setTooltip] = useState(null);
       const lp = useLongPress(() => setTooltip(true));
+      const { artistName } = React.useContext(LangContext);
       return (
         <>
           {tooltip && <ArtistTooltip item={item} onClose={() => setTooltip(null)} />}
@@ -568,7 +621,7 @@
               lineHeight: 1.3, overflow: "hidden",
               display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
             }}>
-              {item.artist}
+              {artistName(item.artist)}
             </div>
           </div>
         </>
@@ -577,6 +630,7 @@
 
     function TimelineCard({ item, gap, preferred, dimmed, onClick, status, progress }) {
       const c = STAGES[item.stage]?.bg || "#888";
+      const { L, artistName } = React.useContext(LangContext);
       const dur = t2m(item.end) - t2m(item.start);
       const isClickable = !!onClick;
       const isPlaying = status === "playing";
@@ -593,7 +647,7 @@
             }}>
               <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
               <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>
-                {gap} 分鐘
+                {gap} {L('分鐘')}
               </span>
               <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
             </div>
@@ -647,20 +701,20 @@
                     background: `${c}25`, color: c,
                     padding: "2px 8px", borderRadius: 6,
                     boxShadow: `inset 0 .5px 0 var(--surface-hi)`,
-                  }}>演出中</span>
+                  }}>{L('演出中')}</span>
                 )}
                 {isEnded && (
                   <span style={{
                     fontSize: 10, fontWeight: 600,
                     color: "var(--text-5)",
-                  }}>已結束</span>
+                  }}>{L('已結束')}</span>
                 )}
               </div>
               <div style={{ fontSize: 17, fontWeight: 700, marginTop: 8, lineHeight: 1.3 }}>
-                {item.artist}
+                {artistName(item.artist)}
               </div>
               <div style={{ fontSize: 12, color: "var(--text-4)", marginTop: 4, fontWeight: 500 }}>
-                {dur} 分鐘
+                {dur} {L('分鐘')}
               </div>
             </div>
             {isPlaying && (
@@ -678,6 +732,7 @@
 
     // Conflict group wrapper — groups overlapping items visually
     function ConflictGroup({ items, pref, onPref, groupRef, getStatus, getProgress, onLottery }) {
+      const { L } = React.useContext(LangContext);
       const prefId = items.find(i => pref.has(i.id))?.id || null;
       const collapsed = prefId !== null;
       const otherCount = items.length - 1;
@@ -696,10 +751,10 @@
                 <circle cx="8" cy="11.5" r=".75" fill="#FF6B6B" />
               </svg>
               <span style={{ fontSize: 12, fontWeight: 700, color: "#FF6B6B" }}>
-                時間撞場
+                {L('時間撞場')}
               </span>
               <span style={{ fontSize: 11, color: "rgba(255,80,80,.5)", fontWeight: 500, flex: 1 }}>
-                — 點選想去的演出
+                {L('— 點選想去的演出')}
               </span>
               {onLottery && <button onClick={e => { e.stopPropagation(); onLottery(items); }} className="press" style={{
                 background: "linear-gradient(135deg, rgba(255,107,107,0.12), rgba(255,107,107,0.06))",
@@ -711,7 +766,7 @@
                 backdropFilter: "blur(12px) saturate(150%)",
                 WebkitBackdropFilter: "blur(12px) saturate(150%)",
                 boxShadow: "inset 0 .5px 0 rgba(255,255,255,.1)",
-              }}>🎲 抽</button>}
+              }}>{L('🎲 抽')}</button>}
             </div>
           </div>
           {items.map(item => {
@@ -762,6 +817,7 @@
 
     // Slot machine animation for lottery
     function SlotMachine({ items, winner, spinning, onDone }) {
+      const { artistName, stageName: stgName } = React.useContext(LangContext);
       const [pos, setPos] = useState(0);
       const doneRef = useRef(false);
       const ITEM_H = 72;
@@ -811,12 +867,12 @@
                     background: stg?.bg || "#888", color: "var(--badge-text)",
                     fontSize: 11, fontWeight: 700, padding: "3px 8px",
                     borderRadius: 6, whiteSpace: "nowrap", letterSpacing: .5,
-                  }}>{stg?.name || item.stage}</span>
+                  }}>{stgName(item.stage) || item.stage}</span>
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{
                       fontWeight: 700, fontSize: 16, color: "var(--text)",
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}>{item.artist}</div>
+                    }}>{artistName(item.artist)}</div>
                     <div style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2 }}>
                       {item.start}–{fmtEnd(item)}
                     </div>
@@ -831,6 +887,7 @@
 
     // Lottery bottom sheet
     function LotterySheet({ items, onAccept, onClose }) {
+      const { L, artistName, stageName: stgName } = React.useContext(LangContext);
       const [closing, setClosing] = useState(false);
       const [spinning, setSpinning] = useState(false);
       const [winner, setWinner] = useState(null);
@@ -912,9 +969,9 @@
               {/* Header */}
               <div style={{ textAlign: "center", marginBottom: 20 }}>
                 <div style={{ fontSize: 28, marginBottom: 4 }}>🎲</div>
-                <h2 style={{ fontSize: 19, fontWeight: 800, margin: 0, color: "var(--text)" }}>撞團抽籤</h2>
+                <h2 style={{ fontSize: 19, fontWeight: 800, margin: 0, color: "var(--text)" }}>{L('撞團抽籤')}</h2>
                 <p style={{ fontSize: 13, color: "var(--text-3)", margin: "6px 0 0" }}>
-                  {items.length} 組演出撞場，交給命運決定！
+                  {items.length} {L('組演出撞場，交給命運決定！')}
                 </p>
               </div>
 
@@ -946,17 +1003,17 @@
                         background: stg?.bg || "#888", color: "var(--badge-text)",
                         fontSize: 10, fontWeight: 700, padding: "2px 7px",
                         borderRadius: 5, whiteSpace: "nowrap",
-                      }}>{stg?.name || item.stage}</span>
+                      }}>{stgName(item.stage) || item.stage}</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{
                           fontWeight: 700, fontSize: 15, color: "var(--text)",
                           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                        }}>{item.artist}</div>
+                        }}>{artistName(item.artist)}</div>
                         <div style={{ fontSize: 12, color: "var(--text-3)", marginTop: 1 }}>
                           {item.start}–{fmtEnd(item)}
                         </div>
                       </div>
-                      {isLoser && <span style={{ fontSize: 11, color: "var(--text-4)" }}>下次吧</span>}
+                      {isLoser && <span style={{ fontSize: 11, color: "var(--text-4)" }}>{L('下次吧')}</span>}
                     </div>
                   );
                 })}
@@ -994,14 +1051,14 @@
               {/* Result text */}
               {revealed && winner && (
                 <div className="lottery-result" style={{ textAlign: "center", padding: "12px 0 16px" }}>
-                  <div style={{ fontSize: 13, color: "var(--text-3)", marginBottom: 4 }}>{winner.artist === QIAOHU ? "小朋友就是要看" : "就決定是你了！"}</div>
+                  <div style={{ fontSize: 13, color: "var(--text-3)", marginBottom: 4 }}>{winner.artist === QIAOHU ? L("小朋友就是要看") : L("就決定是你了！")}</div>
                   <div style={{
                     fontSize: 20, fontWeight: 900,
                     background: `linear-gradient(135deg, ${STAGES[winner.stage]?.bg || "#888"}, var(--text))`,
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>{winner.artist}</div>
+                  }}>{artistName(winner.artist)}</div>
                   <div style={{ fontSize: 12, color: "var(--text-4)", marginTop: 4 }}>
-                    {STAGES[winner.stage]?.name} · {winner.start}–{fmtEnd(winner)}
+                    {stgName(winner.stage)} · {winner.start}–{fmtEnd(winner)}
                   </div>
                 </div>
               )}
@@ -1009,21 +1066,21 @@
               {/* Buttons */}
               <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
                 {!spinning && !revealed && (
-                  <button onClick={spin} className="lottery-btn-primary">🎲 抽！</button>
+                  <button onClick={spin} className="lottery-btn-primary">{L('🎲 抽！')}</button>
                 )}
                 {revealed && winner?.artist === QIAOHU && !scolded && (
                   <>
-                    <button onClick={() => setScolded(true)} className="lottery-btn-secondary">再抽一次</button>
-                    <button onClick={accept} className="lottery-btn-primary">接受結果 ✓</button>
+                    <button onClick={() => setScolded(true)} className="lottery-btn-secondary">{L('再抽一次')}</button>
+                    <button onClick={accept} className="lottery-btn-primary">{L('接受結果 ✓')}</button>
                   </>
                 )}
                 {revealed && winner?.artist === QIAOHU && scolded && (
-                  <button onClick={accept} className="lottery-btn-primary">接受結果 ✓</button>
+                  <button onClick={accept} className="lottery-btn-primary">{L('接受結果 ✓')}</button>
                 )}
                 {revealed && winner?.artist !== QIAOHU && (
                   <>
-                    <button onClick={retry} className="lottery-btn-secondary">再抽一次</button>
-                    <button onClick={accept} className="lottery-btn-primary">接受結果 ✓</button>
+                    <button onClick={retry} className="lottery-btn-secondary">{L('再抽一次')}</button>
+                    <button onClick={accept} className="lottery-btn-primary">{L('接受結果 ✓')}</button>
                   </>
                 )}
               </div>
@@ -1045,7 +1102,7 @@
                     animation: "scolded .5s var(--spring) both",
                     letterSpacing: 4,
                   }}>
-                    小朋友就是要看巧虎！
+                    {L('小朋友就是要看巧虎！')}
                   </div>
                 </div>
               )}
@@ -1163,6 +1220,7 @@
     };
 
     function ImageViewer({ src, hotspots, onClose }) {
+      const { L } = React.useContext(LangContext);
       const [closing, setClosing] = useState(false);
       const [stagePopup, setStagePopup] = useState(null);
       const imgRef = useRef(null);
@@ -1345,7 +1403,7 @@
                       const s = STAGES[k];
                       const url = navUrl(k);
                       if (s && url) {
-                        setStagePopup({ name: s.name, bg: s.bg, url, loc: STAGE_LOCS[k] });
+                        setStagePopup({ name: (typeof STAGE_NAMES_EN !== 'undefined' && localStorage.getItem('lang-pref') === 'en' ? STAGE_NAMES_EN[k] : s.name), bg: s.bg, url, loc: STAGE_LOCS[k] });
                       }
                       return;
                     }
@@ -1439,13 +1497,13 @@
                   border: ".5px solid var(--glass-border)",
                   background: "var(--surface)", color: "var(--text-3)",
                   fontSize: 15, fontWeight: 600, cursor: "pointer",
-                }}>取消</button>
+                }}>{L('取消')}</button>
                 <button onClick={() => { window.open(stagePopup.url, "_blank", "noopener,noreferrer"); setStagePopup(null); }} style={{
                   flex: 1, height: 44, borderRadius: 12, border: "none",
                   background: stagePopup.bg, color: "#fff",
                   fontSize: 15, fontWeight: 600, cursor: "pointer",
                   boxShadow: `0 2px 12px ${stagePopup.bg}40`,
-                }}>導航前往</button>
+                }}>{L('導航前往')}</button>
               </div>
             </div>
           </div>
@@ -1455,6 +1513,7 @@
 
     // Time Picker — liquid glass bottom sheet
     function TimePicker({ simNow, onSet, onReset, onClose }) {
+      const { L } = React.useContext(LangContext);
       const [closing, setClosing] = useState(false);
       const current = simNow || new Date();
       const curDay = getDayFromDate(current) || 1;
@@ -1481,12 +1540,12 @@
       };
 
       const presets = [
-        { label: "DAY 1 開場", day: 1, h: 12, m: 40 },
-        { label: "DAY 1 下午", day: 1, h: 15, m: 0 },
-        { label: "DAY 1 晚上", day: 1, h: 19, m: 0 },
-        { label: "DAY 2 開場", day: 2, h: 12, m: 40 },
-        { label: "DAY 2 下午", day: 2, h: 15, m: 0 },
-        { label: "DAY 2 晚上", day: 2, h: 19, m: 0 },
+        { label: `DAY 1 ${L("開場")}`, day: 1, h: 12, m: 40 },
+        { label: `DAY 1 ${L("下午")}`, day: 1, h: 15, m: 0 },
+        { label: `DAY 1 ${L("晚上")}`, day: 1, h: 19, m: 0 },
+        { label: `DAY 2 ${L("開場")}`, day: 2, h: 12, m: 40 },
+        { label: `DAY 2 ${L("下午")}`, day: 2, h: 15, m: 0 },
+        { label: `DAY 2 ${L("晚上")}`, day: 2, h: 19, m: 0 },
       ];
 
       return ReactDOM.createPortal(
@@ -1502,7 +1561,7 @@
             >
               {/* Header */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-                <span style={{ fontSize: 17, fontWeight: 700, color: "var(--text)" }}>模擬時間</span>
+                <span style={{ fontSize: 17, fontWeight: 700, color: "var(--text)" }}>{L('模擬時間')}</span>
                 <button onClick={dismiss} style={{
                   background: "var(--dim)", border: "none", borderRadius: 50,
                   width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center",
@@ -1517,7 +1576,7 @@
                 color: "var(--text)", letterSpacing: 2,
               }}>
                 <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text-4)", display: "block", marginBottom: 4 }}>
-                  {curDay === 1 ? "DAY 1 · 3/21 (六)" : "DAY 2 · 3/22 (日)"}
+                  {curDay === 1 ? `DAY 1 · 3/21 (${L('六')})` : `DAY 2 · 3/22 (${L('日')})`}
                 </span>
                 {String(curH).padStart(2, '0')}:{String(curM).padStart(2, '0')}
               </div>
@@ -1561,7 +1620,7 @@
                 fontSize: 15, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
                 boxShadow: `inset 0 .5px 0 var(--surface-border)`,
               }}>
-                恢復即時
+                {L('恢復即時')}
               </button>
             </div>
           </div>
@@ -1572,6 +1631,7 @@
 
     // Liquid glass confirm dialog
     function ConfirmDialog({ title, message, confirmLabel, onConfirm, onClose }) {
+      const { L } = React.useContext(LangContext);
       const [closing, setClosing] = useState(false);
       const dismiss = useCallback(() => {
         setClosing(true);
@@ -1595,7 +1655,7 @@
               {message && <div className="confirm-msg">{message}</div>}
             </div>
             <div className="confirm-actions">
-              <button className="confirm-cancel" onClick={dismiss}>取消</button>
+              <button className="confirm-cancel" onClick={dismiss}>{L('取消')}</button>
               <button className="confirm-destructive" onClick={handleConfirm}>{confirmLabel}</button>
             </div>
           </div>
@@ -1688,6 +1748,7 @@
     ];
 
     function Onboarding({ onDone, startStep = 0, singleStep = false }) {
+      const { L } = React.useContext(LangContext);
       const [step, setStep] = useState(startStep);
       const [closing, setClosing] = useState(false);
       const [stepKey, setStepKey] = useState(0);
@@ -1708,8 +1769,8 @@
             style={closing ? { animation: "dialogOut .25s var(--ease-out) forwards" } : {}}>
             <div key={stepKey} className="onboard-body onboard-step-enter">
               <div className="onboard-icon">{s.icon}</div>
-              <div className="onboard-title">{s.title}</div>
-              <div className="onboard-desc">{s.desc}</div>
+              <div className="onboard-title">{L(s.title)}</div>
+              <div className="onboard-desc">{L(s.desc)}</div>
               {s.content && s.content}
               {s.links && <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginTop: 12 }}>
                 {s.links.map(l => <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" style={{
@@ -1730,12 +1791,12 @@
                 <button className="onboard-btn onboard-btn-primary" onClick={next}>👌</button>
               ) : (<>
                 {step > 0 ? (
-                  <button className="onboard-btn onboard-btn-secondary" onClick={prev}>上一步</button>
+                  <button className="onboard-btn onboard-btn-secondary" onClick={prev}>{L('上一步')}</button>
                 ) : (
-                  <button className="onboard-btn onboard-btn-secondary" onClick={skip}>跳過</button>
+                  <button className="onboard-btn onboard-btn-secondary" onClick={skip}>{L('跳過')}</button>
                 )}
                 <button className="onboard-btn onboard-btn-primary" onClick={next}>
-                  {isLast ? "開始使用" : "下一步"}
+                  {isLast ? L("開始使用") : L("下一步")}
                 </button>
               </>)}
             </div>
@@ -1748,6 +1809,7 @@
     /* ══════════ Timetable ══════════ */
 
     function TtBlock({ item, stg, selected, dimmed, conflict, top, height, toggle }) {
+      const { artistName } = React.useContext(LangContext);
       const [tooltip, setTooltip] = useState(null);
       const lp = useLongPress((pos) => setTooltip(pos || { x: 0, y: 200 }));
       return (
@@ -1765,15 +1827,16 @@
             onTouchStart={lp.onTouchStart} onTouchEnd={lp.onTouchEnd} onTouchMove={lp.onTouchMove}
             onContextMenu={e => e.preventDefault()}
           >
-            {item.artist}
+            {artistName(item.artist)}
           </div>
         </>
       );
     }
 
     function Timetable({ day, sel, toggle, dimIds, confIds, activeDay, activeMinutes }) {
+      const { lang, stageName } = React.useContext(LangContext);
       const PX_PER_MIN = 2;
-      const HEADER_H = 32;
+      const HEADER_H = lang === 'en' ? 40 : 32;
       const dayItems = useMemo(() => T.filter(t => t.day === day), [day]);
       const stages = useMemo(() => Object.keys(STAGES).filter(k => dayItems.some(t => t.stage === k)), [dayItems]);
 
@@ -1813,7 +1876,7 @@
               return (
                 <div key={stg} className="tt-stage-col" style={{ height: totalH + HEADER_H }}>
                   <div className="tt-stage-header" style={{ background: STAGES[stg].bg }}>
-                    {STAGES[stg].name}
+                    {stageName(stg)}
                   </div>
                   {lines.map(l => (
                     <div key={l.m} className={l.isHour ? "tt-hour-line" : "tt-half-line"}
@@ -1884,6 +1947,8 @@
       const [lastTap, setLastTap] = useState(0);
       const firstConflictRef = useRef(null);
       const theme = useTheme();
+      const langCtx = useLang();
+      const { lang, L, artistName, stageName } = langCtx;
       const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
       const [showV8Tip, setShowV8Tip] = useState(() => localStorage.getItem("onboard-done") && !localStorage.getItem("onboard-v7"));
       const [showRes, setShowRes] = useState(false);
@@ -2028,7 +2093,7 @@
       const dimIds = useMemo(() => { const s = new Set(); T.forEach(t => { if (sel.includes(t.id)) return; for (const si of selItems) if (clash(t, si)) { s.add(t.id); break } }); return s }, [sel, selItems]);
 
       const sched = useMemo(() => { const d = { 1: [], 2: [] }; selItems.forEach(i => d[i.day]?.push(i)); Object.values(d).forEach(a => a.sort((x, y) => t2m(x.start) - t2m(y.start))); return d }, [selItems]);
-      const filterStage = useCallback((s) => T.filter(t => { if (t.day !== day) return false; if (q) return t.artist.toLowerCase().includes(q.toLowerCase()); if (s !== "ALL" && t.stage !== s) return false; return true }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, q]);
+      const filterStage = useCallback((s) => T.filter(t => { if (t.day !== day) return false; if (q) { const ql = q.toLowerCase(); return t.artist.toLowerCase().includes(ql) || (artistName(t.artist)).toLowerCase().includes(ql); } if (s !== "ALL" && t.stage !== s) return false; return true }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, q, artistName]);
       const list = useMemo(() => filterStage(stg), [filterStage, stg]);
       const stgIdx = useMemo(() => stgsDay.indexOf(stg), [stgsDay, stg]);
       const prevList = useMemo(() => stgIdx > 0 ? filterStage(stgsDay[stgIdx - 1]) : null, [filterStage, stgsDay, stgIdx]);
@@ -2049,6 +2114,7 @@
       }, [activeMinutes]);
 
       return (
+        <LangContext.Provider value={langCtx}>
         <div style={{
           position: "relative", zIndex: 1,
           maxWidth: 520, margin: "0 auto",
@@ -2074,7 +2140,7 @@
                   <span style={{
                     background: "linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  }}>大港開唱</span>
+                  }}>{L('大港開唱')}</span>
                   <span onClick={view === "sched" ? () => {
                     const n = Date.now();
                     if (n - lastTap < 400) setShowTimePicker(true);
@@ -2087,13 +2153,23 @@
                   }}>2026{simNow && " ⏱"}</span>
                 </h1>
                 <p style={{ fontSize: 12, color: "var(--text-3)", marginTop: 2, fontWeight: 500 }}>
-                  3/21–22 高雄駁二
+                  {L('3/21–22 高雄駁二')}
                   <span style={{ margin: "0 6px", opacity: .3 }}>·</span>
-                  已選 {sel.length} 組
+                  {L('已選')} {sel.length} {L('組')}
                 </p>
               </div>
+              <button className="theme-btn" onClick={langCtx.toggle} title={lang === 'zh' ? 'Switch to English' : '切換中文'}
+                style={{ width: 'auto', padding: '0 10px', gap: 5 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20" />
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                <span style={{ fontSize: 12, fontWeight: 700, width: 18, textAlign: 'center' }}>{lang === 'zh' ? '中' : 'EN'}</span>
+              </button>
+              <div style={{ width: 8 }} />
               <button className="theme-btn" onClick={theme.toggle} title={
-                theme.resolved === 'light' ? '切換深色模式' : '切換淺色模式'
+                theme.resolved === 'light' ? L('切換深色模式') : L('切換淺色模式')
               }>
                 <ThemeIcon resolved={theme.resolved} />
               </button>
@@ -2101,7 +2177,7 @@
 
             {/* Mode toggle */}
             <Segment
-              items={[{ value: "pick", label: "選團" }, { value: "sched", label: "我的行程" }]}
+              items={[{ value: "pick", label: L("選團") }, { value: "sched", label: L("我的行程") }]}
               value={view} onChange={v => {
                 setView(v);
                 if (v === "sched") setTimeout(() => {
@@ -2117,7 +2193,7 @@
                 <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
                   <div style={{ flex: 1 }}>
                     <Segment
-                      items={[{ value: 1, label: "DAY 1 · 3/21 六" }, { value: 2, label: "DAY 2 · 3/22 日" }]}
+                      items={[{ value: 1, label: `DAY 1 · 3/21 ${L('六')}` }, { value: 2, label: `DAY 2 · 3/22 ${L('日')}` }]}
                       value={day} onChange={v => {
                         setDay(v);
                         if (stg !== "ALL") {
@@ -2166,7 +2242,7 @@
                         <input
                           ref={searchRef}
                           value={q} onChange={e => setQ(e.target.value)}
-                          placeholder="搜尋表演者..."
+                          placeholder={L("搜尋表演者...")}
                           style={{
                             width: "100%", padding: "8px 32px 8px 30px",
                             borderRadius: 12, boxSizing: "border-box",
@@ -2191,7 +2267,7 @@
                         border: "none", background: "none", color: "var(--text-3)",
                         fontSize: 13, fontWeight: 600, cursor: "pointer", padding: "6px 2px",
                         whiteSpace: "nowrap", flexShrink: 0,
-                      }}>取消</button>
+                      }}>{L('取消')}</button>
                     </div>
                   ) : (<>
                     <button className="press" onClick={() => { setShowSearch(true); setTimeout(() => searchRef.current?.focus(), 50) }} style={{
@@ -2209,7 +2285,7 @@
                     {stgsDay.map(s => (
                       <div key={s} data-stage-active={stg === s ? "1" : "0"}>
                         <Pill
-                          label={s === "ALL" ? "全部" : STAGES[s]?.name}
+                          label={s === "ALL" ? L("全部") : stageName(s)}
                           active={stg === s}
                           color={s === "ALL" ? null : STAGES[s]?.bg}
                           onClick={() => {
@@ -2241,7 +2317,7 @@
                     <div style={{
                       textAlign: "center", padding: "100px 20px",
                       color: "var(--text-5)", fontSize: 16, fontWeight: 500,
-                    }}>找不到符合的表演者</div>
+                    }}>{L('找不到符合的表演者')}</div>
                   ) : list.map(item => {
                     const st = getStatus(item);
                     return <Card
@@ -2276,14 +2352,14 @@
                         <div style={{
                           textAlign: "center", padding: "100px 20px",
                           color: "var(--text-5)", fontSize: 16, fontWeight: 500,
-                        }}>此舞台本日無演出</div>
+                        }}>{L('此舞台本日無演出')}</div>
                       ) : (() => {
                         const out = [];
                         let nowInserted = false;
                         items.forEach((item, idx) => {
                           if (!nowInserted && day === activeDay && t2m(item.start) > activeMinutes) {
                             nowInserted = true;
-                            out.push(<div key="now-line" className="now-line">{!isClamped && <div className="now-line-dot" />}<span className="now-line-label">{isClamped ? "🚢 活動即將開始" : `現在 ${fmtTime(activeNow)}`}</span><div className="now-line-line" /></div>);
+                            out.push(<div key="now-line" className="now-line">{!isClamped && <div className="now-line-dot" />}<span className="now-line-label">{isClamped ? L("🚢 活動即將開始") : `${L("現在")} ${fmtTime(activeNow)}`}</span><div className="now-line-line" /></div>);
                           }
                           const st = getStatus(item);
                           out.push(
@@ -2320,7 +2396,7 @@
                       fontSize: 12, fontWeight: 500, color: "var(--text-4)",
                     }}>
                       <span style={{ fontSize: 14 }}>⏳</span>
-                      <span>還沒開演啦！<b style={{ color: "var(--text-2)" }}>{DAY_DATES[1].slice(5)} {eTime}</b> 開始後時間軸會自己跑</span>
+                      <span>{L('還沒開演啦！')}<b style={{ color: "var(--text-2)" }}>{DAY_DATES[1].slice(5)} {eTime}</b> {L('開始後時間軸會自己跑')}</span>
                     </div>
                   );
                 })()}
@@ -2331,7 +2407,7 @@
                       color: "var(--text-5)", fontSize: 16,
                       fontWeight: 500, lineHeight: 2,
                     }}>
-                      還沒選任何演出<br />切換到「選團」開始挑選
+                      {L('還沒選任何演出')}<br />{L('切換到「選團」開始挑選')}
                     </div>
                     {(() => {
                       const playing = T.filter(t => t.day === activeDay && activeMinutes >= t2m(t.start) && activeMinutes < t2m(t.end))
@@ -2340,7 +2416,7 @@
                       return (
                         <div style={{ marginTop: 28 }}>
                           <div style={{ fontSize: 12, color: "var(--text-5)", fontWeight: 600, marginBottom: 8, textAlign: "center" }}>
-                            現在有演出
+                            {L('現在有演出')}
                           </div>
                           <div className="no-scrollbar" style={{
                             display: "flex", gap: 8, overflowX: "auto",
@@ -2396,15 +2472,15 @@
                             {d === 1 ? "DAY 1" : "DAY 2"}
                           </h3>
                           <span style={{ fontSize: 13, color: "var(--text-4)", fontWeight: 500 }}>
-                            {d === 1 ? "3/21 (六)" : "3/22 (日)"}
+                            {d === 1 ? `3/21 (${L('六')})` : `3/22 (${L('日')})`}
                           </span>
                           <span style={{ fontSize: 12, color: "var(--text-5)", fontWeight: 500 }}>
-                            {items.length} 組
+                            {items.length} {L('組')}
                           </span>
                         </div>
                         {(() => {
                           const out = [];
-                          const nowLine = <div key="now-line" className="now-line">{!isClamped && <div className="now-line-dot" />}<span className="now-line-label">{isClamped ? "🚢 活動即將開始" : `現在 ${fmtTime(activeNow)}`}</span><div className="now-line-line" /></div>;
+                          const nowLine = <div key="now-line" className="now-line">{!isClamped && <div className="now-line-dot" />}<span className="now-line-label">{isClamped ? L("🚢 活動即將開始") : `${L("現在")} ${fmtTime(activeNow)}`}</span><div className="now-line-line" /></div>;
                           let nowInserted = false;
 
                           // Find all artists currently performing
@@ -2416,7 +2492,7 @@
                           const suggestions = nowPlaying.length > 0
                             ? <div key="suggestions" style={{ margin: "6px 0 10px" }}>
                                 <div style={{ fontSize: 12, color: "var(--text-5)", fontWeight: 600, marginBottom: 8, textAlign: "center" }}>
-                                  現在有演出
+                                  {L('現在有演出')}
                                 </div>
                                 <div className="no-scrollbar" style={{
                                   display: "flex", gap: 8, overflowX: "auto",
@@ -2451,7 +2527,7 @@
                                   {gap !== null && gap > 0 && (
                                     <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", justifyContent: "center" }}>
                                       <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
-                                      <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{gap} 分鐘</span>
+                                      <span style={{ fontSize: 11, color: "var(--text-5)", fontWeight: 500 }}>{gap} {L('分鐘')}</span>
                                       <div style={{ flex: 1, height: .5, background: "var(--divider)" }} />
                                     </div>
                                   )}
@@ -2501,7 +2577,7 @@
                       cursor: "pointer", fontFamily: "inherit",
                       boxShadow: `0 2px 12px rgba(255,80,80,.08), inset 0 .5px 0 var(--surface-border)`,
                     }}>
-                      清除所有選取
+                      {L('清除所有選取')}
                     </button>
                   </div>
                 )}
@@ -2515,9 +2591,9 @@
                 )}
                 {showSheet && (
                   <ConfirmDialog
-                    title="清除所有選取？"
-                    message={`已選的 ${sel.length} 組演出將全部移除，此操作無法復原。`}
-                    confirmLabel="清除"
+                    title={L("清除所有選取？")}
+                    message={`${L('已選')} ${sel.length} ${L('組演出將全部移除，此操作無法復原。')}`}
+                    confirmLabel={L("清除")}
                     onConfirm={() => setSel([])}
                     onClose={() => setShowSheet(false)}
                   />
@@ -2554,7 +2630,7 @@
                     transition: "background .15s",
                   }} onTouchStart={e => e.currentTarget.style.background = "rgba(255,80,80,.12)"}
                     onTouchEnd={e => e.currentTarget.style.background = "transparent"}>
-                    {nC} 撞場
+                    {nC} {L('撞場')}
                   </span>
                 </>
               )}
@@ -2566,7 +2642,7 @@
 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: -2, marginRight: 3 }}>
                 <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" /><line x1="8" y1="2" x2="8" y2="18" /><line x1="16" y1="6" x2="16" y2="22" />
               </svg>
-              總覽
+              {L('總覽')}
             </span>
           </div>}
 
@@ -2611,10 +2687,10 @@
               <div className="res-sheet" onTouchStart={onDragStart} onTouchMove={onDragMove} onTouchEnd={onDragEnd}>
                 <div style={{ padding: "8px 16px calc(16px + var(--safe-bottom))", display: "flex", flexDirection: "column", gap: 14 }}>
                   {[
-                    { src: MAP_SRC, label: "場地地圖" },
-                    { src: "./img/megaport_festival_2026_day_1.webp", label: "DAY 1 節目表 (3/21)" },
-                    { src: "./img/megaport_festival_2026_day_2.webp", label: "DAY 2 節目表 (3/22)" },
-                    { src: "./img/megaport_festival_2026_free_stage.jpg", label: "大樹下節目表" },
+                    { src: lang === 'en' ? "./img/megaport_festival_2026_map_EN.webp" : MAP_SRC, label: L("場地地圖") },
+                    { src: lang === 'en' ? "./img/megaport_festival_2026_day_1_EN.webp" : "./img/megaport_festival_2026_day_1.webp", label: L("DAY 1 節目表 (3/21)") },
+                    { src: lang === 'en' ? "./img/megaport_festival_2026_day_2_EN.webp" : "./img/megaport_festival_2026_day_2.webp", label: L("DAY 2 節目表 (3/22)") },
+                    { src: lang === 'en' ? "./img/megaport_festival_2026_free_stage_EN.webp" : "./img/megaport_festival_2026_free_stage.jpg", label: L("大樹下節目表") },
                   ].map(r => (
                     <div key={r.src} style={{
                       borderRadius: 14, overflow: "hidden",
@@ -2633,20 +2709,21 @@
                     </div>
                   ))}
                   <div style={{ fontSize: 12, color: "var(--text-5)", textAlign: "center", padding: "4px 0" }}>
-                    已快取，沒網路也能看
+                    {L('已快取，沒網路也能看')}
                   </div>
                 </div>
               </div>
             </>;
           })()}
           {/* ══ Floating Map Button ══ */}
-          <FloatingMapBtn onMapOpen={() => setZoomImg({ src: MAP_SRC, hotspots: true })} />
+          <FloatingMapBtn onMapOpen={() => setZoomImg({ src: lang === 'en' ? "./img/megaport_festival_2026_map_EN.webp" : MAP_SRC, hotspots: true })} />
           {/* ══ Image Viewer ══ */}
           {zoomImg && <ImageViewer src={typeof zoomImg === 'string' ? zoomImg : zoomImg.src} hotspots={typeof zoomImg === 'object' && zoomImg.hotspots} onClose={() => setZoomImg(null)} />}
           {showOnboard && <Onboarding onDone={() => { localStorage.setItem("onboard-done", "1"); localStorage.setItem("onboard-v7", "1"); setShowOnboard(false) }} />}
           {showV8Tip && <Onboarding startStep={1} singleStep onDone={() => { localStorage.setItem("onboard-v7", "1"); setShowV8Tip(false) }} />}
           {lotteryItems && <LotterySheet items={lotteryItems} onAccept={id => { togglePref(id, lotteryItems.map(i => i.id)); setLotteryItems(null); }} onClose={() => setLotteryItems(null)} />}
         </div>
+        </LangContext.Provider>
       );
     }
 
