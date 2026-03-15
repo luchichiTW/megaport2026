@@ -87,7 +87,12 @@
     })();
 
     function useLang() {
-      const [lang, setLang] = useState(() => localStorage.getItem('lang-pref') || 'zh');
+      const [lang, setLang] = useState(() => {
+        const saved = localStorage.getItem('lang-pref');
+        if (saved) return saved;
+        const browserLang = (navigator.language || '').toLowerCase();
+        return browserLang.startsWith('zh') ? 'zh' : 'en';
+      });
       const toggle = useCallback(() => {
         const next = lang === 'zh' ? 'en' : 'zh';
         setLang(next);
