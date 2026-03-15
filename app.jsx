@@ -1923,10 +1923,18 @@
 
     function App() {
       const [sel, setSel] = useState([]);
-      const [view, setView] = useState("pick");
-      const [day, setDay] = useState(1);
-      const [stg, setStg] = useState("ALL");
-      const [pickMode, setPickMode] = useState("table");
+      const savedView = useMemo(() => {
+        try { return JSON.parse(localStorage.getItem("view-state")) || {}; } catch(e) { return {}; }
+      }, []);
+      const [view, setView] = useState(savedView.view || "pick");
+      const [day, setDay] = useState(savedView.day || 1);
+      const [stg, setStg] = useState(savedView.stg || "ALL");
+      const [pickMode, setPickMode] = useState(savedView.pickMode || "table");
+
+      // Persist view state to localStorage
+      useEffect(() => {
+        localStorage.setItem("view-state", JSON.stringify({ view, day, stg, pickMode }));
+      }, [view, day, stg, pickMode]);
 
       // Lock body scroll when timetable is visible
       useEffect(() => {
@@ -1967,6 +1975,14 @@
       const activeNow = isClamped ? FESTIVAL_EARLIEST : rawNow;
       const activeDay = getDayFromDate(activeNow);
       const activeMinutes = activeNow.getHours() * 60 + activeNow.getMinutes();
+
+      // Scroll to now on mount if restored to sched view
+      useEffect(() => {
+        if (view === "sched") setTimeout(() => {
+          const el = document.querySelector('.now-line') || document.querySelector('.now-playing-glow')?.parentElement;
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 300);
+      }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
       useEffect(() => {
         Promise.all([dbGet(), dbGetPref()]).then(([v, p]) => {
