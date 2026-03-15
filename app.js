@@ -3187,27 +3187,44 @@ function App() {
   }, "\xB7"), L('已選'), " ", sel.length, " ", L('組'))), /*#__PURE__*/React.createElement("button", {
     className: "theme-btn",
     onClick: langCtx.toggle,
-    title: lang === 'zh' ? 'Switch to English' : '切換中文'
+    title: lang === 'zh' ? 'Switch to English' : '切換中文',
+    style: {
+      width: 'auto',
+      padding: '0 10px',
+      gap: 5
+    }
   }, /*#__PURE__*/React.createElement("svg", {
-    width: "20",
-    height: "20",
+    width: "15",
+    height: "15",
     viewBox: "0 0 24 24",
-    fill: "currentColor"
-  }, lang === 'zh' ? /*#__PURE__*/React.createElement("text", {
-    x: "12",
-    y: "17",
-    textAnchor: "middle",
-    fontSize: "14",
-    fontWeight: "700",
-    fontFamily: "system-ui"
-  }, "EN") : /*#__PURE__*/React.createElement("text", {
-    x: "12",
-    y: "17",
-    textAnchor: "middle",
-    fontSize: "14",
-    fontWeight: "700",
-    fontFamily: "system-ui"
-  }, "\u4E2D"))), /*#__PURE__*/React.createElement("button", {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    style: {
+      flexShrink: 0
+    }
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "12",
+    r: "10"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M2 12h20"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+  })), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      fontWeight: 700,
+      width: 18,
+      textAlign: 'center'
+    }
+  }, lang === 'zh' ? '中' : 'EN')), /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 8
+    }
+  }), /*#__PURE__*/React.createElement("button", {
     className: "theme-btn",
     onClick: theme.toggle,
     title: theme.resolved === 'light' ? L('切換深色模式') : L('切換淺色模式')
