@@ -3,6 +3,7 @@ const ASSETS = [
   "./index.html",
   "./schedule.js",
   "./artists.js",
+  "./lang-en.js",
   "./app.js",
   "./manifest.json",
   "./icon.svg",
@@ -13,6 +14,10 @@ const ASSETS = [
   "./img/megaport_festival_2026_day_2.webp",
   "./img/megaport_festival_2026_free_stage.jpg",
   "./img/megaport_festival_2026_map.jpg",
+  "./img/megaport_festival_2026_day_1_EN.webp",
+  "./img/megaport_festival_2026_day_2_EN.webp",
+  "./img/megaport_festival_2026_free_stage_EN.webp",
+  "./img/megaport_festival_2026_map_EN.webp",
   "./vendor/react.min.js",
   "./vendor/react-dom.min.js",
 ];

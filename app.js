@@ -85,6 +85,58 @@ function useTheme() {
   };
 }
 
+// Language helpers
+// Build reverse map: EN name → ZH name (for looking up ARTIST_DESC / ARTIST_EMBED)
+const EN_TO_ZH = (() => {
+  if (typeof ARTIST_NAMES_EN === 'undefined') return {};
+  const m = {};
+  for (const [zh, en] of Object.entries(ARTIST_NAMES_EN)) m[en] = zh;
+  return m;
+})();
+function useLang() {
+  const [lang, setLang] = useState(() => localStorage.getItem('lang-pref') || 'zh');
+  const toggle = useCallback(() => {
+    const next = lang === 'zh' ? 'en' : 'zh';
+    setLang(next);
+    localStorage.setItem('lang-pref', next);
+    document.documentElement.setAttribute('data-lang', next);
+  }, [lang]);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-lang', lang);
+  }, [lang]);
+  const L = useCallback(zhStr => {
+    if (lang === 'zh') return zhStr;
+    if (typeof UI_EN !== 'undefined' && zhStr in UI_EN) return UI_EN[zhStr];
+    return zhStr;
+  }, [lang]);
+  const artistName = useCallback(name => {
+    if (lang === 'zh') return name;
+    return typeof ARTIST_NAMES_EN !== 'undefined' && ARTIST_NAMES_EN[name] || name;
+  }, [lang]);
+  // Always resolve to the Chinese key for data lookups (ARTIST_DESC, ARTIST_EMBED)
+  const artistKey = useCallback(name => EN_TO_ZH[name] || name, []);
+  const stageName = useCallback(key => {
+    if (lang === 'zh') return STAGES[key]?.name;
+    return typeof STAGE_NAMES_EN !== 'undefined' && STAGE_NAMES_EN[key] || STAGES[key]?.name;
+  }, [lang]);
+  return {
+    lang,
+    toggle,
+    L,
+    artistName,
+    artistKey,
+    stageName
+  };
+}
+const LangContext = React.createContext({
+  lang: 'zh',
+  toggle: () => {},
+  L: s => s,
+  artistName: s => s,
+  artistKey: s => s,
+  stageName: k => STAGES[k]?.name
+});
+
 // Theme icon component (Apple SF Symbols style)
 function ThemeIcon({
   resolved
@@ -204,6 +256,11 @@ function Badge({
 }) {
   const s = STAGES[stage];
   if (!s) return null;
+  const {
+    lang,
+    stageName
+  } = React.useContext(LangContext);
+  const label = lang === 'en' ? stageName(stage) : full && s.fullName ? s.fullName : s.name;
   return /*#__PURE__*/React.createElement("span", {
     style: {
       display: "inline-flex",
@@ -219,7 +276,7 @@ function Badge({
       flexShrink: 0,
       boxShadow: `0 1px 4px ${s.bg}50, inset 0 .5px 0 rgba(255,255,255,.25)`
     }
-  }, full && s.fullName ? s.fullName : s.name);
+  }, label);
 }
 
 // Artist card — glass card with tinted selection
@@ -239,6 +296,10 @@ function Card({
     x: 0,
     y: 200
   }));
+  const {
+    L,
+    artistName
+  } = React.useContext(LangContext);
   const isPlaying = status === "playing";
   const isEnded = status === "ended";
   return /*#__PURE__*/React.createElement(React.Fragment, null, tooltip && /*#__PURE__*/React.createElement(ArtistTooltip, {
@@ -308,7 +369,7 @@ function Card({
       whiteSpace: "nowrap",
       lineHeight: 1.3
     }
-  }, item.artist), isPlaying && /*#__PURE__*/React.createElement("span", {
+  }, artistName(item.artist)), isPlaying && /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 10,
       fontWeight: 700,
@@ -318,14 +379,14 @@ function Card({
       padding: "2px 8px",
       borderRadius: 6
     }
-  }, "\u6F14\u51FA\u4E2D"), isEnded && /*#__PURE__*/React.createElement("span", {
+  }, L('演出中')), isEnded && /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 10,
       fontWeight: 600,
       flexShrink: 0,
       color: "var(--text-5)"
     }
-  }, "\u5DF2\u7D50\u675F"), conflict && selected && !isPlaying && !isEnded && /*#__PURE__*/React.createElement("span", {
+  }, L('已結束')), conflict && selected && !isPlaying && !isEnded && /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 10,
       fontWeight: 700,
@@ -336,7 +397,7 @@ function Card({
       borderRadius: 8,
       boxShadow: `inset 0 .5px 0 var(--dim)`
     }
-  }, "\u649E\u5834"), isPlaying && /*#__PURE__*/React.createElement("div", {
+  }, L('撞場')), isPlaying && /*#__PURE__*/React.createElement("div", {
     className: "progress-bar-track",
     style: {
       left: 16,
@@ -418,6 +479,10 @@ function ArtistEmbed({
     resolved
   } = useTheme();
   const isDark = resolved === "dark";
+  const {
+    artistKey
+  } = React.useContext(LangContext);
+  const zhName = artistKey(artist);
   const [online, setOnline] = useState(navigator.onLine);
   useEffect(() => {
     const on = () => setOnline(true);
@@ -429,16 +494,16 @@ function ArtistEmbed({
       window.removeEventListener("offline", off);
     };
   }, []);
-  const rawEmbed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[artist] || null;
+  const rawEmbed = typeof ARTIST_EMBED !== "undefined" && ARTIST_EMBED[zhName] || null;
   // 支援新格式 { artists: [...] } 與舊格式 { spotify, appleMusic, ... }
   const artists = useMemo(() => {
     if (!rawEmbed) return [];
     if (rawEmbed.artists) return rawEmbed.artists;
     return [{
-      name: artist,
+      name: zhName,
       ...rawEmbed
     }];
-  }, [rawEmbed, artist]);
+  }, [rawEmbed, zhName]);
   // 過濾掉完全沒有平台資料的 artist
   const availableArtists = useMemo(() => artists.filter(a => EMBED_PLATFORMS.some(p => a[p.key])), [artists]);
   const [activeArtistIdx, setActiveArtistIdx] = useState(0);
@@ -596,7 +661,13 @@ function ArtistTooltip({
 }) {
   const [closing, setClosing] = useState(false);
   const dur = t2m(item.end) - t2m(item.start);
-  const desc = typeof ARTIST_DESC !== "undefined" && ARTIST_DESC[item.artist] || null;
+  const {
+    L,
+    artistName,
+    artistKey
+  } = React.useContext(LangContext);
+  const zhName = artistKey(item.artist);
+  const desc = typeof ARTIST_DESC !== "undefined" && ARTIST_DESC[zhName] || null;
   const dismiss = useCallback(() => {
     setClosing(true);
     setTimeout(onClose, 260);
@@ -661,7 +732,7 @@ function ArtistTooltip({
       color: "var(--text-5)",
       fontWeight: 500
     }
-  }, dur, " \u5206\u9418")), /*#__PURE__*/React.createElement("div", {
+  }, dur, " ", L('分鐘'))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 17,
       fontWeight: 700,
@@ -670,8 +741,8 @@ function ArtistTooltip({
       letterSpacing: "-.01em",
       flexShrink: 0
     }
-  }, item.artist), /*#__PURE__*/React.createElement(ArtistEmbed, {
-    artist: item.artist
+  }, artistName(item.artist)), /*#__PURE__*/React.createElement(ArtistEmbed, {
+    artist: zhName
   }), desc && /*#__PURE__*/React.createElement("div", {
     ref: descRef,
     className: "no-scrollbar",
@@ -701,6 +772,9 @@ function SuggestionCard({
   const sc = STAGES[item.stage]?.bg || "#888";
   const [tooltip, setTooltip] = useState(null);
   const lp = useLongPress(() => setTooltip(true));
+  const {
+    artistName
+  } = React.useContext(LangContext);
   return /*#__PURE__*/React.createElement(React.Fragment, null, tooltip && /*#__PURE__*/React.createElement(ArtistTooltip, {
     item: item,
     onClose: () => setTooltip(null)
@@ -767,7 +841,7 @@ function SuggestionCard({
       WebkitLineClamp: 2,
       WebkitBoxOrient: "vertical"
     }
-  }, item.artist)));
+  }, artistName(item.artist))));
 }
 function TimelineCard({
   item,
@@ -779,6 +853,10 @@ function TimelineCard({
   progress
 }) {
   const c = STAGES[item.stage]?.bg || "#888";
+  const {
+    L,
+    artistName
+  } = React.useContext(LangContext);
   const dur = t2m(item.end) - t2m(item.start);
   const isClickable = !!onClick;
   const isPlaying = status === "playing";
@@ -811,7 +889,7 @@ function TimelineCard({
       color: "var(--text-5)",
       fontWeight: 500
     }
-  }, gap, " \u5206\u9418"), /*#__PURE__*/React.createElement("div", {
+  }, gap, " ", L('分鐘')), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       height: .5,
@@ -889,27 +967,27 @@ function TimelineCard({
       borderRadius: 6,
       boxShadow: `inset 0 .5px 0 var(--surface-hi)`
     }
-  }, "\u6F14\u51FA\u4E2D"), isEnded && /*#__PURE__*/React.createElement("span", {
+  }, L('演出中')), isEnded && /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 10,
       fontWeight: 600,
       color: "var(--text-5)"
     }
-  }, "\u5DF2\u7D50\u675F")), /*#__PURE__*/React.createElement("div", {
+  }, L('已結束'))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 17,
       fontWeight: 700,
       marginTop: 8,
       lineHeight: 1.3
     }
-  }, item.artist), /*#__PURE__*/React.createElement("div", {
+  }, artistName(item.artist)), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "var(--text-4)",
       marginTop: 4,
       fontWeight: 500
     }
-  }, dur, " \u5206\u9418")), isPlaying && /*#__PURE__*/React.createElement("div", {
+  }, dur, " ", L('分鐘'))), isPlaying && /*#__PURE__*/React.createElement("div", {
     className: "progress-bar-track"
   }, /*#__PURE__*/React.createElement("div", {
     className: "progress-bar-fill",
@@ -930,6 +1008,9 @@ function ConflictGroup({
   getProgress,
   onLottery
 }) {
+  const {
+    L
+  } = React.useContext(LangContext);
   const prefId = items.find(i => pref.has(i.id))?.id || null;
   const collapsed = prefId !== null;
   const otherCount = items.length - 1;
@@ -979,14 +1060,14 @@ function ConflictGroup({
       fontWeight: 700,
       color: "#FF6B6B"
     }
-  }, "\u6642\u9593\u649E\u5834"), /*#__PURE__*/React.createElement("span", {
+  }, L('時間撞場')), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 11,
       color: "rgba(255,80,80,.5)",
       fontWeight: 500,
       flex: 1
     }
-  }, "\u2014 \u9EDE\u9078\u60F3\u53BB\u7684\u6F14\u51FA"), onLottery && /*#__PURE__*/React.createElement("button", {
+  }, L('— 點選想去的演出')), onLottery && /*#__PURE__*/React.createElement("button", {
     onClick: e => {
       e.stopPropagation();
       onLottery(items);
@@ -1008,7 +1089,7 @@ function ConflictGroup({
       WebkitBackdropFilter: "blur(12px) saturate(150%)",
       boxShadow: "inset 0 .5px 0 rgba(255,255,255,.1)"
     }
-  }, "\uD83C\uDFB2 \u62BD"))), items.map(item => {
+  }, L('🎲 抽')))), items.map(item => {
     const isPref = prefId === item.id;
     const isOther = collapsed && !isPref;
     const st = getStatus?.(item);
@@ -1066,6 +1147,10 @@ function SlotMachine({
   spinning,
   onDone
 }) {
+  const {
+    artistName,
+    stageName: stgName
+  } = React.useContext(LangContext);
   const [pos, setPos] = useState(0);
   const doneRef = useRef(false);
   const ITEM_H = 72;
@@ -1137,7 +1222,7 @@ function SlotMachine({
         whiteSpace: "nowrap",
         letterSpacing: .5
       }
-    }, stg?.name || item.stage), /*#__PURE__*/React.createElement("div", {
+    }, stgName(item.stage) || item.stage), /*#__PURE__*/React.createElement("div", {
       style: {
         minWidth: 0,
         flex: 1
@@ -1151,7 +1236,7 @@ function SlotMachine({
         textOverflow: "ellipsis",
         whiteSpace: "nowrap"
       }
-    }, item.artist), /*#__PURE__*/React.createElement("div", {
+    }, artistName(item.artist)), /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 12,
         color: "var(--text-3)",
@@ -1167,6 +1252,11 @@ function LotterySheet({
   onAccept,
   onClose
 }) {
+  const {
+    L,
+    artistName,
+    stageName: stgName
+  } = React.useContext(LangContext);
   const [closing, setClosing] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState(null);
@@ -1272,13 +1362,13 @@ function LotterySheet({
       margin: 0,
       color: "var(--text)"
     }
-  }, "\u649E\u5718\u62BD\u7C64"), /*#__PURE__*/React.createElement("p", {
+  }, L('撞團抽籤')), /*#__PURE__*/React.createElement("p", {
     style: {
       fontSize: 13,
       color: "var(--text-3)",
       margin: "6px 0 0"
     }
-  }, items.length, " \u7D44\u6F14\u51FA\u649E\u5834\uFF0C\u4EA4\u7D66\u547D\u904B\u6C7A\u5B9A\uFF01")), /*#__PURE__*/React.createElement("div", {
+  }, items.length, " ", L('組演出撞場，交給命運決定！'))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       flexDirection: "column",
@@ -1320,7 +1410,7 @@ function LotterySheet({
         borderRadius: 5,
         whiteSpace: "nowrap"
       }
-    }, stg?.name || item.stage), /*#__PURE__*/React.createElement("div", {
+    }, stgName(item.stage) || item.stage), /*#__PURE__*/React.createElement("div", {
       style: {
         flex: 1,
         minWidth: 0
@@ -1334,7 +1424,7 @@ function LotterySheet({
         textOverflow: "ellipsis",
         whiteSpace: "nowrap"
       }
-    }, item.artist), /*#__PURE__*/React.createElement("div", {
+    }, artistName(item.artist)), /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 12,
         color: "var(--text-3)",
@@ -1345,7 +1435,7 @@ function LotterySheet({
         fontSize: 11,
         color: "var(--text-4)"
       }
-    }, "\u4E0B\u6B21\u5427"));
+    }, L('下次吧')));
   })), spinning && winner && /*#__PURE__*/React.createElement("div", {
     style: {
       marginBottom: 20
@@ -1395,7 +1485,7 @@ function LotterySheet({
       color: "var(--text-3)",
       marginBottom: 4
     }
-  }, winner.artist === QIAOHU ? "小朋友就是要看" : "就決定是你了！"), /*#__PURE__*/React.createElement("div", {
+  }, winner.artist === QIAOHU ? L("小朋友就是要看") : L("就決定是你了！")), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 20,
       fontWeight: 900,
@@ -1403,13 +1493,13 @@ function LotterySheet({
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent"
     }
-  }, winner.artist), /*#__PURE__*/React.createElement("div", {
+  }, artistName(winner.artist)), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 12,
       color: "var(--text-4)",
       marginTop: 4
     }
-  }, STAGES[winner.stage]?.name, " \xB7 ", winner.start, "\u2013", fmtEnd(winner))), /*#__PURE__*/React.createElement("div", {
+  }, stgName(winner.stage), " \xB7 ", winner.start, "\u2013", fmtEnd(winner))), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 10,
@@ -1418,22 +1508,22 @@ function LotterySheet({
   }, !spinning && !revealed && /*#__PURE__*/React.createElement("button", {
     onClick: spin,
     className: "lottery-btn-primary"
-  }, "\uD83C\uDFB2 \u62BD\uFF01"), revealed && winner?.artist === QIAOHU && !scolded && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+  }, L('🎲 抽！')), revealed && winner?.artist === QIAOHU && !scolded && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     onClick: () => setScolded(true),
     className: "lottery-btn-secondary"
-  }, "\u518D\u62BD\u4E00\u6B21"), /*#__PURE__*/React.createElement("button", {
+  }, L('再抽一次')), /*#__PURE__*/React.createElement("button", {
     onClick: accept,
     className: "lottery-btn-primary"
-  }, "\u63A5\u53D7\u7D50\u679C \u2713")), revealed && winner?.artist === QIAOHU && scolded && /*#__PURE__*/React.createElement("button", {
+  }, L('接受結果 ✓'))), revealed && winner?.artist === QIAOHU && scolded && /*#__PURE__*/React.createElement("button", {
     onClick: accept,
     className: "lottery-btn-primary"
-  }, "\u63A5\u53D7\u7D50\u679C \u2713"), revealed && winner?.artist !== QIAOHU && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+  }, L('接受結果 ✓')), revealed && winner?.artist !== QIAOHU && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     onClick: retry,
     className: "lottery-btn-secondary"
-  }, "\u518D\u62BD\u4E00\u6B21"), /*#__PURE__*/React.createElement("button", {
+  }, L('再抽一次')), /*#__PURE__*/React.createElement("button", {
     onClick: accept,
     className: "lottery-btn-primary"
-  }, "\u63A5\u53D7\u7D50\u679C \u2713"))), scolded && /*#__PURE__*/React.createElement("div", {
+  }, L('接受結果 ✓')))), scolded && /*#__PURE__*/React.createElement("div", {
     style: {
       position: "absolute",
       inset: 0,
@@ -1456,7 +1546,7 @@ function LotterySheet({
       animation: "scolded .5s var(--spring) both",
       letterSpacing: 4
     }
-  }, "\u5C0F\u670B\u53CB\u5C31\u662F\u8981\u770B\u5DE7\u864E\uFF01")))));
+  }, L('小朋友就是要看巧虎！'))))));
 }
 
 // Festival date mapping: day 1 = 3/21, day 2 = 3/22
@@ -1625,6 +1715,9 @@ function ImageViewer({
   hotspots,
   onClose
 }) {
+  const {
+    L
+  } = React.useContext(LangContext);
   const [closing, setClosing] = useState(false);
   const [stagePopup, setStagePopup] = useState(null);
   const imgRef = useRef(null);
@@ -1817,7 +1910,7 @@ function ImageViewer({
                   const url = navUrl(k);
                   if (s && url) {
                     setStagePopup({
-                      name: s.name,
+                      name: typeof STAGE_NAMES_EN !== 'undefined' && localStorage.getItem('lang-pref') === 'en' ? STAGE_NAMES_EN[k] : s.name,
                       bg: s.bg,
                       url,
                       loc: STAGE_LOCS[k]
@@ -1994,7 +2087,7 @@ function ImageViewer({
       fontWeight: 600,
       cursor: "pointer"
     }
-  }, "\u53D6\u6D88"), /*#__PURE__*/React.createElement("button", {
+  }, L('取消')), /*#__PURE__*/React.createElement("button", {
     onClick: () => {
       window.open(stagePopup.url, "_blank", "noopener,noreferrer");
       setStagePopup(null);
@@ -2011,7 +2104,7 @@ function ImageViewer({
       cursor: "pointer",
       boxShadow: `0 2px 12px ${stagePopup.bg}40`
     }
-  }, "\u5C0E\u822A\u524D\u5F80")))));
+  }, L('導航前往'))))));
 }
 
 // Time Picker — liquid glass bottom sheet
@@ -2021,6 +2114,9 @@ function TimePicker({
   onReset,
   onClose
 }) {
+  const {
+    L
+  } = React.useContext(LangContext);
   const [closing, setClosing] = useState(false);
   const current = simNow || new Date();
   const curDay = getDayFromDate(current) || 1;
@@ -2049,32 +2145,32 @@ function TimePicker({
     setTime(curDay, h, m);
   };
   const presets = [{
-    label: "DAY 1 開場",
+    label: `DAY 1 ${L("開場")}`,
     day: 1,
     h: 12,
     m: 40
   }, {
-    label: "DAY 1 下午",
+    label: `DAY 1 ${L("下午")}`,
     day: 1,
     h: 15,
     m: 0
   }, {
-    label: "DAY 1 晚上",
+    label: `DAY 1 ${L("晚上")}`,
     day: 1,
     h: 19,
     m: 0
   }, {
-    label: "DAY 2 開場",
+    label: `DAY 2 ${L("開場")}`,
     day: 2,
     h: 12,
     m: 40
   }, {
-    label: "DAY 2 下午",
+    label: `DAY 2 ${L("下午")}`,
     day: 2,
     h: 15,
     m: 0
   }, {
-    label: "DAY 2 晚上",
+    label: `DAY 2 ${L("晚上")}`,
     day: 2,
     h: 19,
     m: 0
@@ -2114,7 +2210,7 @@ function TimePicker({
       fontWeight: 700,
       color: "var(--text)"
     }
-  }, "\u6A21\u64EC\u6642\u9593"), /*#__PURE__*/React.createElement("button", {
+  }, L('模擬時間')), /*#__PURE__*/React.createElement("button", {
     onClick: dismiss,
     style: {
       background: "var(--dim)",
@@ -2148,7 +2244,7 @@ function TimePicker({
       display: "block",
       marginBottom: 4
     }
-  }, curDay === 1 ? "DAY 1 · 3/21 (六)" : "DAY 2 · 3/22 (日)"), String(curH).padStart(2, '0'), ":", String(curM).padStart(2, '0')), /*#__PURE__*/React.createElement("div", {
+  }, curDay === 1 ? `DAY 1 · 3/21 (${L('六')})` : `DAY 2 · 3/22 (${L('日')})`), String(curH).padStart(2, '0'), ":", String(curM).padStart(2, '0')), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       justifyContent: "center",
@@ -2230,7 +2326,7 @@ function TimePicker({
       fontFamily: "inherit",
       boxShadow: `inset 0 .5px 0 var(--surface-border)`
     }
-  }, "\u6062\u5FA9\u5373\u6642")))), document.body);
+  }, L('恢復即時'))))), document.body);
 }
 
 // Liquid glass confirm dialog
@@ -2241,6 +2337,9 @@ function ConfirmDialog({
   onConfirm,
   onClose
 }) {
+  const {
+    L
+  } = React.useContext(LangContext);
   const [closing, setClosing] = useState(false);
   const dismiss = useCallback(() => {
     setClosing(true);
@@ -2276,7 +2375,7 @@ function ConfirmDialog({
   }, /*#__PURE__*/React.createElement("button", {
     className: "confirm-cancel",
     onClick: dismiss
-  }, "\u53D6\u6D88"), /*#__PURE__*/React.createElement("button", {
+  }, L('取消')), /*#__PURE__*/React.createElement("button", {
     className: "confirm-destructive",
     onClick: handleConfirm
   }, confirmLabel)))), document.body);
@@ -2447,6 +2546,9 @@ function Onboarding({
   startStep = 0,
   singleStep = false
 }) {
+  const {
+    L
+  } = React.useContext(LangContext);
   const [step, setStep] = useState(startStep);
   const [closing, setClosing] = useState(false);
   const [stepKey, setStepKey] = useState(0);
@@ -2490,9 +2592,9 @@ function Onboarding({
     className: "onboard-icon"
   }, s.icon), /*#__PURE__*/React.createElement("div", {
     className: "onboard-title"
-  }, s.title), /*#__PURE__*/React.createElement("div", {
+  }, L(s.title)), /*#__PURE__*/React.createElement("div", {
     className: "onboard-desc"
-  }, s.desc), s.content && s.content, s.links && /*#__PURE__*/React.createElement("div", {
+  }, L(s.desc)), s.content && s.content, s.links && /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 8,
@@ -2529,13 +2631,13 @@ function Onboarding({
   }, "\uD83D\uDC4C") : /*#__PURE__*/React.createElement(React.Fragment, null, step > 0 ? /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-secondary",
     onClick: prev
-  }, "\u4E0A\u4E00\u6B65") : /*#__PURE__*/React.createElement("button", {
+  }, L('上一步')) : /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-secondary",
     onClick: skip
-  }, "\u8DF3\u904E"), /*#__PURE__*/React.createElement("button", {
+  }, L('跳過')), /*#__PURE__*/React.createElement("button", {
     className: "onboard-btn onboard-btn-primary",
     onClick: next
-  }, isLast ? "開始使用" : "下一步"))))), document.body);
+  }, isLast ? L("開始使用") : L("下一步")))))), document.body);
 }
 
 /* ══════════ Timetable ══════════ */
@@ -2550,6 +2652,9 @@ function TtBlock({
   height,
   toggle
 }) {
+  const {
+    artistName
+  } = React.useContext(LangContext);
   const [tooltip, setTooltip] = useState(null);
   const lp = useLongPress(pos => setTooltip(pos || {
     x: 0,
@@ -2572,7 +2677,7 @@ function TtBlock({
     onTouchEnd: lp.onTouchEnd,
     onTouchMove: lp.onTouchMove,
     onContextMenu: e => e.preventDefault()
-  }, item.artist));
+  }, artistName(item.artist)));
 }
 function Timetable({
   day,
@@ -2583,8 +2688,12 @@ function Timetable({
   activeDay,
   activeMinutes
 }) {
+  const {
+    lang,
+    stageName
+  } = React.useContext(LangContext);
   const PX_PER_MIN = 2;
-  const HEADER_H = 32;
+  const HEADER_H = lang === 'en' ? 40 : 32;
   const dayItems = useMemo(() => T.filter(t => t.day === day), [day]);
   const stages = useMemo(() => Object.keys(STAGES).filter(k => dayItems.some(t => t.stage === k)), [dayItems]);
   const minTime = useMemo(() => {
@@ -2644,7 +2753,7 @@ function Timetable({
       style: {
         background: STAGES[stg].bg
       }
-    }, STAGES[stg].name), lines.map(l => /*#__PURE__*/React.createElement("div", {
+    }, stageName(stg)), lines.map(l => /*#__PURE__*/React.createElement("div", {
       key: l.m,
       className: l.isHour ? "tt-hour-line" : "tt-half-line",
       style: {
@@ -2721,6 +2830,13 @@ function App() {
   const [lastTap, setLastTap] = useState(0);
   const firstConflictRef = useRef(null);
   const theme = useTheme();
+  const langCtx = useLang();
+  const {
+    lang,
+    L,
+    artistName,
+    stageName
+  } = langCtx;
   const [showOnboard, setShowOnboard] = useState(() => !localStorage.getItem("onboard-done"));
   const [showV8Tip, setShowV8Tip] = useState(() => localStorage.getItem("onboard-done") && !localStorage.getItem("onboard-v7"));
   const [showRes, setShowRes] = useState(false);
@@ -2938,10 +3054,13 @@ function App() {
   }, [selItems]);
   const filterStage = useCallback(s => T.filter(t => {
     if (t.day !== day) return false;
-    if (q) return t.artist.toLowerCase().includes(q.toLowerCase());
+    if (q) {
+      const ql = q.toLowerCase();
+      return t.artist.toLowerCase().includes(ql) || artistName(t.artist).toLowerCase().includes(ql);
+    }
     if (s !== "ALL" && t.stage !== s) return false;
     return true;
-  }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, q]);
+  }).sort((a, b) => t2m(a.start) - t2m(b.start)), [day, q, artistName]);
   const list = useMemo(() => filterStage(stg), [filterStage, stg]);
   const stgIdx = useMemo(() => stgsDay.indexOf(stg), [stgsDay, stg]);
   const prevList = useMemo(() => stgIdx > 0 ? filterStage(stgsDay[stgIdx - 1]) : null, [filterStage, stgsDay, stgIdx]);
@@ -2985,7 +3104,9 @@ function App() {
       e = t2m(item.end);
     return (activeMinutes - s) / (e - s);
   }, [activeMinutes]);
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(LangContext.Provider, {
+    value: langCtx
+  }, /*#__PURE__*/React.createElement("div", {
     style: {
       position: "relative",
       zIndex: 1,
@@ -3037,7 +3158,7 @@ function App() {
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent"
     }
-  }, "\u5927\u6E2F\u958B\u5531"), /*#__PURE__*/React.createElement("span", {
+  }, L('大港開唱')), /*#__PURE__*/React.createElement("span", {
     onClick: view === "sched" ? () => {
       const n = Date.now();
       if (n - lastTap < 400) setShowTimePicker(true);
@@ -3058,24 +3179,47 @@ function App() {
       marginTop: 2,
       fontWeight: 500
     }
-  }, "3/21\u201322 \u9AD8\u96C4\u99C1\u4E8C", /*#__PURE__*/React.createElement("span", {
+  }, L('3/21–22 高雄駁二'), /*#__PURE__*/React.createElement("span", {
     style: {
       margin: "0 6px",
       opacity: .3
     }
-  }, "\xB7"), "\u5DF2\u9078 ", sel.length, " \u7D44")), /*#__PURE__*/React.createElement("button", {
+  }, "\xB7"), L('已選'), " ", sel.length, " ", L('組'))), /*#__PURE__*/React.createElement("button", {
+    className: "theme-btn",
+    onClick: langCtx.toggle,
+    title: lang === 'zh' ? 'Switch to English' : '切換中文'
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "20",
+    height: "20",
+    viewBox: "0 0 24 24",
+    fill: "currentColor"
+  }, lang === 'zh' ? /*#__PURE__*/React.createElement("text", {
+    x: "12",
+    y: "17",
+    textAnchor: "middle",
+    fontSize: "14",
+    fontWeight: "700",
+    fontFamily: "system-ui"
+  }, "EN") : /*#__PURE__*/React.createElement("text", {
+    x: "12",
+    y: "17",
+    textAnchor: "middle",
+    fontSize: "14",
+    fontWeight: "700",
+    fontFamily: "system-ui"
+  }, "\u4E2D"))), /*#__PURE__*/React.createElement("button", {
     className: "theme-btn",
     onClick: theme.toggle,
-    title: theme.resolved === 'light' ? '切換深色模式' : '切換淺色模式'
+    title: theme.resolved === 'light' ? L('切換深色模式') : L('切換淺色模式')
   }, /*#__PURE__*/React.createElement(ThemeIcon, {
     resolved: theme.resolved
   }))), /*#__PURE__*/React.createElement(Segment, {
     items: [{
       value: "pick",
-      label: "選團"
+      label: L("選團")
     }, {
       value: "sched",
-      label: "我的行程"
+      label: L("我的行程")
     }],
     value: view,
     onChange: v => {
@@ -3102,10 +3246,10 @@ function App() {
   }, /*#__PURE__*/React.createElement(Segment, {
     items: [{
       value: 1,
-      label: "DAY 1 · 3/21 六"
+      label: `DAY 1 · 3/21 ${L('六')}`
     }, {
       value: 2,
-      label: "DAY 2 · 3/22 日"
+      label: `DAY 2 · 3/22 ${L('日')}`
     }],
     value: day,
     onChange: v => {
@@ -3240,7 +3384,7 @@ function App() {
     ref: searchRef,
     value: q,
     onChange: e => setQ(e.target.value),
-    placeholder: "\u641C\u5C0B\u8868\u6F14\u8005...",
+    placeholder: L("搜尋表演者..."),
     style: {
       width: "100%",
       padding: "8px 32px 8px 30px",
@@ -3292,7 +3436,7 @@ function App() {
       whiteSpace: "nowrap",
       flexShrink: 0
     }
-  }, "\u53D6\u6D88")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+  }, L('取消'))) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     className: "press",
     onClick: () => {
       setShowSearch(true);
@@ -3330,7 +3474,7 @@ function App() {
     key: s,
     "data-stage-active": stg === s ? "1" : "0"
   }, /*#__PURE__*/React.createElement(Pill, {
-    label: s === "ALL" ? "全部" : STAGES[s]?.name,
+    label: s === "ALL" ? L("全部") : stageName(s),
     active: stg === s,
     color: s === "ALL" ? null : STAGES[s]?.bg,
     onClick: () => {
@@ -3371,7 +3515,7 @@ function App() {
       fontSize: 16,
       fontWeight: 500
     }
-  }, "\u627E\u4E0D\u5230\u7B26\u5408\u7684\u8868\u6F14\u8005") : list.map(item => {
+  }, L('找不到符合的表演者')) : list.map(item => {
     const st = getStatus(item);
     return /*#__PURE__*/React.createElement(Card, {
       key: item.id,
@@ -3425,7 +3569,7 @@ function App() {
       fontSize: 16,
       fontWeight: 500
     }
-  }, "\u6B64\u821E\u53F0\u672C\u65E5\u7121\u6F14\u51FA") : (() => {
+  }, L('此舞台本日無演出')) : (() => {
     const out = [];
     let nowInserted = false;
     items.forEach((item, idx) => {
@@ -3438,7 +3582,7 @@ function App() {
           className: "now-line-dot"
         }), /*#__PURE__*/React.createElement("span", {
           className: "now-line-label"
-        }, isClamped ? "🚢 活動即將開始" : `現在 ${fmtTime(activeNow)}`), /*#__PURE__*/React.createElement("div", {
+        }, isClamped ? L("🚢 活動即將開始") : `${L("現在")} ${fmtTime(activeNow)}`), /*#__PURE__*/React.createElement("div", {
           className: "now-line-line"
         })));
       }
@@ -3478,11 +3622,11 @@ function App() {
       style: {
         fontSize: 14
       }
-    }, "\u23F3"), /*#__PURE__*/React.createElement("span", null, "\u9084\u6C92\u958B\u6F14\u5566\uFF01", /*#__PURE__*/React.createElement("b", {
+    }, "\u23F3"), /*#__PURE__*/React.createElement("span", null, L('還沒開演啦！'), /*#__PURE__*/React.createElement("b", {
       style: {
         color: "var(--text-2)"
       }
-    }, DAY_DATES[1].slice(5), " ", eTime), " \u958B\u59CB\u5F8C\u6642\u9593\u8EF8\u6703\u81EA\u5DF1\u8DD1"));
+    }, DAY_DATES[1].slice(5), " ", eTime), " ", L('開始後時間軸會自己跑')));
   })(), sel.length === 0 ? /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "60px 20px"
@@ -3495,7 +3639,7 @@ function App() {
       fontWeight: 500,
       lineHeight: 2
     }
-  }, "\u9084\u6C92\u9078\u4EFB\u4F55\u6F14\u51FA", /*#__PURE__*/React.createElement("br", null), "\u5207\u63DB\u5230\u300C\u9078\u5718\u300D\u958B\u59CB\u6311\u9078"), (() => {
+  }, L('還沒選任何演出'), /*#__PURE__*/React.createElement("br", null), L('切換到「選團」開始挑選')), (() => {
     const playing = T.filter(t => t.day === activeDay && activeMinutes >= t2m(t.start) && activeMinutes < t2m(t.end)).sort((a, b) => t2m(a.end) - t2m(b.end));
     if (!playing.length) return null;
     return /*#__PURE__*/React.createElement("div", {
@@ -3510,7 +3654,7 @@ function App() {
         marginBottom: 8,
         textAlign: "center"
       }
-    }, "\u73FE\u5728\u6709\u6F14\u51FA"), /*#__PURE__*/React.createElement("div", {
+    }, L('現在有演出')), /*#__PURE__*/React.createElement("div", {
       className: "no-scrollbar",
       style: {
         display: "flex",
@@ -3590,13 +3734,13 @@ function App() {
         color: "var(--text-4)",
         fontWeight: 500
       }
-    }, d === 1 ? "3/21 (六)" : "3/22 (日)"), /*#__PURE__*/React.createElement("span", {
+    }, d === 1 ? `3/21 (${L('六')})` : `3/22 (${L('日')})`), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 12,
         color: "var(--text-5)",
         fontWeight: 500
       }
-    }, items.length, " \u7D44")), (() => {
+    }, items.length, " ", L('組'))), (() => {
       const out = [];
       const nowLine = /*#__PURE__*/React.createElement("div", {
         key: "now-line",
@@ -3605,7 +3749,7 @@ function App() {
         className: "now-line-dot"
       }), /*#__PURE__*/React.createElement("span", {
         className: "now-line-label"
-      }, isClamped ? "🚢 活動即將開始" : `現在 ${fmtTime(activeNow)}`), /*#__PURE__*/React.createElement("div", {
+      }, isClamped ? L("🚢 活動即將開始") : `${L("現在")} ${fmtTime(activeNow)}`), /*#__PURE__*/React.createElement("div", {
         className: "now-line-line"
       }));
       let nowInserted = false;
@@ -3625,7 +3769,7 @@ function App() {
           marginBottom: 8,
           textAlign: "center"
         }
-      }, "\u73FE\u5728\u6709\u6F14\u51FA"), /*#__PURE__*/React.createElement("div", {
+      }, L('現在有演出')), /*#__PURE__*/React.createElement("div", {
         className: "no-scrollbar",
         style: {
           display: "flex",
@@ -3681,7 +3825,7 @@ function App() {
               color: "var(--text-5)",
               fontWeight: 500
             }
-          }, gap, " \u5206\u9418"), /*#__PURE__*/React.createElement("div", {
+          }, gap, " ", L('分鐘')), /*#__PURE__*/React.createElement("div", {
             style: {
               flex: 1,
               height: .5,
@@ -3751,7 +3895,7 @@ function App() {
       fontFamily: "inherit",
       boxShadow: `0 2px 12px rgba(255,80,80,.08), inset 0 .5px 0 var(--surface-border)`
     }
-  }, "\u6E05\u9664\u6240\u6709\u9078\u53D6")), showTimePicker && /*#__PURE__*/React.createElement(TimePicker, {
+  }, L('清除所有選取'))), showTimePicker && /*#__PURE__*/React.createElement(TimePicker, {
     simNow: simNow,
     onSet: d => {
       setSimNow(d);
@@ -3763,9 +3907,9 @@ function App() {
     },
     onClose: () => setShowTimePicker(false)
   }), showSheet && /*#__PURE__*/React.createElement(ConfirmDialog, {
-    title: "\u6E05\u9664\u6240\u6709\u9078\u53D6\uFF1F",
-    message: `已選的 ${sel.length} 組演出將全部移除，此操作無法復原。`,
-    confirmLabel: "\u6E05\u9664",
+    title: L("清除所有選取？"),
+    message: `${L('已選')} ${sel.length} ${L('組演出將全部移除，此操作無法復原。')}`,
+    confirmLabel: L("清除"),
     onConfirm: () => setSel([]),
     onClose: () => setShowSheet(false)
   }))), view === "sched" && /*#__PURE__*/React.createElement("div", {
@@ -3834,7 +3978,7 @@ function App() {
     },
     onTouchStart: e => e.currentTarget.style.background = "rgba(255,80,80,.12)",
     onTouchEnd: e => e.currentTarget.style.background = "transparent"
-  }, nC, " \u649E\u5834")), /*#__PURE__*/React.createElement("span", {
+  }, nC, " ", L('撞場'))), /*#__PURE__*/React.createElement("span", {
     style: {
       color: "var(--dim)"
     }
@@ -3871,7 +4015,7 @@ function App() {
     y1: "6",
     x2: "16",
     y2: "22"
-  })), "\u7E3D\u89BD")), showRes && (() => {
+  })), L('總覽'))), showRes && (() => {
     const dismiss = () => {
       document.querySelector('.res-backdrop')?.classList.add('closing');
       document.querySelector('.res-sheet')?.classList.add('closing');
@@ -3925,17 +4069,17 @@ function App() {
         gap: 14
       }
     }, [{
-      src: MAP_SRC,
-      label: "場地地圖"
+      src: lang === 'en' ? "./img/megaport_festival_2026_map_EN.webp" : MAP_SRC,
+      label: L("場地地圖")
     }, {
-      src: "./img/megaport_festival_2026_day_1.webp",
-      label: "DAY 1 節目表 (3/21)"
+      src: lang === 'en' ? "./img/megaport_festival_2026_day_1_EN.webp" : "./img/megaport_festival_2026_day_1.webp",
+      label: L("DAY 1 節目表 (3/21)")
     }, {
-      src: "./img/megaport_festival_2026_day_2.webp",
-      label: "DAY 2 節目表 (3/22)"
+      src: lang === 'en' ? "./img/megaport_festival_2026_day_2_EN.webp" : "./img/megaport_festival_2026_day_2.webp",
+      label: L("DAY 2 節目表 (3/22)")
     }, {
-      src: "./img/megaport_festival_2026_free_stage.jpg",
-      label: "大樹下節目表"
+      src: lang === 'en' ? "./img/megaport_festival_2026_free_stage_EN.webp" : "./img/megaport_festival_2026_free_stage.jpg",
+      label: L("大樹下節目表")
     }].map(r => /*#__PURE__*/React.createElement("div", {
       key: r.src,
       style: {
@@ -3972,10 +4116,10 @@ function App() {
         textAlign: "center",
         padding: "4px 0"
       }
-    }, "\u5DF2\u5FEB\u53D6\uFF0C\u6C92\u7DB2\u8DEF\u4E5F\u80FD\u770B"))));
+    }, L('已快取，沒網路也能看')))));
   })(), /*#__PURE__*/React.createElement(FloatingMapBtn, {
     onMapOpen: () => setZoomImg({
-      src: MAP_SRC,
+      src: lang === 'en' ? "./img/megaport_festival_2026_map_EN.webp" : MAP_SRC,
       hotspots: true
     })
   }), zoomImg && /*#__PURE__*/React.createElement(ImageViewer, {
@@ -4002,6 +4146,6 @@ function App() {
       setLotteryItems(null);
     },
     onClose: () => setLotteryItems(null)
-  }));
+  })));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
