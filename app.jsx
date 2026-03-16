@@ -1962,6 +1962,16 @@
       const [showRes, setShowRes] = useState(false);
       const [zoomImg, setZoomImg] = useState(null);
       const [lotteryItems, setLotteryItems] = useState(null);
+      const [atBottom, setAtBottom] = useState(false);
+
+      useEffect(() => {
+        const onScroll = () => {
+          const scrollY = window.scrollY + window.innerHeight;
+          setAtBottom(scrollY >= document.documentElement.scrollHeight - 60);
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+      }, []);
 
       // Tick real clock every 30s
       useEffect(() => {
@@ -2619,6 +2629,22 @@
           </div>
 
           {/* ══ Floating Tab Bar ══ */}
+          {/* ══ Author Credit ══ */}
+          {view === "sched" && <div style={{
+            position: "fixed", bottom: `calc(44px + var(--safe-bottom))`, left: 0, right: 0, zIndex: 199,
+            textAlign: "center", padding: "6px 0",
+            fontSize: 12, color: "var(--text-4)", letterSpacing: .3,
+            pointerEvents: "none",
+            opacity: atBottom ? 1 : 0, transition: "opacity .3s ease",
+          }}>
+            <span style={{ pointerEvents: "auto" }}>
+              <span style={{ color: "#D4A746", verticalAlign: "middle", fontSize: 6, textShadow: "0 0 6px rgba(212,167,70,.5)" }}>●</span>{" "}
+              powered by{" "}
+              <a href="https://chiparashi.tw" target="_blank" rel="noopener noreferrer" style={{
+                color: "#D4A746", fontWeight: 700, textDecoration: "none",
+              }}>chiparashi</a>
+            </span>
+          </div>}
           {view === "sched" && <div className="liquid-glass" style={{
             position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200,
             borderRadius: "20px 20px 0 0",
