@@ -3198,10 +3198,16 @@ function App() {
       lineHeight: 1.2
     }
   }, /*#__PURE__*/React.createElement("span", {
+    onClick: () => {
+      const n = Date.now();
+      if (n - lastTap < 400) setZoomImg("./img/megaporters_square.jpg");
+      setLastTap(n);
+    },
     style: {
       background: "linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
       WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent"
+      WebkitTextFillColor: "transparent",
+      cursor: "pointer"
     }
   }, L('大港開唱')), /*#__PURE__*/React.createElement("span", {
     onClick: view === "sched" ? () => {

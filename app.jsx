@@ -2163,9 +2163,14 @@
                 <h1 style={{
                   fontSize: 24, fontWeight: 800, letterSpacing: -.5, lineHeight: 1.2,
                 }}>
-                  <span style={{
+                  <span onClick={() => {
+                    const n = Date.now();
+                    if (n - lastTap < 400) setZoomImg("./img/megaporters_square.jpg");
+                    setLastTap(n);
+                  }} style={{
                     background: "linear-gradient(135deg, #FF6B6B 0%, #F4A261 50%, #FFD93D 100%)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                    cursor: "pointer",
                   }}>{L('大港開唱')}</span>
                   <span onClick={view === "sched" ? () => {
                     const n = Date.now();
